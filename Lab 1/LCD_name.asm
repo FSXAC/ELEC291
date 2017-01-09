@@ -135,6 +135,34 @@ LCD_configure_4bit:
     lcall   sleep
     ret
 
+
+;---------------------------------;
+; Clear LCD                       ;
+;---------------------------------;
+LCD_clear:
+    push    AR0
+    mov     R0, #0x80
+L6: mov     a,  R0
+    lcall   LCD_writeCommand
+    mov     a,  #32
+    lcall   LCD_writeData
+    cjne    R0, #0x8F,  L7
+
+    mov     R0, #0xC0
+L8: mov     a,  R0
+    lcall   LCD_writeCommand
+    mov     a,  #32
+    lcall   LCD_writeData
+    cjne    R0, #0xCF,  L9
+    pop     AR0
+    ret
+
+L9: inc     R0
+    sjmp    L8
+
+L7: inc     R0
+    sjmp    L6
+
 ;---------------------------------;
 ; Main functions                  ;
 ; SETUP function runs onces       ;
@@ -143,53 +171,6 @@ setup:
     mov     SP,     #7FH
     mov     PMOD,   #0
     lcall   LCD_configure_4bit
-
-    ; move cursor to line 1 col 1
-    mov     a,      #0x80
-    lcall   LCD_writeCommand
-    mov     a,      #'A'
-    lcall   LCD_writeData
-
-    ; move cursor to line 2 col 3
-    mov     a,      #0x81
-    lcall   LCD_writeCommand
-    mov     a,      #'B'
-    lcall   LCD_writeData
-
-    mov     a,      #0x82
-    lcall   LCD_writeCommand
-    mov     a,      #'C'
-    lcall   LCD_writeData
-
-    mov     a,      #0x83
-    lcall   LCD_writeCommand
-    mov     a,      #'D'
-    lcall   LCD_writeData
-
-    mov     a,      #0x84
-    lcall   LCD_writeCommand
-    mov     a,      #'E'
-    lcall   LCD_writeData
-
-    mov     a,      #0x8F
-    lcall   LCD_writeCommand
-    mov     a,      #'?'
-    lcall   LCD_writeData
-
-    mov     a,      #0xC0
-    lcall   LCD_writeCommand
-    mov     a,      #'X'
-    lcall   LCD_writeData
-
-    mov     a,      #0xC1
-    lcall   LCD_writeCommand
-    mov     a,      #'Y'
-    lcall   LCD_writeData
-
-    mov     a,      #0xCF
-    lcall   LCD_writeCommand
-    mov     a,      #'Z'
-    lcall   LCD_writeData
 
     ; setup for animation
     mov     R1,     #0x80
@@ -200,6 +181,10 @@ setup:
 ; LOOP function runs forever      ;
 ;---------------------------------;
 loop:
+    ; clear LCD
+    lcall   LCD_clear
+
+    ; write letter to LCD
     mov     a,      R1
     lcall   LCD_writeCommand
     mov     a,      R2
@@ -214,7 +199,7 @@ L4: inc     R1
     mov     R2,     #'@'
 L5: inc     R2
 
-    mov     R0,     #50
+    mov     R0,     #200
     lcall   sleep
     sjmp    loop
 
