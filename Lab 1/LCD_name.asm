@@ -192,8 +192,8 @@ setup:
     lcall   LCD_writeData
 
     ; setup for animation
-    mov     R0,     #255
     mov     R1,     #0x80
+    mov     R2,     #'A'
 
 ;---------------------------------;
 ; Main functions                  ;
@@ -202,13 +202,20 @@ setup:
 loop:
     mov     a,      R1
     lcall   LCD_writeCommand
-    mov     a,      #'F'
+    mov     a,      R2
     lcall   LCD_writeData
-    lcall   sleep
 
     ; increment position of cursor
+    ; check if it's at the end
+    cjne    R1,     #0x8F,  L4
+    mov     R1,     #0x7F
+L4: inc     R1
+    cjne    R2,     #'Z',   L5
+    mov     R2,     #'@'
+L5: inc     R2
 
-
+    mov     R0,     #50
+    lcall   sleep
     sjmp    loop
 
 ; end of program
