@@ -49,6 +49,41 @@ L3: djnz    R2, L3
     ret
 
 ;---------------------------------;
+; Wait 'R0' seconds               ;
+;---------------------------------;
+sleeps:
+    push    AR0
+    push    AR1
+    mov     R0, #250
+    mov     R1, #4
+sleeps_L0:
+    lcall   sleep
+    djnz    R1, sleeps_L0
+    pop     AR1
+    pop     AR0
+    ret
+
+;---------------------------------;
+; Wait 50 milliseconds            ;
+;---------------------------------;
+sleep50:
+    push    AR0
+    mov     R0, #50
+    lcall   sleep
+    pop     AR0
+    ret
+
+;---------------------------------;
+; Wait 100 milliseconds           ;
+;---------------------------------;
+sleep100:
+    push    AR0
+    mov     R0, #100
+    lcall   sleep
+    pop     AR0
+    ret
+
+;---------------------------------;
 ; Toggles the LCD's 'E' pin       ;
 ;---------------------------------;
 LCD_pulse:
@@ -186,14 +221,13 @@ LCD_clear:
 ;---------------------------------;
 ; Animation to shift name in      ;
 ;---------------------------------;
-LCD_shiftName:
-    push    AR0
+LCD_shiftNameIn:
+    push    AR0                 ; back up registers
     push    AR1
-
-    mov     R0, #0x8F
-    mov     R1, R0
-
-    mov     a,  R1
+    mov     R1, #0x8F           ; starting cursor location
+LCD_shiftNameIn_L1:
+    lcall   LCD_clearTop        ; clear top half of the screen first
+    mov     a,  R1              ; loop to print out each character in the name
     lcall   LCD_writeCommand
     mov     a,  #'M'
     lcall   LCD_writeData
@@ -222,9 +256,64 @@ LCD_shiftName:
     lcall   LCD_writeCommand
     mov     a,  #'N'
     lcall   LCD_writeData
+    cjne    R1, #0x85,  LCD_shiftNameIn_L0    ; keep going until name in position
+    mov     R0, #1              ; wait 1 second before return
+    lcall   sleeps
+    pop     AR1
+    pop     AR0
+    ret
+LCD_shiftNameIn_L0:
+    dec     R1                  ; decrement cursor position to the left
+    lcall   sleep50             ; time delay
+    sjmp    LCD_shiftNameIn_L1  ; loop
 
-    cjne    R1, #0x86
 
+;---------------------------------;
+; Animation to shift name out     ;
+;---------------------------------;
+LCD_shiftNameOut:
+    push    AR0                 ; back up registers
+    push    AR1
+    mov     R1, #0x84           ; starting cursor location
+LCD_shiftNameOut_L1:
+    lcall   LCD_clearTop        ; clear top half of the screen first
+    mov     a,  R1              ; loop to print out each character in the name
+    lcall   LCD_writeCommand
+    mov     a,  #'M'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #1
+    lcall   LCD_writeCommand
+    mov     a,  #'U'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #2
+    lcall   LCD_writeCommand
+    mov     a,  #'C'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #3
+    lcall   LCD_writeCommand
+    mov     a,  #'H'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #4
+    lcall   LCD_writeCommand
+    mov     a,  #'E'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #5
+    lcall   LCD_writeCommand
+    mov     a,  #'N'
+    lcall   LCD_writeData
+    cjne    R1, #0x7A,  LCD_shiftNameOut_L0   ; keep going until name in position
+    pop     AR1
+    pop     AR0
+    ret
+LCD_shiftNameOut_L0:
+    dec     R1                  ; decrement cursor position to the left
+    lcall   sleep50             ; time delay
+    sjmp    LCD_shiftNameOut_L1 ; loop
 
 ;---------------------------------;
 ; Main functions                  ;
@@ -251,12 +340,11 @@ loop:
     ; clear LCD
     lcall   LCD_clear
 
+    lcall   LCD_shiftNameIn
+    lcall   LCD_shiftNameOut
+
 	; blink the LED
     cpl     LED_RED
-
-    ; sleep the program
-    mov     R0,     #80
-    lcall   sleep
     sjmp    loop
 
 ; end of program
