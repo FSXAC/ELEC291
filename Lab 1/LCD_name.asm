@@ -18,6 +18,9 @@ LCD_D5  equ P3.3
 LCD_D6  equ P3.4
 LCD_D7  equ P3.5
 
+; defines for the other pins
+LED_RED equ P3.7
+
 ;---------------------------------;
 ; Wait 40 microseconds            ;
 ;---------------------------------;
@@ -170,11 +173,15 @@ L7: inc     R0
 setup:
     mov     SP,     #7FH
     mov     PMOD,   #0
+
+    ; configure LCD
     lcall   LCD_configure_4bit
 
     ; setup for animation
     mov     R1,     #0x80
     mov     R2,     #'A'
+    mov     R3,     #0xCF
+    mov     R4,     #'0'
 
 ;---------------------------------;
 ; Main functions                  ;
@@ -189,6 +196,10 @@ loop:
     lcall   LCD_writeCommand
     mov     a,      R2
     lcall   LCD_writeData
+    mov     a,      R3
+    lcall   LCD_writeCommand
+    mov     a,      R4
+    lcall   LCD_writeData
 
     ; increment position of cursor
     ; check if it's at the end
@@ -199,7 +210,18 @@ L4: inc     R1
     mov     R2,     #'@'
 L5: inc     R2
 
-    mov     R0,     #200
+    cjne    R3,     #0xC0,  LA
+    mov     R3,     #0xD0
+LA: dec     R3
+    cjne    R4,     #'9',   LB
+    mov     R4,     #'/'
+LB: inc     R4
+
+	; blink the LED
+    cpl     LED_RED
+
+    ; sleep the program
+    mov     R0,     #80
     lcall   sleep
     sjmp    loop
 
