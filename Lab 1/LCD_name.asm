@@ -319,71 +319,92 @@ LCD_shiftNameOut_L0:
 ; Simply print name in the middle ;
 ;---------------------------------;
 LCD_printName:
-    lcall   LCD_clearTop
     mov     a,  #0x84
     lcall   LCD_writeCommand
     mov     a,  #'('
     lcall   LCD_writeData
+    lcall   sleep50
     mov     a,  #0x85
     lcall   LCD_writeCommand
     mov     a,  #'M'
     lcall   LCD_writeData
+    lcall   sleep50
     mov     a,  #0x86
     lcall   LCD_writeCommand
     mov     a,  #'A'
     lcall   LCD_writeData
+    lcall   sleep50
     mov     a,  #0x87
     lcall   LCD_writeCommand
     mov     a,  #'N'
     lcall   LCD_writeData
+    lcall   sleep50
     mov     a,  #0x88
     lcall   LCD_writeCommand
     mov     a,  #'S'
     lcall   LCD_writeData
+    lcall   sleep50
     mov     a,  #0x89
     lcall   LCD_writeCommand
     mov     a,  #'U'
     lcall   LCD_writeData
+    lcall   sleep50
     mov     a,  #0x8A
     lcall   LCD_writeCommand
     mov     a,  #'R'
     lcall   LCD_writeData
+    lcall   sleep50
     mov     a,  #0x8B
     lcall   LCD_writeCommand
     mov     a,  #')'
     lcall   LCD_writeData
+    lcall   sleep50
     ret
 
 ;---------------------------------;
 ; Simply print name in the middle ;
 ;---------------------------------;
 LCD_printName2:
-    lcall   LCD_clearTop
+    mov     a,  #0x84
+    lcall   LCD_writeCommand
+    mov     a,  #' '
     lcall   LCD_writeData
+    lcall   sleep50
     mov     a,  #0x85
     lcall   LCD_writeCommand
     mov     a,  #'M'
     lcall   LCD_writeData
+    lcall   sleep50
     mov     a,  #0x86
     lcall   LCD_writeCommand
     mov     a,  #'U'
     lcall   LCD_writeData
+    lcall   sleep50
     mov     a,  #0x87
     lcall   LCD_writeCommand
     mov     a,  #'C'
     lcall   LCD_writeData
+    lcall   sleep50
     mov     a,  #0x88
     lcall   LCD_writeCommand
     mov     a,  #'H'
     lcall   LCD_writeData
+    lcall   sleep50
     mov     a,  #0x89
     lcall   LCD_writeCommand
     mov     a,  #'E'
     lcall   LCD_writeData
+    lcall   sleep50
     mov     a,  #0x8A
     lcall   LCD_writeCommand
     mov     a,  #'N'
     lcall   LCD_writeData
+    lcall   sleep50
+    mov     a,  #0x8B
+    lcall   LCD_writeCommand
+    mov     a,  #' '
+    lcall   LCD_writeData
+    lcall   sleep50
     ret
 
 
