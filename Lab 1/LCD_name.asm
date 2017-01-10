@@ -257,14 +257,13 @@ LCD_shiftNameIn_L1:
     mov     a,  #'N'
     lcall   LCD_writeData
     cjne    R1, #0x85,  LCD_shiftNameIn_L0    ; keep going until name in position
-    mov     R0, #1              ; wait 1 second before return
-    lcall   sleeps
     pop     AR1
     pop     AR0
     ret
 LCD_shiftNameIn_L0:
     dec     R1                  ; decrement cursor position to the left
     lcall   sleep50             ; time delay
+    cpl     LED_RED
     sjmp    LCD_shiftNameIn_L1  ; loop
 
 
@@ -313,7 +312,80 @@ LCD_shiftNameOut_L1:
 LCD_shiftNameOut_L0:
     dec     R1                  ; decrement cursor position to the left
     lcall   sleep50             ; time delay
+    cpl     LED_RED
     sjmp    LCD_shiftNameOut_L1 ; loop
+
+;---------------------------------;
+; Simply print name in the middle ;
+;---------------------------------;
+LCD_printName:
+    lcall   LCD_clearTop
+    mov     a,  #0x84
+    lcall   LCD_writeCommand
+    mov     a,  #'('
+    lcall   LCD_writeData
+    mov     a,  #0x85
+    lcall   LCD_writeCommand
+    mov     a,  #'M'
+    lcall   LCD_writeData
+    mov     a,  #0x86
+    lcall   LCD_writeCommand
+    mov     a,  #'A'
+    lcall   LCD_writeData
+    mov     a,  #0x87
+    lcall   LCD_writeCommand
+    mov     a,  #'N'
+    lcall   LCD_writeData
+    mov     a,  #0x88
+    lcall   LCD_writeCommand
+    mov     a,  #'S'
+    lcall   LCD_writeData
+    mov     a,  #0x89
+    lcall   LCD_writeCommand
+    mov     a,  #'U'
+    lcall   LCD_writeData
+    mov     a,  #0x8A
+    lcall   LCD_writeCommand
+    mov     a,  #'R'
+    lcall   LCD_writeData
+    mov     a,  #0x8B
+    lcall   LCD_writeCommand
+    mov     a,  #')'
+    lcall   LCD_writeData
+    ret
+
+;---------------------------------;
+; Simply print name in the middle ;
+;---------------------------------;
+LCD_printName2:
+    lcall   LCD_clearTop
+    lcall   LCD_writeData
+    mov     a,  #0x85
+    lcall   LCD_writeCommand
+    mov     a,  #'M'
+    lcall   LCD_writeData
+    mov     a,  #0x86
+    lcall   LCD_writeCommand
+    mov     a,  #'U'
+    lcall   LCD_writeData
+    mov     a,  #0x87
+    lcall   LCD_writeCommand
+    mov     a,  #'C'
+    lcall   LCD_writeData
+    mov     a,  #0x88
+    lcall   LCD_writeCommand
+    mov     a,  #'H'
+    lcall   LCD_writeData
+    mov     a,  #0x89
+    lcall   LCD_writeCommand
+    mov     a,  #'E'
+    lcall   LCD_writeData
+    mov     a,  #0x8A
+    lcall   LCD_writeCommand
+    mov     a,  #'N'
+    lcall   LCD_writeData
+    ret
+
 
 ;---------------------------------;
 ; Main functions                  ;
@@ -327,10 +399,10 @@ setup:
     lcall   LCD_configure_4bit
 
     ; setup for animation
-    mov     R1,     #0x80
-    mov     R2,     #'A'
-    mov     R3,     #0xCF
-    mov     R4,     #'0'
+    mov     R1, #0x80
+    mov     R2, #'A'
+    mov     R3, #0xCF
+    mov     R4, #'0'
 
 ;---------------------------------;
 ; Main functions                  ;
@@ -341,10 +413,16 @@ loop:
     lcall   LCD_clear
 
     lcall   LCD_shiftNameIn
-    lcall   LCD_shiftNameOut
+    mov     R0, #1
+    lcall   sleeps
 
-	; blink the LED
-    cpl     LED_RED
+    lcall   LCD_printName
+    lcall   sleeps
+
+    lcall   LCD_printName2
+    lcall   sleeps
+
+    lcall   LCD_shiftNameOut
     sjmp    loop
 
 ; end of program
