@@ -140,31 +140,91 @@ LCD_configure_4bit:
 
 
 ;---------------------------------;
-; Clear LCD                       ;
+; Clear top half LCD              ;
 ;---------------------------------;
-LCD_clear:
+LCD_clearTop:
     push    AR0
     mov     R0, #0x80
-L6: mov     a,  R0
+LCD_clearTop_L0:
+    mov     a,  R0
     lcall   LCD_writeCommand
     mov     a,  #32
     lcall   LCD_writeData
-    cjne    R0, #0x8F,  L7
-
-    mov     R0, #0xC0
-L8: mov     a,  R0
-    lcall   LCD_writeCommand
-    mov     a,  #32
-    lcall   LCD_writeData
-    cjne    R0, #0xCF,  L9
+    cjne    R0, #0x8F,  LCD_clearTop_L1
     pop     AR0
     ret
+LCD_clearTop_L1:
+    inc     R0
+    sjmp    LCD_clearTop_L0
 
-L9: inc     R0
-    sjmp    L8
+;---------------------------------;
+; Clear btm half LCD              ;
+;---------------------------------;
+LCD_clearBtm:
+    push    AR0
+    mov     R0, #0xC0
+LCD_clearBtm_L0:
+    mov     a,  R0
+    lcall   LCD_writeCommand
+    mov     a,  #32
+    lcall   LCD_writeData
+    cjne    R0, #0xCF,  LCD_clearBtm_L1
+    pop     AR0
+    ret
+LCD_clearBtm_L1:
+    inc     R0
+    sjmp    LCD_clearBtm_L0
 
-L7: inc     R0
-    sjmp    L6
+;---------------------------------;
+; Clear all of LCD                ;
+;---------------------------------;
+LCD_clear:
+    lcall   LCD_clearBtm
+    lcall   LCD_clearTop
+    ret
+
+;---------------------------------;
+; Animation to shift name in      ;
+;---------------------------------;
+LCD_shiftName:
+    push    AR0
+    push    AR1
+
+    mov     R0, #0x8F
+    mov     R1, R0
+
+    mov     a,  R1
+    lcall   LCD_writeCommand
+    mov     a,  #'M'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #1
+    lcall   LCD_writeCommand
+    mov     a,  #'U'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #2
+    lcall   LCD_writeCommand
+    mov     a,  #'C'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #3
+    lcall   LCD_writeCommand
+    mov     a,  #'H'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #4
+    lcall   LCD_writeCommand
+    mov     a,  #'E'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #5
+    lcall   LCD_writeCommand
+    mov     a,  #'N'
+    lcall   LCD_writeData
+
+    cjne    R1, #0x86
+
 
 ;---------------------------------;
 ; Main functions                  ;
@@ -190,32 +250,6 @@ setup:
 loop:
     ; clear LCD
     lcall   LCD_clear
-
-    ; write letter to LCD
-    mov     a,      R1
-    lcall   LCD_writeCommand
-    mov     a,      R2
-    lcall   LCD_writeData
-    mov     a,      R3
-    lcall   LCD_writeCommand
-    mov     a,      R4
-    lcall   LCD_writeData
-
-    ; increment position of cursor
-    ; check if it's at the end
-    cjne    R1,     #0x8F,  L4
-    mov     R1,     #0x7F
-L4: inc     R1
-    cjne    R2,     #'Z',   L5
-    mov     R2,     #'@'
-L5: inc     R2
-
-    cjne    R3,     #0xC0,  LA
-    mov     R3,     #0xD0
-LA: dec     R3
-    cjne    R4,     #'9',   LB
-    mov     R4,     #'/'
-LB: inc     R4
 
 	; blink the LED
     cpl     LED_RED
