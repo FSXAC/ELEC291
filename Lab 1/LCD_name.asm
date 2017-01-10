@@ -23,7 +23,7 @@ LED_RED equ P3.7
 
 ; data in the memory
 data_name1:
-	db		'MUCHEN', 0
+	db		' MUCHEN ', 0
 data_name2:
     db      '(MANSUR)', 0
 data_stdid:
@@ -328,19 +328,14 @@ LCD_shiftNameOut_L0:
 ; param: data pointer             ;
 ;---------------------------------;
 LCD_printName:
-	mov 	a, 	#0x80
-	lcall	LCD_writeCommand
-	mov     dptr,   #data_name2
-X0:
     clr     a
     movc    a,  @a+dptr
-    jz      X1
+    jz      LCD_printName_return
     lcall   LCD_writeData
     inc     dptr
     lcall   sleep50
-    sjmp    X0
-    cpl		LED_RED
-X1:
+    sjmp    LCD_printName
+LCD_printName_return:
     ret
 
 
@@ -372,11 +367,17 @@ loop:
     lcall   LCD_shiftNameIn
     lcall   sleeps
 
-    ;mov     R0, #0x85
-    ;lcall   LCD_writeCommand
-    ;mov     dptr,   #data_name2
+    mov     a, #0x84
+    lcall   LCD_writeCommand
+    mov     dptr,   #data_name2
     lcall   LCD_printName
     lcall   sleeps
+    
+    mov 	a,	#0x84
+    lcall	LCD_writeCommand
+    mov		dptr,	#data_name1
+    lcall	LCD_printName
+    lcall	sleeps
 
     lcall   LCD_shiftNameOut
     sjmp    loop
