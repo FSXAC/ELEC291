@@ -21,6 +21,14 @@ LCD_D7  equ P3.5
 ; defines for the other pins
 LED_RED equ P3.7
 
+; data in the memory
+data_name1:
+	db		'MUCHEN', 0
+data_name2:
+    db      '(MANSUR)', 0
+data_stdid:
+	db		'44638154', 0
+
 ;---------------------------------;
 ; Wait 40 microseconds            ;
 ;---------------------------------;
@@ -49,7 +57,7 @@ L3: djnz    R2, L3
     ret
 
 ;---------------------------------;
-; Wait 'R0' seconds               ;
+; Wait 1 second                   ;
 ;---------------------------------;
 sleeps:
     push    AR0
@@ -317,94 +325,22 @@ LCD_shiftNameOut_L0:
 
 ;---------------------------------;
 ; Simply print name in the middle ;
+; param: data pointer             ;
 ;---------------------------------;
 LCD_printName:
-    mov     a,  #0x84
-    lcall   LCD_writeCommand
-    mov     a,  #'('
+	mov 	a, 	#0x80
+	lcall	LCD_writeCommand
+	mov     dptr,   #data_name2
+X0:
+    clr     a
+    movc    a,  @a+dptr
+    jz      X1
     lcall   LCD_writeData
+    inc     dptr
     lcall   sleep50
-    mov     a,  #0x85
-    lcall   LCD_writeCommand
-    mov     a,  #'M'
-    lcall   LCD_writeData
-    lcall   sleep50
-    mov     a,  #0x86
-    lcall   LCD_writeCommand
-    mov     a,  #'A'
-    lcall   LCD_writeData
-    lcall   sleep50
-    mov     a,  #0x87
-    lcall   LCD_writeCommand
-    mov     a,  #'N'
-    lcall   LCD_writeData
-    lcall   sleep50
-    mov     a,  #0x88
-    lcall   LCD_writeCommand
-    mov     a,  #'S'
-    lcall   LCD_writeData
-    lcall   sleep50
-    mov     a,  #0x89
-    lcall   LCD_writeCommand
-    mov     a,  #'U'
-    lcall   LCD_writeData
-    lcall   sleep50
-    mov     a,  #0x8A
-    lcall   LCD_writeCommand
-    mov     a,  #'R'
-    lcall   LCD_writeData
-    lcall   sleep50
-    mov     a,  #0x8B
-    lcall   LCD_writeCommand
-    mov     a,  #')'
-    lcall   LCD_writeData
-    lcall   sleep50
-    ret
-
-;---------------------------------;
-; Simply print name in the middle ;
-;---------------------------------;
-LCD_printName2:
-    mov     a,  #0x84
-    lcall   LCD_writeCommand
-    mov     a,  #' '
-    lcall   LCD_writeData
-    lcall   sleep50
-    mov     a,  #0x85
-    lcall   LCD_writeCommand
-    mov     a,  #'M'
-    lcall   LCD_writeData
-    lcall   sleep50
-    mov     a,  #0x86
-    lcall   LCD_writeCommand
-    mov     a,  #'U'
-    lcall   LCD_writeData
-    lcall   sleep50
-    mov     a,  #0x87
-    lcall   LCD_writeCommand
-    mov     a,  #'C'
-    lcall   LCD_writeData
-    lcall   sleep50
-    mov     a,  #0x88
-    lcall   LCD_writeCommand
-    mov     a,  #'H'
-    lcall   LCD_writeData
-    lcall   sleep50
-    mov     a,  #0x89
-    lcall   LCD_writeCommand
-    mov     a,  #'E'
-    lcall   LCD_writeData
-    lcall   sleep50
-    mov     a,  #0x8A
-    lcall   LCD_writeCommand
-    mov     a,  #'N'
-    lcall   LCD_writeData
-    lcall   sleep50
-    mov     a,  #0x8B
-    lcall   LCD_writeCommand
-    mov     a,  #' '
-    lcall   LCD_writeData
-    lcall   sleep50
+    sjmp    X0
+    cpl		LED_RED
+X1:
     ret
 
 
@@ -434,13 +370,12 @@ loop:
     lcall   LCD_clear
 
     lcall   LCD_shiftNameIn
-    mov     R0, #1
     lcall   sleeps
 
+    ;mov     R0, #0x85
+    ;lcall   LCD_writeCommand
+    ;mov     dptr,   #data_name2
     lcall   LCD_printName
-    lcall   sleeps
-
-    lcall   LCD_printName2
     lcall   sleeps
 
     lcall   LCD_shiftNameOut
