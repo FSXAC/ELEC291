@@ -20,6 +20,7 @@ LCD_D7  equ P3.5
 
 ; defines for the other pins
 LED_RED equ P3.7
+BUZZER  equ P2.0
 
 ; data in the memory
 data_name1:
@@ -72,21 +73,24 @@ sleeps_L0:
     ret
 
 ;---------------------------------;
+; Wait (R0) microsecond           ;
+;---------------------------------;
+sleepm:
+    push    AR1
+sleepm_L1:
+    mov     R1, #7
+sleepm_L0:
+    djnz    R1, sleepm_L0
+    djnz    R0, sleepm_L1
+    pop     AR1
+    ret
+
+;---------------------------------;
 ; Wait 50 milliseconds            ;
 ;---------------------------------;
 sleep50:
     push    AR0
     mov     R0, #50
-    lcall   sleep
-    pop     AR0
-    ret
-
-;---------------------------------;
-; Wait 100 milliseconds           ;
-;---------------------------------;
-sleep100:
-    push    AR0
-    mov     R0, #100
     lcall   sleep
     pop     AR0
     ret
@@ -99,7 +103,6 @@ LCD_pulse:
     lcall   sleep40us
     clr     LCD_E
     ret
-
 
 ;---------------------------------;
 ; Writes data to LCD              ;
@@ -114,7 +117,6 @@ LCD_writeData:
 LCD_writeCommand:
     clr     LCD_RS
     ljmp    LCD_byte
-
 
 ;---------------------------------;
 ; Writes acc to LCD in 4-bit mode ;
@@ -181,7 +183,6 @@ LCD_configure_4bit:
     lcall   sleep
     ret
 
-
 ;---------------------------------;
 ; Clear top half LCD              ;
 ;---------------------------------;
@@ -222,8 +223,8 @@ LCD_clearBtm_L1:
 ; Clear all of LCD                ;
 ;---------------------------------;
 LCD_clear:
-    lcall   LCD_clearBtm
-    lcall   LCD_clearTop
+    mov     a,  #0x01
+    lcall   LCD_writeCommand
     ret
 
 ;---------------------------------;
@@ -247,7 +248,6 @@ LCD_shiftNameIn_L0:
     lcall   sleep50             ; time delay
     cpl     LED_RED
     sjmp    LCD_shiftNameIn_L1  ; loop
-
 
 ;---------------------------------;
 ; Animation to shift name out     ;
@@ -319,6 +319,25 @@ LCD_scrollDigit_L0:
 	pop 	AR1
     ret
 
+;---------------------------------;
+; Sound test                      ;
+;---------------------------------;
+soundtest:
+	pop 	AR1
+	pop		AR2
+	mov		R1,	#250
+soundtest_L1:
+	mov		R2,	#4
+soundtest_L0:
+	cpl		LED_RED
+	mov		R0,	#1
+	lcall	sleep
+	djnz	R2,	soundtest_L0
+	djnz	R1,	soundtest_L1
+	push	AR2
+	push	AR1
+	ret
+
 
 ;---------------------------------;
 ; Main functions                  ;
@@ -368,6 +387,9 @@ loop:
     mov     R0, #'8'
     lcall   LCD_scrollDigit
     lcall   sleeps
+
+    lcall	soundtest
+
     sjmp    loop
 
 ; end of program
