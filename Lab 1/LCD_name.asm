@@ -237,33 +237,7 @@ LCD_shiftNameIn_L1:
     lcall   LCD_clearTop        ; clear top half of the screen first
     mov     a,  R1              ; loop to print out each character in the name
     lcall   LCD_writeCommand
-    mov     a,  #'M'
-    lcall   LCD_writeData
-    mov     a,  R1
-    add     a,  #1
-    lcall   LCD_writeCommand
-    mov     a,  #'U'
-    lcall   LCD_writeData
-    mov     a,  R1
-    add     a,  #2
-    lcall   LCD_writeCommand
-    mov     a,  #'C'
-    lcall   LCD_writeData
-    mov     a,  R1
-    add     a,  #3
-    lcall   LCD_writeCommand
-    mov     a,  #'H'
-    lcall   LCD_writeData
-    mov     a,  R1
-    add     a,  #4
-    lcall   LCD_writeCommand
-    mov     a,  #'E'
-    lcall   LCD_writeData
-    mov     a,  R1
-    add     a,  #5
-    lcall   LCD_writeCommand
-    mov     a,  #'N'
-    lcall   LCD_writeData
+    lcall   LCD_printNameNoDelay
     cjne    R1, #0x85,  LCD_shiftNameIn_L0    ; keep going until name in position
     pop     AR1
     pop     AR0
@@ -286,33 +260,7 @@ LCD_shiftNameOut_L1:
     lcall   LCD_clearTop        ; clear top half of the screen first
     mov     a,  R1              ; loop to print out each character in the name
     lcall   LCD_writeCommand
-    mov     a,  #'M'
-    lcall   LCD_writeData
-    mov     a,  R1
-    add     a,  #1
-    lcall   LCD_writeCommand
-    mov     a,  #'U'
-    lcall   LCD_writeData
-    mov     a,  R1
-    add     a,  #2
-    lcall   LCD_writeCommand
-    mov     a,  #'C'
-    lcall   LCD_writeData
-    mov     a,  R1
-    add     a,  #3
-    lcall   LCD_writeCommand
-    mov     a,  #'H'
-    lcall   LCD_writeData
-    mov     a,  R1
-    add     a,  #4
-    lcall   LCD_writeCommand
-    mov     a,  #'E'
-    lcall   LCD_writeData
-    mov     a,  R1
-    add     a,  #5
-    lcall   LCD_writeCommand
-    mov     a,  #'N'
-    lcall   LCD_writeData
+    lcall   LCD_printNameNoDelay
     cjne    R1, #0x7A,  LCD_shiftNameOut_L0   ; keep going until name in position
     pop     AR1
     pop     AR0
@@ -325,7 +273,6 @@ LCD_shiftNameOut_L0:
 
 ;---------------------------------;
 ; Simply print name in the middle ;
-; param: data pointer             ;
 ;---------------------------------;
 LCD_printName:
     clr     a
@@ -336,6 +283,40 @@ LCD_printName:
     lcall   sleep50
     sjmp    LCD_printName
 LCD_printName_return:
+    ret
+
+;---------------------------------;
+; Simply print name in the middle ;
+;---------------------------------;
+LCD_printNameNoDelay:
+    clr     a
+    movc    a,  @a+dptr
+    jz      LCD_printNameNoDelay_return
+    lcall   LCD_writeData
+    inc     dptr
+    sjmp    LCD_printNameNoDelay
+LCD_printNameNoDelay_return:
+    ret
+
+;---------------------------------;
+; Prints out a single digit       ;
+; R0 is the parameter             ;
+;---------------------------------;
+LCD_scrollDigit:
+    push    AR1
+    mov     a,  #'0'
+LCD_scrollDigit_L1:
+    lcall   LCD_writeData
+    mov     R1, a
+    clr     c
+    subb    a, R0
+    jz      LCD_scrollDigit_L0
+    mov     a, R1
+    inc     a
+    lcall	sleep50
+    sjmp    LCD_scrollDigit_L1
+LCD_scrollDigit_L0:
+	pop 	AR1
     ret
 
 
@@ -364,6 +345,7 @@ loop:
     ; clear LCD
     lcall   LCD_clear
 
+    mov     dptr,   #data_name1
     lcall   LCD_shiftNameIn
     lcall   sleeps
 
@@ -372,7 +354,7 @@ loop:
     mov     dptr,   #data_name2
     lcall   LCD_printName
     lcall   sleeps
-    
+
     mov 	a,	#0x84
     lcall	LCD_writeCommand
     mov		dptr,	#data_name1
@@ -380,6 +362,12 @@ loop:
     lcall	sleeps
 
     lcall   LCD_shiftNameOut
+
+    mov     a,  #0xC0
+    lcall   LCD_writeCommand
+    mov     R0, #'8'
+    lcall   LCD_scrollDigit
+    lcall   sleeps
     sjmp    loop
 
 ; end of program
