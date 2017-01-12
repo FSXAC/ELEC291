@@ -24,14 +24,13 @@ BUZZER  equ P2.0
 
 ; data in the memory
 data_name1:
-	db		'MUCHEN', 0
+	db		'MUCHEN HE', 0
 data_name2:
     db      'MANSUR', 0
-data_name3:
-	db		'HE', 0
+data_number1:
+    db      '00000000', 0
 data_stdid:
 	db		'44638154', 0
-
 
 ;---------------------------------;
 ; Wait (R0) microsecond           ;
@@ -235,30 +234,80 @@ LCD_clear:
     ret
 
 ;---------------------------------;
-; Simply print name in the middle ;
+; Shift mode for LCD              ;
 ;---------------------------------;
-LCD_printName:
-    clr     a
-    movc    a,  @a+dptr
-    jz      LCD_printName_return
-    lcall   LCD_writeData
-    inc     dptr
-    lcall   sleep50
-    sjmp    LCD_printName
-LCD_printName_return:
+LCD_shiftCursor:
+	mov		a, 	#0x06
+	sjmp	LCD_shift_return
+LCD_shiftDisplay:
+	mov 	a,  #0x07
+LCD_shift_return:
+	lcall	LCD_writeCommand
+	ret
+
+;---------------------------------;
+; resets cursor at home           ;
+;---------------------------------;
+LCD_home:
+	mov 	a,	#0x02
+	lcall	LCD_writeCommand
+	ret
+
+;---------------------------------;
+; move cursor back one            ;
+;---------------------------------;
+LCD_back:
+    mov     a,  #0x10
+    lcall   LCD_writeCommand
     ret
 
 ;---------------------------------;
 ; Simply print name in the middle ;
 ;---------------------------------;
-LCD_printNameNoDelay:
+LCD_print:
     clr     a
     movc    a,  @a+dptr
-    jz      LCD_printNameNoDelay_return
+    jz      LCD_print_return
     lcall   LCD_writeData
     inc     dptr
-    sjmp    LCD_printNameNoDelay
-LCD_printNameNoDelay_return:
+    lcall   sleep50
+    cpl		BUZZER
+    cpl		LED_RED
+    sjmp    LCD_print
+LCD_print_return:
+    ret
+
+;---------------------------------;
+; Simply print name in the middle ;
+;---------------------------------;
+LCD_printMore:
+    clr     a
+    movc    a,  @a+dptr
+    jz      LCD_printMore_return
+    lcall   LCD_writeData
+    mov     a,  #']'
+    lcall   LCD_writeData
+    mov     a,  #0x10
+    lcall   LCD_writeCommand
+    inc     dptr
+    lcall   sleep50
+    cpl		BUZZER
+    cpl		LED_RED
+    sjmp    LCD_printMore
+LCD_printMore_return:
+    ret
+
+;---------------------------------;
+; Simply print name in the middle ;
+;---------------------------------;
+LCD_printNoDelay:
+    clr     a
+    movc    a,  @a+dptr
+    jz      LCD_printNoDelay_return
+    lcall   LCD_writeData
+    inc     dptr
+    sjmp    LCD_printNoDelay
+LCD_printNoDelay_return:
     ret
 
 ;---------------------------------;
@@ -284,6 +333,31 @@ LCD_scrollDigit_L0:
 	pop 	AR1
     ret
 
+;---------------------------------;
+; moves a square from A to B      ;
+;---------------------------------;
+moveSquare:
+    push    AR1
+    mov     R1, #0x8F
+LCD_shiftNameOut_L1:
+    lcall   LCD_clearTop        ; clear top half of the screen first
+    mov     a,  R1              ; loop to print out each character in the name
+    lcall   LCD_writeCommand
+    mov     a,  #'['
+    lcall   LCD_writeData
+    mov     a,  #']'
+    lcall   LCD_writeData
+    cjne    R1, #0x83,  LCD_shiftNameOut_L0
+    pop     AR1
+    ret
+LCD_shiftNameOut_L0:
+    dec     R1                  ; decrement cursor position to the left
+    lcall   sleep50             ; time delay
+    cpl     LED_RED
+    cpl     BUZZER
+    sjmp    LCD_shiftNameOut_L1 ; loop
+
+
 ;###################################
 ;# Main functions                  #
 ;# SETUP function runs onces       #
@@ -292,6 +366,7 @@ setup:
     mov     SP,     #7FH
     mov     PMOD,   #0
     lcall   LCD_configure_4bit
+    lcall	LCD_shiftCursor
 
 ;---------------------------------;
 ; Main functions                  ;
@@ -299,23 +374,25 @@ setup:
 ;---------------------------------;
 loop:
 	lcall	LCD_clear
+	lcall	LCD_home
 
-    ;---------------------------------;
-    ; Main code goes here             ;
-
-    mov     a,      #0x06
+    ;-[ Main code goes here ]-------------;
+    mov     a,      #0x8F
     lcall   LCD_writeCommand
-    mov     a,      #0x80             ; reset cursor position
+    lcall   moveSquare
+    lcall   sleep50
+
+    mov     a,      #0x84
     lcall   LCD_writeCommand
-    mov     R0, #'8'
-    lcall   LCD_scrollDigit
-    lcall   sleeps
+    mov     dptr,   #data_name1
+    lcall   LCD_printMore
+    lcall   sleep50
 
-    cpl		LED_RED
+    mov     a,      #0xC4
+    lcall   LCD_writeCommand
+    mov     dptr,   #data_number1
+    lcall   LCD_print
     lcall   sleeps
-
-    ;                                 ;
-    ;---------------------------------;
 
     sjmp    loop
 
