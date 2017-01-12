@@ -33,6 +33,8 @@ data_number1:
     db      '00000000', 0
 data_stdid:
 	db		'45138644', 0
+string1:
+	db		'                ', 0
 
 ;---------------------------------;
 ; Wait (R0) microsecond           ;
@@ -79,7 +81,7 @@ L3: djnz    R2, L3
 ;---------------------------------;
 sleep50:
     push    AR0
-    mov     R0, #50
+    mov     R0, #10
     lcall   sleep
     pop     AR0
     ret
@@ -231,8 +233,6 @@ LCD_clear:
     lcall   LCD_writeCommand
     mov     R0, #3
     lcall   sleep
-    ;lcall   LCD_clearTop
-    ;lcall   LCD_clearBtm
     ret
 
 ;---------------------------------;
@@ -392,11 +392,11 @@ studentNumberArrow:
 studentNumberArrow_L0:
     mov     a,  R0
     lcall   LCD_writeCommand
-    mov     a,  #'>'
+    mov     a,  R2
     lcall   LCD_writeData
     mov     a,  R1
     lcall   LCD_writeCommand
-    mov     a,  #'<'
+    mov     a,  R3
     lcall   LCD_writeData
 
     cjne    R0, #0xC3, studentNumberArrow_L1
@@ -413,6 +413,39 @@ studentNumberArrow_L2:
     lcall   sleep50
     sjmp    studentNumberArrow_L0
 
+;---------------------------------;
+; Sound test                      ;
+;---------------------------------;
+tone:
+soundtest_L1:
+	mov		a,	R4
+    mov     R2, a
+soundtest_L0:
+	cpl		BUZZER
+    mov     a, R6
+    mov     R1, a
+X1:	mov		a,	R5
+    mov		R0,	a
+	lcall	sleepu
+    djnz    R1, X1
+	djnz	R2,	soundtest_L0
+	djnz	R3,	soundtest_L1
+	ret
+
+;---------------------------------;
+; We are number one               ;
+; except it's on the AT89LP52     ;
+;---------------------------------;
+WANO:
+	; 196 cycles
+    ; 23 * 37 us delay between half cycles
+    mov		R3,	#4
+    mov     R4, #55
+    mov     R5, #23
+    mov     R6, #37
+	lcall	tone
+	ret
+
 ;###################################
 ;# Main functions                  #
 ;# SETUP function runs onces       #
@@ -422,6 +455,7 @@ setup:
     mov     PMOD,   #0
     lcall   LCD_configure_4bit
     lcall	LCD_shiftCursor
+    mov     R4,     #3
 
 ;---------------------------------;
 ; Main functions                  ;
@@ -461,10 +495,44 @@ loop:
     mov     dptr,   #data_name3
     lcall   LCD_print
 
+    mov     R0,     #4
+loop_loop1:
+    mov     R2,     #'>'
+    mov     R3,     #'<'
+    lcall   studentNumberArrow
+    lcall   sleep50
+    mov     R2,     #' '
+    mov     R3,     #' '
+    lcall   studentNumberArrow
+    lcall   sleep50
+    djnz    R0, loop_loop1
+
+    mov     R2,     #'>'
+    mov     R3,     #'<'
     lcall   studentNumberArrow
     lcall   sleeps
 
-    sjmp    loop
+    mov     a,      #0x84
+    lcall   LCD_writeCommand
+    mov     dptr,   #data_name2
+    lcall   LCD_print
+    mov     a,      #0x84
+    lcall   LCD_writeCommand
+    mov     dptr,   #data_name1
+    lcall   LCD_print
+    lcall   sleeps
+
+    mov     a,      #0xCF
+    mov     dptr,   #string1
+    lcall   LCD_shiftDisplay
+    lcall   LCD_print
+    lcall   LCD_clear
+    lcall   LCD_home
+    lcall   LCD_shiftCursor
+
+    lcall   WANO
+
+    ljmp    loop
 
 ; end of program
 END
