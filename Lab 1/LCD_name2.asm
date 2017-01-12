@@ -226,16 +226,68 @@ LCD_clearBtm_L1:
 ; Clear all of LCD                ;
 ;---------------------------------;
 LCD_clear:
-    mov     a,  #0x01
-    lcall   LCD_writeCommand
-    mov     R0, #2
-    lcall   sleep
+    ;mov     a,  #0x01
+    ;lcall   LCD_writeCommand
+    ;mov     R0, #3
+    ;lcall   sleep
+    lcall   LCD_clearTop
+    lcall   LCD_clearBtm
     ret
 
 ;---------------------------------;
-; Main functions                  ;
-; SETUP function runs onces       ;
+; Simply print name in the middle ;
 ;---------------------------------;
+LCD_printName:
+    clr     a
+    movc    a,  @a+dptr
+    jz      LCD_printName_return
+    lcall   LCD_writeData
+    inc     dptr
+    lcall   sleep50
+    sjmp    LCD_printName
+LCD_printName_return:
+    ret
+
+;---------------------------------;
+; Simply print name in the middle ;
+;---------------------------------;
+LCD_printNameNoDelay:
+    clr     a
+    movc    a,  @a+dptr
+    jz      LCD_printNameNoDelay_return
+    lcall   LCD_writeData
+    inc     dptr
+    sjmp    LCD_printNameNoDelay
+LCD_printNameNoDelay_return:
+    ret
+
+;---------------------------------;
+; Prints out a single digit       ;
+; R0 is the parameter             ;
+;---------------------------------;
+LCD_scrollDigit:
+    push    AR1
+    mov     a,  #'0'
+LCD_scrollDigit_L1:
+    lcall   LCD_writeData
+    mov     R1, a                   ; put a somewhere else
+    clr     c                       ; if R0 == a
+    subb    a, R0
+    jz      LCD_scrollDigit_L0
+    mov     a, #0x10
+    lcall   LCD_writeCommand        ; left shift cursor
+    mov     a, R1
+    inc     a
+    lcall	sleep50
+    sjmp    LCD_scrollDigit_L1
+LCD_scrollDigit_L0:
+	pop 	AR1
+    ret
+
+;###################################
+;# Main functions                  #
+;# SETUP function runs onces       #
+;###################################
 setup:
     mov     SP,     #7FH
     mov     PMOD,   #0
@@ -251,49 +303,13 @@ loop:
     ;---------------------------------;
     ; Main code goes here             ;
 
-    mov     a,  #0x06
+    mov     a,      #0x06
     lcall   LCD_writeCommand
-
-	mov a, #0x84
-    lcall LCD_writeCommand
-    mov a, #'A'
-    lcall LCD_writeData
-    lcall   sleep50
-    mov a, #'B'
-    lcall LCD_writeData
-    lcall   sleep50
-    mov a, #'C'
-    lcall LCD_writeData
-    lcall   sleep50
-    mov a, #'D'
-    lcall LCD_writeData
-    lcall   sleep50
-    mov a, #'E'
-    lcall LCD_writeData
-    lcall   sleep50
-    mov a, #'F'
-    lcall LCD_writeData
-    lcall   sleep50
-
-    mov     a,  #0x07
+    mov     a,      #0x80             ; reset cursor position
     lcall   LCD_writeCommand
-    mov a, #'G'
-    lcall LCD_writeData
-    lcall   sleep50
-    mov a, #'H'
-    lcall LCD_writeData
-    lcall   sleep50
-    mov a, #'I'
-    lcall LCD_writeData
-    lcall   sleep50
-    mov a, #'J'
-    lcall LCD_writeData
-    lcall   sleep50
-    mov a, #'K'
-    lcall LCD_writeData
-    lcall   sleep50
-    mov a, #'L'
-    lcall LCD_writeData
+    mov     R0, #'8'
+    lcall   LCD_scrollDigit
+    lcall   sleeps
 
     cpl		LED_RED
     lcall   sleeps
