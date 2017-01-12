@@ -30,7 +30,7 @@ data_name2:
 data_number1:
     db      '00000000', 0
 data_stdid:
-	db		'44638154', 0
+	db		'45138644', 0
 
 ;---------------------------------;
 ; Wait (R0) microsecond           ;
@@ -328,6 +328,8 @@ LCD_scrollDigit_L1:
     mov     a, R1
     inc     a
     lcall	sleep50
+    cpl		LED_RED
+    cpl		BUZZER
     sjmp    LCD_scrollDigit_L1
 LCD_scrollDigit_L0:
 	pop 	AR1
@@ -357,6 +359,25 @@ LCD_shiftNameOut_L0:
     cpl     BUZZER
     sjmp    LCD_shiftNameOut_L1 ; loop
 
+;---------------------------------;
+; fancy animation for student ID  ;
+;---------------------------------;
+studentNumber:
+    mov     a,  #0xCB
+    lcall	LCD_writeCommand
+    mov     dptr,   #data_stdid
+studentNumber_L0:
+    clr     a
+    movc    a,  @a+dptr
+    jz      studentNumber_return
+    mov     R0, a
+    lcall   LCD_scrollDigit
+    lcall   LCD_back
+    lcall   LCD_back
+    inc     dptr
+    sjmp    studentNumber_L0
+studentNumber_return:
+    ret
 
 ;###################################
 ;# Main functions                  #
@@ -392,6 +413,9 @@ loop:
     lcall   LCD_writeCommand
     mov     dptr,   #data_number1
     lcall   LCD_print
+    lcall   sleep50
+
+    lcall   studentNumber
     lcall   sleeps
 
     sjmp    loop
