@@ -34,7 +34,11 @@ data_number1:
 data_stdid:
 	db		'45138644', 0
 string1:
-    db      'We're number one', 0
+    db      '                ', 0
+string2:
+	db 		'We are', 0
+string3:
+	db		'number one!', 0
 
 ;---------------------------------;
 ; Wait (R0) microsecond           ;
@@ -678,12 +682,20 @@ loop_loop1:
     lcall   sleeps
 
     mov     a,      #0xCF
+    lcall	LCD_writeCommand
     mov     dptr,   #string1
     lcall   LCD_shiftDisplay
     lcall   LCD_print
     lcall   LCD_clear
     lcall   LCD_home
     lcall   LCD_shiftCursor
+    mov 	dptr,	#string2
+    lcall	LCD_print
+    mov 	a,		#0xC3
+    lcall	LCD_writeCommand
+    mov		dptr,	#string3
+    lcall	LCD_print
+    lcall	sleeps
 
     lcall   WANO
 
