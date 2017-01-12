@@ -34,7 +34,7 @@ data_number1:
 data_stdid:
 	db		'45138644', 0
 string1:
-	db		'                ', 0
+    db      'We're number one', 0
 
 ;---------------------------------;
 ; Wait (R0) microsecond           ;
@@ -81,7 +81,7 @@ L3: djnz    R2, L3
 ;---------------------------------;
 sleep50:
     push    AR0
-    mov     R0, #10
+    mov     R0, #50
     lcall   sleep
     pop     AR0
     ret
@@ -437,13 +437,168 @@ X1:	mov		a,	R5
 ; except it's on the AT89LP52     ;
 ;---------------------------------;
 WANO:
-	; 196 cycles
+	; D 196 cycles
     ; 23 * 37 us delay between half cycles
     mov		R3,	#4
     mov     R4, #55
     mov     R5, #23
-    mov     R6, #37
+    mov     R6, #38
 	lcall	tone
+
+    ; 1/2 rest
+    mov     R0, #188
+    lcall   sleep
+
+    ; A 330 cycles, 8*71 delay
+    mov     R3, #2
+    mov     R4, #165
+    mov     R5, #8
+    mov     R6, #71
+    lcall   tone
+
+    ; G#
+    mov     R3, #1
+    mov     R4, #156
+    mov     R5, #14
+    mov     R6, #43
+    lcall   tone
+
+    ; A
+    mov     R3, #1
+    mov     R4, #165
+    mov     R5, #8
+    mov     R6, #71
+    lcall   tone
+
+    ; G#
+    mov     R3, #1
+    mov     R4, #156
+    mov     R5, #14
+    mov     R6, #43
+    lcall   tone
+
+    ; A
+    mov     R3, #1
+    mov     R4, #165
+    mov     R5, #8
+    mov     R6, #71
+    lcall   tone
+
+    ; G#
+    mov     R3, #2
+    mov     R4, #156
+    mov     R5, #14
+    mov     R6, #43
+    lcall   tone
+
+    ; A
+    mov     R3, #2
+    mov     R4, #165
+    mov     R5, #8
+    mov     R6, #71
+    lcall   tone
+
+    ; F 524 cycles, 4*179 delay
+    mov     R3, #3
+    mov     R4, #131
+    mov     R5, #4
+    mov     R6, #165
+    lcall   tone
+
+    ; D
+    mov		R3,	#4
+    mov     R4, #55
+    mov     R5, #23
+    mov     R6, #38
+	lcall	tone
+
+    ; 1/2 rest
+    mov     R0, #188
+    lcall   sleep
+
+    ; D
+    mov		R3,	#2
+    mov     R4, #55
+    mov     R5, #23
+    mov     R6, #38
+	lcall	tone
+
+    ; F
+    mov     R3, #2
+    mov     R4, #131
+    mov     R5, #4
+    mov     R6, #165
+    lcall   tone
+
+    ; A
+    mov     R3, #2
+    mov     R4, #165
+    mov     R5, #8
+    mov     R6, #71
+    lcall   tone
+
+    ; A# 741 cycles,22*23 delay
+    mov     R3, #6
+    mov     R4, #93
+    mov     R5, #22
+    mov     R6, #26
+    lcall   tone
+
+    ; F
+    mov     R3, #3
+    mov     R4, #131
+    mov     R5, #4
+    mov     R6, #165
+    lcall   tone
+
+    ; A#
+    mov     R3, #6
+    mov     R4, #93
+    mov     R5, #22
+    mov     R6, #26
+    lcall   tone
+
+    ; C 785 cycles, 2 * 239 delay
+    mov     R3, #6
+    mov     R4, #93
+    mov     R5, #22
+    mov     R6, #23
+    lcall   tone
+
+    ; A
+    mov     R3, #2
+    mov     R4, #135
+    mov     R5, #8
+    mov     R6, #71
+    lcall   tone
+
+    ; A#
+    mov     R3, #4
+    mov     R4, #74
+    mov     R5, #22
+    mov     R6, #26
+    lcall   tone
+
+    ; A
+    mov     R3, #2
+    mov     R4, #135
+    mov     R5, #8
+    mov     R6, #71
+    lcall   tone
+
+    ; A#
+    mov     R3, #4
+    mov     R4, #74
+    mov     R5, #22
+    mov     R6, #26
+    lcall   tone
+
+    ; A
+    mov     R3, #3
+    mov     R4, #135
+    mov     R5, #8
+    mov     R6, #71
+    lcall   tone
 	ret
 
 ;###################################
