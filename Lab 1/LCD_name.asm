@@ -27,6 +27,8 @@ data_name1:
 	db		' MUCHEN ', 0
 data_name2:
     db      '(MANSUR)', 0
+data_name3:
+	db		'   HE   ', 0
 data_stdid:
 	db		'44638154', 0
 
@@ -231,17 +233,41 @@ LCD_clear:
 ; Animation to shift name in      ;
 ;---------------------------------;
 LCD_shiftNameIn:
-    push    AR0                 ; back up registers
     push    AR1
     mov     R1, #0x8F           ; starting cursor location
 LCD_shiftNameIn_L1:
     lcall   LCD_clearTop        ; clear top half of the screen first
     mov     a,  R1              ; loop to print out each character in the name
     lcall   LCD_writeCommand
-    lcall   LCD_printNameNoDelay
+    mov     a,  #'M'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #1
+    lcall   LCD_writeCommand
+    mov     a,  #'U'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #2
+    lcall   LCD_writeCommand
+    mov     a,  #'C'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #3
+    lcall   LCD_writeCommand
+    mov     a,  #'H'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #4
+    lcall   LCD_writeCommand
+    mov     a,  #'E'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #5
+    lcall   LCD_writeCommand
+    mov     a,  #'N'
+    lcall   LCD_writeData
     cjne    R1, #0x85,  LCD_shiftNameIn_L0    ; keep going until name in position
     pop     AR1
-    pop     AR0
     ret
 LCD_shiftNameIn_L0:
     dec     R1                  ; decrement cursor position to the left
@@ -253,17 +279,41 @@ LCD_shiftNameIn_L0:
 ; Animation to shift name out     ;
 ;---------------------------------;
 LCD_shiftNameOut:
-    push    AR0                 ; back up registers
     push    AR1
     mov     R1, #0x84           ; starting cursor location
 LCD_shiftNameOut_L1:
     lcall   LCD_clearTop        ; clear top half of the screen first
     mov     a,  R1              ; loop to print out each character in the name
     lcall   LCD_writeCommand
-    lcall   LCD_printNameNoDelay
-    cjne    R1, #0x7A,  LCD_shiftNameOut_L0   ; keep going until name in position
+    mov     a,  #'M'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #1
+    lcall   LCD_writeCommand
+    mov     a,  #'U'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #2
+    lcall   LCD_writeCommand
+    mov     a,  #'C'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #3
+    lcall   LCD_writeCommand
+    mov     a,  #'H'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #4
+    lcall   LCD_writeCommand
+    mov     a,  #'E'
+    lcall   LCD_writeData
+    mov     a,  R1
+    add     a,  #5
+    lcall   LCD_writeCommand
+    mov     a,  #'N'
+    lcall   LCD_writeData
+    cjne    R1, #0x79,  LCD_shiftNameOut_L0   ; keep going until name in position
     pop     AR1
-    pop     AR0
     ret
 LCD_shiftNameOut_L0:
     dec     R1                  ; decrement cursor position to the left
@@ -322,22 +372,21 @@ LCD_scrollDigit_L0:
 ;---------------------------------;
 ; Sound test                      ;
 ;---------------------------------;
-soundtest:
-	pop 	AR1
-	pop		AR2
-	mov		R1,	#250
-soundtest_L1:
-	mov		R2,	#4
-soundtest_L0:
-	cpl		LED_RED
-	mov		R0,	#1
-	lcall	sleep
-	djnz	R2,	soundtest_L0
-	djnz	R1,	soundtest_L1
-	push	AR2
-	push	AR1
-	ret
-
+;soundtest:
+;	pop 	AR1
+;	pop		AR2
+;	mov		R1,	#250
+;soundtest_L1:
+;	mov		R2,	#4
+;soundtest_L0:
+;	cpl		BUZZER
+;	mov		R0,	#1
+;	lcall	sleep
+;	djnz	R2,	soundtest_L0
+;	djnz	R1,	soundtest_L1
+;	push	AR2
+;	push	AR1
+;	ret
 
 ;---------------------------------;
 ; Main functions                  ;
@@ -349,12 +398,8 @@ setup:
 
     ; configure LCD
     lcall   LCD_configure_4bit
-
-    ; setup for animation
-    mov     R1, #0x80
-    mov     R2, #'A'
-    mov     R3, #0xCF
-    mov     R4, #'0'
+    mov     a,  #0x06
+    lcall   LCD_writeCommand
 
 ;---------------------------------;
 ; Main functions                  ;
@@ -364,31 +409,40 @@ loop:
     ; clear LCD
     lcall   LCD_clear
 
-    mov     dptr,   #data_name1
-    lcall   LCD_shiftNameIn
-    lcall   sleeps
+    ;mov     dptr,   #data_name1
+    ;lcall   LCD_shiftNameIn
+    ;lcall   sleeps
 
-    mov     a, #0x84
+    mov     a, #0x80
     lcall   LCD_writeCommand
-    mov     dptr,   #data_name2
-    lcall   LCD_printName
+    mov     a, #'A'
+    lcall   LCD_writeData
+    mov     a, #'B'
+    lcall   LCD_writeData
+    mov     a, #'C'
+    lcall   LCD_writeData
+    cpl		LED_RED
     lcall   sleeps
+    ;lcall   LCD_writeCommand
+    ;mov     dptr,   #data_name2
+    ;lcall   LCD_printName
+    ;lcall   sleeps
 
-    mov 	a,	#0x84
-    lcall	LCD_writeCommand
-    mov		dptr,	#data_name1
-    lcall	LCD_printName
-    lcall	sleeps
+    ;mov 	a,	#0x84
+    ;lcall	LCD_writeCommand
+    ;mov		dptr,	#data_name1
+    ;lcall	LCD_printName
+    ;lcall	sleeps
 
-    lcall   LCD_shiftNameOut
+    ;lcall   LCD_shiftNameOut
 
-    mov     a,  #0xC0
-    lcall   LCD_writeCommand
-    mov     R0, #'8'
-    lcall   LCD_scrollDigit
-    lcall   sleeps
+    ;mov     a,  #0xC0
+    ;lcall   LCD_writeCommand
+    ;mov     R0, #'8'
+    ;lcall   LCD_scrollDigit
+    ;lcall   sleeps
 
-    lcall	soundtest
+    ;lcall	soundtest
 
     sjmp    loop
 
