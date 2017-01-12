@@ -26,6 +26,8 @@ BUZZER  equ P2.0
 data_name1:
 	db		'MUCHEN HE', 0
 data_name2:
+    db      '------', 0
+data_name3:
     db      'MANSUR', 0
 data_number1:
     db      '00000000', 0
@@ -225,12 +227,12 @@ LCD_clearBtm_L1:
 ; Clear all of LCD                ;
 ;---------------------------------;
 LCD_clear:
-    ;mov     a,  #0x01
-    ;lcall   LCD_writeCommand
-    ;mov     R0, #3
-    ;lcall   sleep
-    lcall   LCD_clearTop
-    lcall   LCD_clearBtm
+    mov     a,  #0x01
+    lcall   LCD_writeCommand
+    mov     R0, #3
+    lcall   sleep
+    ;lcall   LCD_clearTop
+    ;lcall   LCD_clearBtm
     ret
 
 ;---------------------------------;
@@ -379,6 +381,38 @@ studentNumber_L0:
 studentNumber_return:
     ret
 
+;---------------------------------;
+; fancy animation for student ID  ;
+;---------------------------------;
+studentNumberArrow:
+    push    AR0
+    push    AR1
+    mov     R0, #0xC0
+    mov     R1, #0xCF
+studentNumberArrow_L0:
+    mov     a,  R0
+    lcall   LCD_writeCommand
+    mov     a,  #'>'
+    lcall   LCD_writeData
+    mov     a,  R1
+    lcall   LCD_writeCommand
+    mov     a,  #'<'
+    lcall   LCD_writeData
+
+    cjne    R0, #0xC3, studentNumberArrow_L1
+    sjmp    studentNumberArrow_return
+studentNumberArrow_L1:
+    cjne    R1, #0xCB,  studentNumberArrow_L2
+studentNumberArrow_return:
+    pop     AR1
+    pop     AR0
+    ret
+studentNumberArrow_L2:
+    inc     R0
+    dec     R1
+    lcall   sleep50
+    sjmp    studentNumberArrow_L0
+
 ;###################################
 ;# Main functions                  #
 ;# SETUP function runs onces       #
@@ -416,6 +450,18 @@ loop:
     lcall   sleep50
 
     lcall   studentNumber
+    lcall   sleeps
+
+    mov     a,      #0x84
+    lcall   LCD_writeCommand
+    mov     dptr,   #data_name2
+    lcall   LCD_print
+    mov     a,      #0x84
+    lcall   LCD_writeCommand
+    mov     dptr,   #data_name3
+    lcall   LCD_print
+
+    lcall   studentNumberArrow
     lcall   sleeps
 
     sjmp    loop
