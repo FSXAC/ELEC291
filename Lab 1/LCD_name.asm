@@ -413,16 +413,6 @@ loop:
     ;lcall   LCD_shiftNameIn
     ;lcall   sleeps
 
-    mov     a, #0x80
-    lcall   LCD_writeCommand
-    mov     a, #'A'
-    lcall   LCD_writeData
-    mov     a, #'B'
-    lcall   LCD_writeData
-    mov     a, #'C'
-    lcall   LCD_writeData
-    cpl		LED_RED
-    lcall   sleeps
     ;lcall   LCD_writeCommand
     ;mov     dptr,   #data_name2
     ;lcall   LCD_printName

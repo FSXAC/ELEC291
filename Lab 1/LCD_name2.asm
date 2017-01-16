@@ -159,33 +159,19 @@ LCD_byte:
 ; Configure LCD in 4-bit mode     ;
 ;---------------------------------;
 LCD_configure_4bit:
-    ; Resting state of LCD's enable is zero
-    clr     LCD_E
-
-    ; We are only writing to the LCD in this program
-    clr     LCD_RW
-
-    ; After power on, wait for LCD start up time before initializing
-    ; NOTE: the preprogrammed power-on delay of 16 ms on the AT89LP52
-    ; seems to be enough.  That is why these two lines are commented out.
-    ; Also, commenting these two lines improves simulation time in Multisim.
-    ; mov R2, #40
-    ; lcall WaitmilliSec
-
-    ; First make sure the LCD is in 8-bit mode and then change to 4-bit mode
-    mov     a,  #0x33
+    clr     LCD_E				; Resting state of LCD's enable is zero
+    clr     LCD_RW				; We are only writing to the LCD in this program
+    mov     a,  #0x33			; check 8 bit mode
     lcall   LCD_writeCommand
     mov     a,  #0x33
     lcall   LCD_writeCommand
-    mov     a,  #0x32 ; change to 4-bit mode
+    mov     a,  #0x32 			; change to 4-bit mode
     lcall   LCD_writeCommand
-
-    ; Configure the LCD
-    mov     a,  #0x28
+    mov     a,  #0x28			; Configure the LCD
     lcall   LCD_writeCommand
     mov     a,  #0x0c
     lcall   LCD_writeCommand
-    mov     a,  #0x01 ;  Clear screen command (takes some time)
+    mov     a,  #0x01 			; clear screen command (takes some time)
     lcall   LCD_writeCommand
 
     ;Wait for clear screen command to finish. Usually takes 1.52ms.
@@ -402,7 +388,6 @@ studentNumberArrow_L0:
     lcall   LCD_writeCommand
     mov     a,  R3
     lcall   LCD_writeData
-
     cjne    R0, #0xC3, studentNumberArrow_L1
     sjmp    studentNumberArrow_return
 studentNumberArrow_L1:
@@ -603,6 +588,16 @@ WANO:
     mov     R5, #8
     mov     R6, #71
     lcall   tone
+    
+    ; 1/2 rest
+    mov     R0, #188
+    lcall   sleep
+    lcall	sleep
+    mov		a,	R7
+	jz    	WANO_return
+	dec		R7
+    ljmp	WANO
+WANO_return:
 	ret
 
 ;###################################
@@ -696,7 +691,8 @@ loop_loop1:
     mov		dptr,	#string3
     lcall	LCD_print
     lcall	sleeps
-
+	
+	mov 	R7,	#1
     lcall   WANO
 
     ljmp    loop
