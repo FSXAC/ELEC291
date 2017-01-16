@@ -108,3 +108,75 @@ timer2_init:
     setb    ET2
     setb    TR2
     ret
+
+;---------------------------------;
+; timer 2 ISR                     ;
+;---------------------------------;
+timer2_ISR:
+    ; manually clear TF2
+    clr     TF2
+    cpl     P3.6
+
+    ; save these registers to stacks
+    push    acc
+    push    psw
+
+    ; increment 16-bit 1ms counter
+    inc     count1ms
+    mov     a,  count1ms+0
+    jnz     timer2_ISR_incdone
+    inc     count1ms+1
+
+timer2_ISR_incdone:
+    ; check if 500ms passed, return if not
+    mov     a,  count1ms+0
+    cjne    a,  #low(500),  timer2_ISR_done
+    mov     a,  count1sm+1
+    cjne    a,  #high(500), timer2_ISR_done
+
+    ; 500ms have passed, set flag
+    setb    half_seconds_flag
+    cpl     TR0
+
+    ; reset ms counter
+    clr     a
+    mov     count1ms+0, a
+    mov     count1ms+1, a
+
+    ; increment BCD counter
+    mov     a,      BCD_counter
+    jnb     UPDOWN, timer2_ISR_decrement
+    add     a,      #0x01
+    sjmp    timer2_ISR_da
+
+timer2_ISR_decrement:
+    ; adding 10's compliment of -1 === subtract +1
+    add     a,      #0x99
+
+timer2_ISR_da:
+    ; decimal adjust
+    da      a
+    mov     BCD_counter,    a
+
+timer2_done:
+    pop     psw
+    pop     acc
+    reti
+
+;---------------------------------;
+; Main program. Includes hardware ;
+; initialization and 'forever'    ;
+; loop.                           ;
+;---------------------------------;
+setup:
+    ; initialization
+    mov     SP,     #0x7F
+    mov     PMOD,   #0
+
+    ; timer initialization
+    lcall   timer0_init
+    lcall   timer2_init
+
+    ; enable global interrupts
+    setb    EA
+    lcall   LCD_4BIT
