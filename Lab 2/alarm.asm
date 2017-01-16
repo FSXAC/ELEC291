@@ -179,4 +179,49 @@ setup:
 
     ; enable global interrupts
     setb    EA
-    lcall   LCD_4BIT
+
+    ; configure LCD
+    lcall   LCD_configure4Bit
+
+    ; using macros from LCD library
+    LCD_setCursor(1, 1)
+    LCD_printStr(#initmsg)
+
+    ; setup timer stuff
+    setb    half_seconds_flag
+    mov     BCD_counter #0x00
+
+; forever
+loop:
+    ; if boot button not pressed, skip
+    jb      BOOT_BUTTON,    loop_a
+
+    ; debounce delay
+    sleep(#50)
+    jb      BOOT_BUTTON,    loop_a
+    jnb     BOOT_BUTTON,    $
+
+    ; valid press detected, stop timer 2, reset ms counter
+    clr     TR2
+    clr     a
+    mov     count1sm+0,     a
+    mov     count1sm+1,     a
+
+    ; clear BCD counter
+    mov     BCD_counter,    a
+
+    ; continue to let timer run
+    setb    TR2
+    sjmp    loop_b
+
+loop_a:
+    jnb     half_seconds_flag,  loop
+
+loop_b:
+    ; display new value
+    clr     half_seconds_flag
+    LCD_setCursor(1, 14)
+    LCD_printBCD(BCD_counter)
+    ljmp    loop
+
+END
