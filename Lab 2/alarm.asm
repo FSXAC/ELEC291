@@ -19,18 +19,32 @@ PIN_UPDOWN      equ P0.0
 org 0x0000
     ljmp    setup
 
+org 0x0003
+    reti
+
 ; Timer / Counter 0 overflow interrupt vector
 org 0x000B
     ljmp    timer0_ISR
+
+org 0x0013
+    reti
+
+org 0x001B
+    reti
+
+org 0x0023
+    reti
 
 ; Timer / Counter 2 overflow interrupt vector
 org 0x002B
     ljmp    timer2_ISR
 
 ; Direct access variables (from 0x30 to 0x7F)
-desg            at 0x30
-dount1ms:       ds 2            ; used to check if 1/2 second has passed
-BCD_counter     ds 1            ; BCD counter incremented in ISR
+dseg at 0x30
+count1ms:       ds 2            ; used to check if 1/2 second has passed
+BCD_hour:		ds 0
+BCD_minute:		ds 0
+BCD_second:     ds 1            ; BCD counter incremented in ISR
 
 ; 1-bit variables
 bseg
@@ -53,7 +67,7 @@ $LIST
 
 ; LCD strings
 initmsg:
-    db  'BCD_counter: xx ', 0
+    db  'waa', 0
 
 ;---------------------------------;
 ; Routine to initialize the ISR   ;
@@ -86,7 +100,7 @@ timer0_ISR:
     mov     TH0,    #high(TIMER0_RELOAD)
     mov     TL0,    #low(TIMER0_RELOAD)
     setb    TR0
-    cpl     SOUND_OUT
+    cpl     PIN_SOUND
     reti
 
 ;---------------------------------;
@@ -122,7 +136,7 @@ timer2_ISR:
     push    psw
 
     ; increment 16-bit 1ms counter
-    inc     count1ms
+    inc     count1ms+0
     mov     a,  count1ms+0
     jnz     timer2_ISR_incdone
     inc     count1ms+1
@@ -131,7 +145,7 @@ timer2_ISR_incdone:
     ; check if 500ms passed, return if not
     mov     a,  count1ms+0
     cjne    a,  #low(500),  timer2_ISR_done
-    mov     a,  count1sm+1
+    mov     a,  count1ms+1
     cjne    a,  #high(500), timer2_ISR_done
 
     ; 500ms have passed, set flag
@@ -144,8 +158,8 @@ timer2_ISR_incdone:
     mov     count1ms+1, a
 
     ; increment BCD counter
-    mov     a,      BCD_counter
-    jnb     UPDOWN, timer2_ISR_decrement
+    mov     a,      BCD_second
+    jnb     PIN_UPDOWN, timer2_ISR_decrement
     add     a,      #0x01
     sjmp    timer2_ISR_da
 
@@ -156,9 +170,9 @@ timer2_ISR_decrement:
 timer2_ISR_da:
     ; decimal adjust
     da      a
-    mov     BCD_counter,    a
+    mov     BCD_second,     a
 
-timer2_done:
+timer2_ISR_done:
     pop     psw
     pop     acc
     reti
@@ -189,26 +203,26 @@ setup:
 
     ; setup timer stuff
     setb    half_seconds_flag
-    mov     BCD_counter #0x00
+    mov     BCD_second, #0
 
 ; forever
 loop:
     ; if boot button not pressed, skip
-    jb      BOOT_BUTTON,    loop_a
+    jb      PIN_BOOT,    loop_a
 
     ; debounce delay
     sleep(#50)
-    jb      BOOT_BUTTON,    loop_a
-    jnb     BOOT_BUTTON,    $
+    jb      PIN_BOOT,    loop_a
+    jnb     PIN_BOOT,    $
 
     ; valid press detected, stop timer 2, reset ms counter
     clr     TR2
     clr     a
-    mov     count1sm+0,     a
-    mov     count1sm+1,     a
+    mov     count1ms+0,     a
+    mov     count1ms+1,     a
 
     ; clear BCD counter
-    mov     BCD_counter,    a
+    mov     BCD_second,     a
 
     ; continue to let timer run
     setb    TR2
@@ -221,7 +235,7 @@ loop_b:
     ; display new value
     clr     half_seconds_flag
     LCD_setCursor(1, 14)
-    LCD_printBCD(BCD_counter)
+    LCD_printBCD(BCD_second)
     ljmp    loop
 
 END

@@ -63,7 +63,7 @@ LCD_byte:
 	mov    c,      ACC.4
 	mov    LCD_D4, c
     lcall  LCD_pulse
-    lcall  Wait40uSec
+    lcall  sleep40us
 
 	; Write low 4 bits next
 	mov    c,      ACC.3
@@ -145,7 +145,7 @@ endmac
     clr     a
     movc    a,      @a+dptr
     jz      ?LCD_printStr_return
-    lcall   ?WriteData
+    lcall   ?LCD_writeData
     inc     dptr
     sjmp    ?LCD_printStr
 ?LCD_printStr_return:
