@@ -12,7 +12,7 @@ TIMER0_RATE   equ 4096     ; 2048Hz squarewave (peak amplitude of CEM-1203 speak
 TIMER0_RELOAD equ ((65536-(CLK/TIMER0_RATE)))
 TIMER2_RATE   equ 1000     ; 1000Hz, for a timer tick of 1ms
 TIMER2_RELOAD equ ((65536-(CLK/TIMER2_RATE)))
-TIME_RATE	  equ 1000
+TIME_RATE	  equ 1
 
 BOOT_BUTTON   equ P4.5
 SOUND_OUT     equ P3.7
@@ -20,7 +20,7 @@ UPDOWN        equ P0.0
 
 ; Reset vector
 org 0x0000
-    ljmp main
+    ljmp setup
 
 ; External interrupt 0 vector (not used in this code)
 org 0x0003
@@ -49,12 +49,15 @@ org 0x002B
 ; In the 8051 we can define direct access variables starting at location 0x30 up to location 0x7F
 dseg at 0x30
 Count1ms:     ds 2 ; Used to determine when half second has passed
+BCD_hour:	 ds 1
+BCD_minute:	 ds 1
 BCD_second:  ds 1 ; The BCD counter incrememted in the ISR and displayed in the main loop
 
 ; In the 8051 we have variables that are 1-bit in size.  We can use the setb, clr, jb, and jnb
 ; instructions with these variables.  This is how you define a 1-bit variable:
 bseg
-half_seconds_flag: dbit 1 ; Set to one in the ISR every time 500 ms had passed
+half_seconds_flag: 	dbit 1 ; Set to one in the ISR every time 500 ms had passed
+am_pm_flag:			dbit 0
 
 cseg
 ; These 'equ' must match the wiring between the microcontroller and the LCD!
@@ -70,7 +73,7 @@ $include(LCD_4bit.inc) ; A library of LCD related functions and utility macros
 $LIST
 
 ;                     1234567890123456    <- This helps determine the location of the counter
-Initial_Message:  db ' 00:00:00 AM    ', 0
+Initial_Message:  db '00:00:00 XM', 0
 
 ;---------------------------------;
 ; Routine to initialize the ISR   ;
@@ -151,13 +154,62 @@ Inc_Done:
 	clr a
 	mov Count1ms+0, a
 	mov Count1ms+1, a
-	; Increment the BCD counter
-	mov a, BCD_second
-	add a, #0x01
-	sjmp Timer2_ISR_da
-Timer2_ISR_da:
-	da a ; Decimal adjust instruction.  Check datasheet for more details!
-	mov BCD_second, a
+
+	; Increment the BCD second or go to 0 when at 59
+	mov 	a, 	BCD_second
+    cjne 	a, 	#0x59, Timer2_ISR_incSecond
+    ; reset second, increment minute
+    mov 	a,	#0
+    da 		a
+	mov 	BCD_second, a
+
+	mov		a,	BCD_minute
+	cjne	a,	#0x59, Timer2_ISR_incMinute
+	; reset minute, increment hour
+	mov 	a,  #0
+	da		a
+	mov 	BCD_minute, a
+	
+	; reset hour, toggle am/pm
+	mov 	a,  BCD_hour
+	jb 		am_pm_flag,	Timer2_ISR_PM
+	; am
+	; if not 11, increment
+	cjne 	a, 	#0x11, Timer2_ISR_incHour
+	; else if not 12 (is 11)
+	cjne 	a, 	#0x12, Timer2_ISR_AM11
+	; else (12 AM)
+	mov		a, 	#0
+	da		a
+	mov		BCD_hour, 	a
+	sjmp	Timer2_ISR_done	
+Timer2_ISR_AM11:
+	cpl		am_pm_flag
+	sjmp 	Timer2_ISR_incHour	
+Timer2_ISR_PM:
+	cjne 	a, 	#0x11, Timer2_ISR_incHour
+	cpl		am_pm_flag
+	mov 	a,	#0
+	da		a
+	mov 	BCD_hour,	a
+	sjmp Timer2_ISR_done
+Timer2_ISR_incSecond:
+	add 	a, 	#0x01
+	da 		a
+	mov 	BCD_second, a
+	sjmp	Timer2_ISR_done
+
+Timer2_ISR_incMinute:
+	add		a, 	#0x01
+	da		a
+	mov		BCD_minute, a
+	sjmp	Timer2_ISR_done
+
+Timer2_ISR_incHour:
+	add		a, 	#0x01
+	da		a
+	mov 	BCD_hour,	a
+	sjmp	Timer2_ISR_done
 
 Timer2_ISR_done:
 	pop psw
@@ -169,7 +221,7 @@ Timer2_ISR_done:
 ; initialization and 'forever'    ;
 ; loop.                           ;
 ;---------------------------------;
-main:
+setup:
 	; Initialization
     mov SP, #0x7F
     mov PMOD, #0 ; Configure all ports in bidirectional mode
@@ -181,7 +233,10 @@ main:
 	Set_Cursor(1, 1)
     Send_Constant_String(#Initial_Message)
     setb half_seconds_flag
+	
 	mov BCD_second, #0x00
+	mov BCD_minute, #0x00
+	mov BCD_hour,	#0x00
 
 	; After initialization the program stays in this 'forever' loop
 loop:
@@ -195,15 +250,32 @@ loop:
 	clr a
 	mov Count1ms+0, a
 	mov Count1ms+1, a
-	; Now clear the BCD counter
+	; Now clear the BCD second
 	mov BCD_second, a
+	mov BCD_minute, a
+	mov BCD_hour,	a
+
 	setb TR2                ; Start timer 2
 	sjmp loop_b             ; Display the new value
 loop_a:
 	jnb half_seconds_flag, loop
 loop_b:
     clr half_seconds_flag ; We clear this flag in the main loop, but it is set in the ISR for timer 2
-	Set_Cursor(1, 8)     ; the place in the LCD where we want the BCD counter value
+
+    Set_Cursor(1, 1)
+    Display_BCD(BCD_hour)
+
+    Set_Cursor(1, 4)
+    Display_BCD(BCD_minute)
+
+	Set_Cursor(1, 7)       ; the place in the LCD where we want the BCD counter value
 	Display_BCD(BCD_second) ; This macro is also in 'LCD_4bit.inc'
-    ljmp loop
+	
+	Set_Cursor(1, 10)
+	jb 		am_pm_flag, loop_setpm
+	Display_char(#'A')
+	ljmp	loop
+loop_setpm:
+	Display_char(#'P')
+    ljmp 	loop
 END
