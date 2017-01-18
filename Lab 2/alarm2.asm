@@ -12,7 +12,7 @@ TIMER0_RATE     equ 4096     ; 2048Hz squarewave (peak amplitude of CEM-1203 spe
 TIMER0_RELOAD   equ ((65536-(CLK/TIMER0_RATE)))
 TIMER2_RATE     equ 1000     ; 1000Hz, for a timer tick of 1ms
 TIMER2_RELOAD   equ ((65536-(CLK/TIMER2_RATE)))
-TIME_RATE       equ 1000
+TIME_RATE       equ 30
 DEBOUNCE_DELAY	equ	20
 
 ; pin assignments
@@ -311,7 +311,7 @@ mode0_d:
     Display_char(#'P')
     ljmp    loop
 
-;===[MODE 1]=== (FINISH ADDING FUNCTIONS FOR BUTTONS)
+;===[MODE 1]===
 mode1:
     ; Clock time set mode
     jb      BUTTON_BOOT,    mode1_a
@@ -428,6 +428,25 @@ mode1_setpm:
     Display_char(#'P')
     ljmp    loop
 
+;===[MODE 2]===
 mode2:
-    ; CONTINUE FROM HERE
+    jb      BUTTON_BOOT,    mode2_a
+    Wait_Milli_Seconds(#DEBOUNCE_DELAY)
+    jb      BUTTON_BOOT,    mode2_a
+    jnb     BUTTON_BOOT,    $
+    ; boot button functions (save alarm)
+mode2_a:
+    jb      BUTTON_1,       mode2_b
+    Wait_Milli_Seconds(#DEBOUNCE_DELAY)
+    jb      BUTTON_BOOT,    mode2_b
+    jnb     BUTTON_BOOT,    $
+    ; button 1 function (next pos)
+mode2_b:
+    jb      BUTTON_2,       mode2_c
+    Wait_Milli_Seconds(#DEBOUNCE_DELAY)
+    jb      BUTTON_2,       mode2_c
+    jnb     BUTTON_2,       $
+    ; button 2 function (increment)
+mode2_c:
+	ljmp	loop
 END
