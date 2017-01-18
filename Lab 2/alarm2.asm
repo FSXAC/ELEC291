@@ -292,13 +292,14 @@ mode0_b:
     Set_Cursor(1, 7)
     Display_BCD(BCD_second)
     Set_Cursor(1, 10)
-    jb 		am_pm_flag, btn_boot_pressed_setpm
+    jb 		am_pm_flag, mode0_setpm
     Display_char(#'A')
     ljmp	loop
-    btn_boot_pressed_setpm:
+    mode0_setpm:
     Display_char(#'P')
     ljmp    loop
 
+;===[MODE 1]=== (FINISH ADDING FUNCTIONS FOR BUTTONS)
 mode1:
     jb      BUTTON_BOOT,    mode1_a
     Wait_Milli_Seconds(#DEBOUNCE_DELAY)
@@ -310,5 +311,33 @@ mode1_a:
     jb      BUTTON_1,       mode1_b
     Wait_Milli_Seconds(#DEBOUNCE_DELAY)
     jb      BUTTON_1,       mode1_b
+    jnb     BUTTON_1,       $
+    ; valid button 1: change position
 
+mode1_b:
+    jb      BUTTON_2,       mode1_c
+    Wait_Milli_Seconds(#DEBOUNCE_DELAY)
+    jb      BUTTON_2,       mode2_c
+    jnb     BUTTON_2,       $
+    ; valid button 2: increment current position value
+
+mode1_c:
+	jb		tick_flag,	mode1_d
+	ljmp	loop
+
+mode1_d:
+    clr    	tick_flag ; We clear this flag in the main ; display every second
+    Set_Cursor(1, 1)
+    Display_BCD(BCD_hour)
+    Set_Cursor(1, 4)
+    Display_BCD(BCD_minute)
+    Set_Cursor(1, 7)
+    Display_BCD(BCD_second)
+    Set_Cursor(1, 10)
+    jb 		am_pm_flag, mode1_setpm
+    Display_char(#'A')
+    ljmp	loop
+    mode1_setpm:
+    Display_char(#'P')
+    ljmp    loop
 END
