@@ -27,27 +27,27 @@ org 0x0000
 
 ; External interrupt 0 vector (not used in this code)
 org 0x0003
-	reti
+    reti
 
 ; Timer/Counter 0 overflow interrupt vector
 org 0x000B
-	ljmp Timer0_ISR
+    ljmp Timer0_ISR
 
 ; External interrupt 1 vector (not used in this code)
 org 0x0013
-	reti
+    reti
 
 ; Timer/Counter 1 overflow interrupt vector (not used in this code)
 org 0x001B
-	reti
+    reti
 
 ; Serial port receive/transmit interrupt vector (not used in this code)
 org 0x0023
-	reti
+    reti
 
 ; Timer/Counter 2 overflow interrupt vector
 org 0x002B
-	ljmp Timer2_ISR
+    ljmp Timer2_ISR
 
 ; In the 8051 we can define direct access variables starting at location 0x30 up to location 0x7F
 dseg at 0x30
@@ -89,16 +89,16 @@ string_mode1_sec:	db	'      ^^       ',	0
 ; for timer 0                     ;
 ;---------------------------------;
 Timer0_Init:
-	mov a, TMOD
-	anl a, #0xf0 ; Clear the bits for timer 0
-	orl a, #0x01 ; Configure timer 0 as 16-timer
-	mov TMOD, a
-	mov TH0, #high(TIMER0_RELOAD)
-	mov TL0, #low(TIMER0_RELOAD)
-	; Enable the timer and interrupts
+    mov a, TMOD
+    anl a, #0xf0 ; Clear the bits for timer 0
+    orl a, #0x01 ; Configure timer 0 as 16-timer
+    mov TMOD, a
+    mov TH0, #high(TIMER0_RELOAD)
+    mov TL0, #low(TIMER0_RELOAD)
+    ; Enable the timer and interrupts
     setb ET0  ; Enable timer 0 interrupt
     setb TR0  ; Start timer 0
-	ret
+    ret
 
 ;---------------------------------;
 ; ISR for timer 0.  Set to execute;
@@ -106,14 +106,14 @@ Timer0_Init:
 ; 2048 Hz square wave at pin P3.7 ;
 ;---------------------------------;
 Timer0_ISR:
-	;clr TF0  ; According to the data sheet this is done for us already.
-	; In mode 1 we need to reload the timer.
+    ;clr TF0  ; According to the data sheet this is done for us already.
+    ; In mode 1 we need to reload the timer.
     clr     TR0
     mov     TH0, #high(TIMER0_RELOAD)
     mov     TL0, #low(TIMER0_RELOAD)
     setb    TR0
     cpl     SOUND_OUT ; Connect speaker to P3.7!
-	reti
+    reti
 
 ;---------------------------------;
 ; Routine to initialize the ISR   ;
@@ -127,10 +127,10 @@ Timer2_Init:
     clr     a
     mov     Count1ms+0, a
     mov     Count1ms+1, a
-	; Enable the timer and interrupts
+    ; Enable the timer and interrupts
     setb    ET2  ; Enable timer 2 interrupt
     setb    TR2  ; Enable timer 2
-	ret
+    ret
 
 ;---------------------------------;
 ; ISR for timer 2                 ;
@@ -139,27 +139,27 @@ Timer2_ISR:
     clr     TF2  ; Timer 2 doesn't clear TF2 automatically. Do it in ISR
     cpl     P3.6 ; To check the interrupt rate with oscilloscope. It must be precisely a 1 ms pulse.
 
-	; The two registers used in the ISR must be saved in the stack
+    ; The two registers used in the ISR must be saved in the stack
     push    acc
     push    psw
 
-	; Increment the 16-bit one mili second counter
+    ; Increment the 16-bit one mili second counter
     inc     Count1ms+0    ; Increment the low 8-bits first
     mov     a,  Count1ms+0 ; If the low 8-bits overflow, then increment high 8-bits
     jnz     Timer2_ISR_incDone
     inc     Count1ms+1
 
 Timer2_ISR_incDone:
-	; Check if [] second has passed
+    ; Check if [] second has passed
     mov     a,  Count1ms+0
     cjne    a,  #low(TIME_RATE),    Timer2_ISR_done ; Warning: this instruction changes the carry flag!
     mov     a,  Count1ms+1
     cjne    a,  #high(TIME_RATE),   Timer2_ISR_done
 
-	; 500 milliseconds have passed.  Set a flag so the main program knows
-	setb    tick_flag ; Let the main program know [] second had passed
-	cpl 	TR0 ; Enable/disable timer/counter 0. This line creates a beep-silence-beep-silence sound.
-	; Reset to zero the milli-seconds counter, it is a 16-bit variable
+    ; 500 milliseconds have passed.  Set a flag so the main program knows
+    setb    tick_flag ; Let the main program know [] second had passed
+    cpl 	TR0 ; Enable/disable timer/counter 0. This line creates a beep-silence-beep-silence sound.
+    ; Reset to zero the milli-seconds counter, it is a 16-bit variable
     clr     a
     mov     Count1ms+0, a
     mov     Count1ms+1, a
@@ -176,45 +176,45 @@ Timer2_ISR_incDone:
     mov 	a,  #0         ; reset minute, increment hour
     da		a
     mov 	BCD_minute,    a
-	mov 	a,  BCD_hour   ; reset hour, toggle am/pm
-	jb 		am_pm_flag,	   Timer2_ISR_PM
-	cjne 	a, 	#0x11, Timer2_ISR_incHour
-	cjne 	a, 	#0x12, Timer2_ISR_AM11
+    mov 	a,  BCD_hour   ; reset hour, toggle am/pm
+    jb 		am_pm_flag,	   Timer2_ISR_PM
+    cjne 	a, 	#0x11, Timer2_ISR_incHour
+    cjne 	a, 	#0x12, Timer2_ISR_AM11
 Timer2_ISR_AM11:
-	cpl		am_pm_flag
-	sjmp 	Timer2_ISR_incHour
+    cpl		am_pm_flag
+    sjmp 	Timer2_ISR_incHour
 Timer2_ISR_PM:
-	cjne	a, 	#0x12, Timer2_ISR_PM12
-	mov		a, 	#1
-	da		a
-	mov		BCD_hour, 	a
-	sjmp	Timer2_ISR_done
+    cjne	a, 	#0x12, Timer2_ISR_PM12
+    mov		a, 	#1
+    da		a
+    mov		BCD_hour, 	a
+    sjmp	Timer2_ISR_done
 Timer2_ISR_PM12:
-	cjne 	a, 	#0x11, Timer2_ISR_incHour
-	cpl		am_pm_flag
-	mov 	a,	#0
-	da		a
-	mov 	BCD_hour,	a
-	sjmp Timer2_ISR_done
+    cjne 	a, 	#0x11, Timer2_ISR_incHour
+    cpl		am_pm_flag
+    mov 	a,	#0
+    da		a
+    mov 	BCD_hour,	a
+    sjmp Timer2_ISR_done
 Timer2_ISR_incSecond:
-	add 	a, 	#0x01
-	da 		a
-	mov 	BCD_second, a
-	sjmp	Timer2_ISR_done
+    add 	a, 	#0x01
+    da 		a
+    mov 	BCD_second, a
+    sjmp	Timer2_ISR_done
 Timer2_ISR_incMinute:
-	add		a, 	#0x01
-	da		a
-	mov		BCD_minute, a
-	sjmp	Timer2_ISR_done
+    add		a, 	#0x01
+    da		a
+    mov		BCD_minute, a
+    sjmp	Timer2_ISR_done
 Timer2_ISR_incHour:
-	add		a, 	#0x01
-	da		a
-	mov 	BCD_hour,	a
-	sjmp	Timer2_ISR_done
+    add		a, 	#0x01
+    da		a
+    mov 	BCD_hour,	a
+    sjmp	Timer2_ISR_done
 Timer2_ISR_done:
-	pop psw
-	pop acc
-	reti
+    pop psw
+    pop acc
+    reti
 
 ;---------------------------------;
 ; Main program. Includes hardware ;
@@ -222,7 +222,7 @@ Timer2_ISR_done:
 ; loop.                           ;
 ;---------------------------------;
 setup:
-	; Initialization
+    ; Initialization
     mov     SP,     #0x7F
     mov     PMOD,   #0      ; Configure all ports in bidirectional mode
     lcall   Timer0_Init
@@ -230,41 +230,41 @@ setup:
     setb    EA              ; Enable Global interrupts
     lcall   LCD_4BIT
 
-	Set_Cursor(1, 1)
+    Set_Cursor(1, 1)
     Send_Constant_String(#Initial_Message)
     setb    tick_flag
 
-	; set mode
-	mov		mode,			#0x00
+    ; set mode
+    mov		mode,			#0x00
 
     mov     BCD_second,     #0x00
     mov     BCD_minute,     #0x00
     mov     BCD_hour,       #0x00
 
-	; After initialization the program stays in this 'forever' loop
+    ; After initialization the program stays in this 'forever' loop
 loop:
-	; find which mode we are running
-	clr		c
-	mov 	a,  mode
-	jz		mode0			; if mode == 0
-	subb	a, 	#0x01
-	jnz		loop_notMode1	; if mode == 1
-	ljmp	mode1
+    ; find which mode we are running
+    clr		c
+    mov 	a,  mode
+    jz		mode0			; if mode == 0
+    subb	a, 	#0x01
+    jnz		loop_notMode1	; if mode == 1
+    ljmp	mode1
 loop_notMode1:
     clr     c
-	mov 	a,  #mode
-	subb	a, 	#0x02
-	jnz		loop		    ; if mode == 2
+    mov 	a,  #mode
+    subb	a, 	#0x02
+    jnz		loop		    ; if mode == 2
     ljmp    loop
 
 mode0:
-	jb      BUTTON_BOOT, mode0_a  		       ; if the 'BOOT' button is not pressed skip
-	Wait_Milli_Seconds(#DEBOUNCE_DELAY)	       ; Debounce delay.  This macro is also in 'LCD_4bit.inc'
-	jb     	BUTTON_BOOT, mode0_a               ; if the 'BOOT' button is not pressed skip
-	jnb    	BUTTON_BOOT, $		               ; Wait for button release.  The '$' means: jump to same instruction.
-	                                           ; A valid press of the 'BOOT' button has been detected, reset the BCD counter.
+    jb      BUTTON_BOOT, mode0_a  		       ; if the 'BOOT' button is not pressed skip
+    Wait_Milli_Seconds(#DEBOUNCE_DELAY)	       ; Debounce delay.  This macro is also in 'LCD_4bit.inc'
+    jb     	BUTTON_BOOT, mode0_a               ; if the 'BOOT' button is not pressed skip
+    jnb    	BUTTON_BOOT, $		               ; Wait for button release.  The '$' means: jump to same instruction.
+                                               ; A valid press of the 'BOOT' button has been detected, reset the BCD counter.
                                                ; But first stop timer 2 and reset the milli-seconds counter, to resync everything.
-	clr    	a
+    clr    	a
 
     ; boot button is pressed here (goto mode 1)
     mov     mode1_pos,  a
@@ -272,10 +272,10 @@ mode0:
     mov     mode,   a
 
     ; Display the new value
-	sjmp   	mode0_d
+    sjmp   	mode0_d
 mode0_a:
-	jb 		BUTTON_1,	mode0_b
-	Wait_Milli_Seconds(#DEBOUNCE_DELAY)
+    jb 		BUTTON_1,	mode0_b
+    Wait_Milli_Seconds(#DEBOUNCE_DELAY)
     jb      BUTTON_1,   mode0_b
     jnb     BUTTON_1,   $
     ; button 1 pressed (set alarm) (goto mode 2)
@@ -291,8 +291,8 @@ mode0_b:
     ; button 2 pressed (...)
     sjmp    mode0_d
 mode0_c:
-	jb		tick_flag,	mode0_d
-	ljmp	loop
+    jb		tick_flag,	mode0_d
+    ljmp	loop
 mode0_d:
     clr    	tick_flag ; We clear this flag in the main ; display every second
     Set_Cursor(2, 1)
@@ -377,9 +377,9 @@ mode1_b_setHours_PM12:
     mov 	BCD_hour,	a
     sjmp    mode1_d
 mode1_b_setHours_incHour:
-	add		a, 	#0x01
-	da		a
-	mov 	BCD_hour,	a
+    add		a, 	#0x01
+    da		a
+    mov 	BCD_hour,	a
     sjmp    mode1_d
 mode1_b_setMinutes:
     ; increment minutes
@@ -393,8 +393,8 @@ mode1_b_setMinutes_inc:
     mov		BCD_minute,	a
     sjmp    mode1_d
 mode1_c:
-	jb		tick_flag,	mode1_d
-	ljmp	loop
+    jb		tick_flag,	mode1_d
+    ljmp	loop
 mode1_d:
     clr    	tick_flag
     ; display cursor
