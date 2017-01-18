@@ -251,35 +251,49 @@ loop:
 	jnz		loop_notMode1	; if mode == 1
 	ljmp	mode1
 loop_notMode1:
-	;mov 	a,  #mode
-	;subb	a, 	#0x02
-	;jz		mode2		; if mode == 2
+    clr     c
+	mov 	a,  #mode
+	subb	a, 	#0x02
+	jnz		loop		    ; if mode == 2
     ljmp    loop
 
 mode0:
-	jb      BUTTON_BOOT, mode0_a  		; if the 'BOOT' button is not pressed skip
-	Wait_Milli_Seconds(#DEBOUNCE_DELAY)	; Debounce delay.  This macro is also in 'LCD_4bit.inc'
-	jb     	BUTTON_BOOT, mode0_a  ; if the 'BOOT' button is not pressed skip
-	jnb    	BUTTON_BOOT, $		; Wait for button release.  The '$' means: jump to same instruction.
-	; A valid press of the 'BOOT' button has been detected, reset the BCD counter.
-	; But first stop timer 2 and reset the milli-seconds counter, to resync everything.
-	clr    	TR2                 ; Stop timer 2
+	jb      BUTTON_BOOT, mode0_a  		       ; if the 'BOOT' button is not pressed skip
+	Wait_Milli_Seconds(#DEBOUNCE_DELAY)	       ; Debounce delay.  This macro is also in 'LCD_4bit.inc'
+	jb     	BUTTON_BOOT, mode0_a               ; if the 'BOOT' button is not pressed skip
+	jnb    	BUTTON_BOOT, $		               ; Wait for button release.  The '$' means: jump to same instruction.
+	                                           ; A valid press of the 'BOOT' button has been detected, reset the BCD counter.
+                                               ; But first stop timer 2 and reset the milli-seconds counter, to resync everything.
 	clr    	a
-	mov    	Count1ms+0, a
-	mov    	Count1ms+1, a
 
     ; boot button is pressed here (goto mode 1)
     mov     mode1_pos,  a
     mov     a,      #0x01
     mov     mode,   a
-    setb	TR2
 
     ; Display the new value
-	sjmp   	mode0_b
+	sjmp   	mode0_d
 mode0_a:
-	jb		tick_flag,	mode0_b
-	ljmp	loop
+	jb 		BUTTON_1,	mode0_b
+	Wait_Milli_Seconds(#DEBOUNCE_DELAY)
+    jb      BUTTON_1,   mode0_b
+    jnb     BUTTON_1,   $
+    ; button 1 pressed (set alarm) (goto mode 2)
+    ;mov     a,      #0x02
+    ;mov     mode,   a
+    sjmp    mode0_d
 mode0_b:
+    jb      BUTTON_2,   mode0_c
+    Wait_Milli_Seconds(#DEBOUNCE_DELAY)
+    jb      BUTTON_2,   mode0_c
+    jb      BUTTON_2,   mode0_b
+    jnb     BUTTON_2,   $
+    ; button 2 pressed (...)
+    sjmp    mode0_d
+mode0_c:
+	jb		tick_flag,	mode0_d
+	ljmp	loop
+mode0_d:
     clr    	tick_flag ; We clear this flag in the main ; display every second
     Set_Cursor(2, 1)
     Send_Constant_String(#string_date)
@@ -307,7 +321,7 @@ mode1:
     ; valid boot button register (save and go back to mode 0)
     mov     a,      #0x00
     mov     mode,   a
-    ljmp    mode1_c
+    ljmp    mode1_d
 mode1_a:
     jb      BUTTON_1,       mode1_b
     Wait_Milli_Seconds(#DEBOUNCE_DELAY)
@@ -317,10 +331,10 @@ mode1_a:
     mov     a,  mode1_pos
     cjne    a,  #0x02,  mode1_a_inc
     mov     mode1_pos,  #0x00
-    ljmp    mode1_c
+    ljmp    mode1_d
 mode1_a_inc:
     inc     mode1_pos
-    ljmp    mode1_c
+    ljmp    mode1_d
 mode1_b:
     jb      BUTTON_2,       mode1_c
     Wait_Milli_Seconds(#DEBOUNCE_DELAY)
@@ -332,7 +346,13 @@ mode1_b:
     jz      mode1_b_setHours
     subb    a,  #0x01
     jz      mode1_b_setMinutes
+    ; set seconds, also resync timer
+    clr     TR2
+    clr     a
+    mov     Count1ms+0, a
+    mov     Count1ms+1, a
     mov     BCD_second, #0x00
+    setb    TR2
     sjmp    mode1_d
 mode1_b_setHours:
     ; increment hours
@@ -407,4 +427,7 @@ mode1_d_display:
 mode1_setpm:
     Display_char(#'P')
     ljmp    loop
+
+mode2:
+    ; CONTINUE FROM HERE
 END
