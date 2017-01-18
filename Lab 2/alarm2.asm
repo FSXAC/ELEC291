@@ -60,8 +60,9 @@ mode:		 ds 1 ; modes
 ; In the 8051 we have variables that are 1-bit in size.  We can use the setb, clr, jb, and jnb
 ; instructions with these variables.  This is how you define a 1-bit variable:
 bseg
-tick_flag: 	dbit 1 ; Set to one in the ISR every time 500 ms had passed
-am_pm_flag: dbit 1
+tick_flag: 	    dbit 1 ; Set to one in the ISR every time 500 ms had passed
+am_pm_flag:     dbit 1
+alarm_pos_flag: dbit 1
 
 cseg
 ; These 'equ' must match the wiring between the microcontroller and the LCD!
@@ -76,8 +77,11 @@ $NOLIST
 $include(LCD_4bit.inc) ; A library of LCD related functions and utility macros
 $LIST
 
-;                     1234567890123456    <- This helps determine the location of the counter
-Initial_Message:  db '00:00:00 XM', 0
+;                       1234567890123456    <- This helps determine the location of the counter
+Initial_Message:  	db 	'00:00:00 XM', 		0
+string_date:		db 	'THUR, JAN. 19', 	0
+string_mode1_hour:	db 	'^^             ',	0
+string_mode1_min:	db	'   ^^          ',	0
 
 ;---------------------------------;
 ; Routine to initialize the ISR   ;
@@ -141,54 +145,45 @@ Timer2_ISR:
 	; Increment the 16-bit one mili second counter
     inc     Count1ms+0    ; Increment the low 8-bits first
     mov     a,  Count1ms+0 ; If the low 8-bits overflow, then increment high 8-bits
-    jnz     Inc_Done
+    jnz     Timer2_ISR_incDone
     inc     Count1ms+1
 
-Inc_Done:
-	; Check if half second has passed
-    mov     a, Count1ms+0
-    cjne    a, #low(TIME_RATE), Timer2_ISR_done ; Warning: this instruction changes the carry flag!
-    mov     a, Count1ms+1
-    cjne    a, #high(TIME_RATE), Timer2_ISR_done
+Timer2_ISR_incDone:
+	; Check if [] second has passed
+    mov     a,  Count1ms+0
+    cjne    a,  #low(TIME_RATE),    Timer2_ISR_done ; Warning: this instruction changes the carry flag!
+    mov     a,  Count1ms+1
+    cjne    a,  #high(TIME_RATE),   Timer2_ISR_done
 
 	; 500 milliseconds have passed.  Set a flag so the main program knows
-	setb    tick_flag ; Let the main program know half second had passed
+	setb    tick_flag ; Let the main program know [] second had passed
 	cpl 	TR0 ; Enable/disable timer/counter 0. This line creates a beep-silence-beep-silence sound.
 	; Reset to zero the milli-seconds counter, it is a 16-bit variable
     clr     a
     mov     Count1ms+0, a
     mov     Count1ms+1, a
 
-	; Increment the BCD second or go to 0 when at 59
-	mov 	a, 	BCD_second
-    cjne 	a, 	#0x59, Timer2_ISR_incSecond
-    ; reset second, increment minute
-    mov 	a,	#0
+    ; set second
+    mov 	a, 	BCD_second
+    cjne 	a, 	#0x59,     Timer2_ISR_incSecond
+    mov 	a,	#0         ; reset second, increment minute
     da 		a
-	mov 	BCD_second, a
-
-	mov		a,	BCD_minute
-	cjne	a,	#0x59, Timer2_ISR_incMinute
-	; reset minute, increment hour
-	mov 	a,  #0
-	da		a
-	mov 	BCD_minute, a
-
-	; reset hour, toggle am/pm
-	mov 	a,  BCD_hour
-	jb 		am_pm_flag,	Timer2_ISR_PM
-	; am
-	; if not 11, increment
+    mov 	BCD_second,    a
+    ; set minute
+    mov		a,	BCD_minute
+    cjne	a,	#0x59,     Timer2_ISR_incMinute
+    mov 	a,  #0         ; reset minute, increment hour
+    da		a
+    mov 	BCD_minute,    a
+	mov 	a,  BCD_hour   ; reset hour, toggle am/pm
+	jb 		am_pm_flag,	   Timer2_ISR_PM
 	cjne 	a, 	#0x11, Timer2_ISR_incHour
-	; if is 11 and not 12
 	cjne 	a, 	#0x12, Timer2_ISR_AM11
 Timer2_ISR_AM11:
 	cpl		am_pm_flag
 	sjmp 	Timer2_ISR_incHour
 Timer2_ISR_PM:
-	; if not 12, increment
 	cjne	a, 	#0x12, Timer2_ISR_PM12
-	; if 12 pm
 	mov		a, 	#1
 	da		a
 	mov		BCD_hour, 	a
@@ -205,19 +200,16 @@ Timer2_ISR_incSecond:
 	da 		a
 	mov 	BCD_second, a
 	sjmp	Timer2_ISR_done
-
 Timer2_ISR_incMinute:
 	add		a, 	#0x01
 	da		a
 	mov		BCD_minute, a
 	sjmp	Timer2_ISR_done
-
 Timer2_ISR_incHour:
 	add		a, 	#0x01
 	da		a
 	mov 	BCD_hour,	a
 	sjmp	Timer2_ISR_done
-
 Timer2_ISR_done:
 	pop psw
 	pop acc
@@ -254,9 +246,11 @@ loop:
 	; find which mode we are running
 	clr		c
 	mov 	a,  mode
-	jz		mode0		; if mode == 0
+	jz		mode0			; if mode == 0
 	subb	a, 	#0x01
-	jz		mode1		; if mode == 1
+	jnz		loop_notMode1	; if mode == 1
+	ljmp	mode1
+loop_notMode1:
 	;mov 	a,  #mode
 	;subb	a, 	#0x02
 	;jz		mode2		; if mode == 2
@@ -274,9 +268,11 @@ mode0:
 	mov    	Count1ms+0, a
 	mov    	Count1ms+1, a
 
-    ; boot button is pressed here
-    mov     a,      #1
+    ; boot button is pressed here (goto mode 1)
+    clr     alarm_pos_flag
+    mov     a,      #0x01
     mov     mode,   a
+    setb	TR2
 
     ; Display the new value
 	sjmp   	mode0_b
@@ -285,6 +281,8 @@ mode0_a:
 	ljmp	loop
 mode0_b:
     clr    	tick_flag ; We clear this flag in the main ; display every second
+    Set_Cursor(2, 1)
+    Send_Constant_String(#string_date)
     Set_Cursor(1, 1)
     Display_BCD(BCD_hour)
     Set_Cursor(1, 4)
@@ -301,32 +299,43 @@ mode0_b:
 
 ;===[MODE 1]=== (FINISH ADDING FUNCTIONS FOR BUTTONS)
 mode1:
+    ; Clock time set mode
     jb      BUTTON_BOOT,    mode1_a
     Wait_Milli_Seconds(#DEBOUNCE_DELAY)
     jb      BUTTON_BOOT,    mode1_a
     jnb     BUTTON_BOOT,    $
-    ; valid boot button register
-
+    ; valid boot button register (save and go back to mode 0)
+    mov     a,      #0x00
+    mov     mode,   a
+    ljmp    mode1_c
 mode1_a:
     jb      BUTTON_1,       mode1_b
     Wait_Milli_Seconds(#DEBOUNCE_DELAY)
     jb      BUTTON_1,       mode1_b
     jnb     BUTTON_1,       $
     ; valid button 1: change position
-
+    cpl		alarm_pos_flag
+    ljmp    mode1_c
 mode1_b:
     jb      BUTTON_2,       mode1_c
     Wait_Milli_Seconds(#DEBOUNCE_DELAY)
-    jb      BUTTON_2,       mode2_c
+    jb      BUTTON_2,       mode1_c
     jnb     BUTTON_2,       $
     ; valid button 2: increment current position value
-
 mode1_c:
 	jb		tick_flag,	mode1_d
 	ljmp	loop
-
 mode1_d:
-    clr    	tick_flag ; We clear this flag in the main ; display every second
+    clr    	tick_flag
+    ; display cursor
+    Set_Cursor(2, 1) 
+    jb      alarm_pos_flag,	mode1_d_setMinutes
+    Send_Constant_String(#string_mode1_hour)
+    sjmp	mode1_d_display
+mode1_d_setMinutes:
+    Send_Constant_String(#string_mode1_min)
+mode1_d_display:
+    ; display rest
     Set_Cursor(1, 1)
     Display_BCD(BCD_hour)
     Set_Cursor(1, 4)
@@ -337,7 +346,7 @@ mode1_d:
     jb 		am_pm_flag, mode1_setpm
     Display_char(#'A')
     ljmp	loop
-    mode1_setpm:
+mode1_setpm:
     Display_char(#'P')
     ljmp    loop
 END
