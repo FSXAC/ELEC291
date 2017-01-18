@@ -56,13 +56,13 @@ BCD_hour:	 ds 1
 BCD_minute:	 ds 1
 BCD_second:  ds 1 ; The BCD counter incrememted in the ISR and displayed in the main loop
 mode:		 ds 1 ; modes
+mode1_pos:   ds 1 ; curosr position for setting time
 
 ; In the 8051 we have variables that are 1-bit in size.  We can use the setb, clr, jb, and jnb
 ; instructions with these variables.  This is how you define a 1-bit variable:
 bseg
 tick_flag: 	    dbit 1 ; Set to one in the ISR every time 500 ms had passed
 am_pm_flag:     dbit 1
-alarm_pos_flag: dbit 1
 
 cseg
 ; These 'equ' must match the wiring between the microcontroller and the LCD!
@@ -82,6 +82,8 @@ Initial_Message:  	db 	'00:00:00 XM', 		0
 string_date:		db 	'THUR, JAN. 19', 	0
 string_mode1_hour:	db 	'^^             ',	0
 string_mode1_min:	db	'   ^^          ',	0
+string_mode1_sec:	db	'      ^^       ',	0
+string_mode1_ampm:	db	'         ^^    ',	0
 
 ;---------------------------------;
 ; Routine to initialize the ISR   ;
@@ -239,7 +241,6 @@ setup:
     mov     BCD_second,     #0x00
     mov     BCD_minute,     #0x00
     mov     BCD_hour,       #0x00
-    clr	    am_pm_flag
 
 	; After initialization the program stays in this 'forever' loop
 loop:
@@ -269,7 +270,7 @@ mode0:
 	mov    	Count1ms+1, a
 
     ; boot button is pressed here (goto mode 1)
-    clr     alarm_pos_flag
+    mov     mode1_pos,  a
     mov     a,      #0x01
     mov     mode,   a
     setb	TR2
@@ -314,7 +315,12 @@ mode1_a:
     jb      BUTTON_1,       mode1_b
     jnb     BUTTON_1,       $
     ; valid button 1: change position
-    cpl		alarm_pos_flag
+    mov     a,  mode1_pos
+    cjne    a,  #0x03,  mode1_a_inc
+    mov     mode1_pos,  #0x00
+    ljmp    mode1_c
+mode1_a_inc:
+    inc     mode1_pos
     ljmp    mode1_c
 mode1_b:
     jb      BUTTON_2,       mode1_c
@@ -328,12 +334,27 @@ mode1_c:
 mode1_d:
     clr    	tick_flag
     ; display cursor
-    Set_Cursor(2, 1) 
-    jb      alarm_pos_flag,	mode1_d_setMinutes
+    Set_Cursor(2, 1)
+
+    clr     c
+    mov     a,  mode1_pos
+    jz      mode1_d_setHours
+    subb    a,  #0x01
+    jz      mode1_d_setMinutes
+    clr     c
+    mov     a,  mode1_pos
+    subb    a,  #0x02
+    jz      mode1_d_setSeconds
+    Send_Constant_String(#string_mode1_ampm)
+    sjmp    mode1_d_display
+mode1_d_setHours:
     Send_Constant_String(#string_mode1_hour)
-    sjmp	mode1_d_display
+    sjmp    mode1_d_display
 mode1_d_setMinutes:
     Send_Constant_String(#string_mode1_min)
+    sjmp	mode1_d_display
+mode1_d_setSeconds:
+    Send_Constant_String(#string_mode1_sec)
 mode1_d_display:
     ; display rest
     Set_Cursor(1, 1)
