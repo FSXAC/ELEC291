@@ -12,7 +12,7 @@ TIMER0_RATE     equ 4096     ; 2048Hz squarewave (peak amplitude of CEM-1203 spe
 TIMER0_RELOAD   equ ((65536-(CLK/TIMER0_RATE)))
 TIMER2_RATE     equ 1000     ; 1000Hz, for a timer tick of 1ms
 TIMER2_RELOAD   equ ((65536-(CLK/TIMER2_RATE)))
-TIME_RATE       equ 1
+TIME_RATE       equ 1000
 DEBOUNCE_DELAY	equ	20
 
 ; pin assignments
@@ -83,7 +83,6 @@ string_date:		db 	'THUR, JAN. 19', 	0
 string_mode1_hour:	db 	'^^             ',	0
 string_mode1_min:	db	'   ^^          ',	0
 string_mode1_sec:	db	'      ^^       ',	0
-string_mode1_ampm:	db	'         ^^    ',	0
 
 ;---------------------------------;
 ; Routine to initialize the ISR   ;
@@ -316,7 +315,7 @@ mode1_a:
     jnb     BUTTON_1,       $
     ; valid button 1: change position
     mov     a,  mode1_pos
-    cjne    a,  #0x03,  mode1_a_inc
+    cjne    a,  #0x02,  mode1_a_inc
     mov     mode1_pos,  #0x00
     ljmp    mode1_c
 mode1_a_inc:
@@ -328,6 +327,51 @@ mode1_b:
     jb      BUTTON_2,       mode1_c
     jnb     BUTTON_2,       $
     ; valid button 2: increment current position value
+    clr     c
+    mov     a,  mode1_pos
+    jz      mode1_b_setHours
+    subb    a,  #0x01
+    jz      mode1_b_setMinutes
+    mov     BCD_second, #0x00
+    sjmp    mode1_d
+mode1_b_setHours:
+    ; increment hours
+    mov 	a,  BCD_hour   ; reset hour, toggle am/pm
+    jb 		am_pm_flag,	   mode1_b_setHours_PM
+    cjne 	a, 	#0x11,     mode1_b_setHours_incHour
+    cjne 	a, 	#0x12,     mode1_b_setHours_AM11
+mode1_b_setHours_AM11:
+    cpl		am_pm_flag
+    sjmp 	mode1_b_setHours_incHour
+mode1_b_setHours_PM:
+    cjne	a, 	#0x12, mode1_b_setHours_PM12
+    mov		a, 	#1
+    da		a
+    mov		BCD_hour, 	a
+    sjmp	mode1_d
+mode1_b_setHours_PM12:
+    cjne 	a, 	#0x11, mode1_b_setHours_incHour
+    cpl		am_pm_flag
+    mov 	a,	#0
+    da		a
+    mov 	BCD_hour,	a
+    sjmp    mode1_d
+mode1_b_setHours_incHour:
+	add		a, 	#0x01
+	da		a
+	mov 	BCD_hour,	a
+    sjmp    mode1_d
+mode1_b_setMinutes:
+    ; increment minutes
+    mov     a,  BCD_minute
+    cjne    a,  #0x59,  mode1_b_setMinutes_inc
+    mov     BCD_minute, #0x00
+    sjmp    mode1_d
+mode1_b_setMinutes_inc:
+    add     a, 	#0x01
+    da		a
+    mov		BCD_minute,	a
+    sjmp    mode1_d
 mode1_c:
 	jb		tick_flag,	mode1_d
 	ljmp	loop
@@ -335,17 +379,12 @@ mode1_d:
     clr    	tick_flag
     ; display cursor
     Set_Cursor(2, 1)
-
     clr     c
     mov     a,  mode1_pos
     jz      mode1_d_setHours
     subb    a,  #0x01
     jz      mode1_d_setMinutes
-    clr     c
-    mov     a,  mode1_pos
-    subb    a,  #0x02
-    jz      mode1_d_setSeconds
-    Send_Constant_String(#string_mode1_ampm)
+    Send_Constant_String(#string_mode1_sec)
     sjmp    mode1_d_display
 mode1_d_setHours:
     Send_Constant_String(#string_mode1_hour)
@@ -353,8 +392,6 @@ mode1_d_setHours:
 mode1_d_setMinutes:
     Send_Constant_String(#string_mode1_min)
     sjmp	mode1_d_display
-mode1_d_setSeconds:
-    Send_Constant_String(#string_mode1_sec)
 mode1_d_display:
     ; display rest
     Set_Cursor(1, 1)
