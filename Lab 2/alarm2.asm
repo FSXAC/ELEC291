@@ -518,8 +518,28 @@ mode2_b_hourNot12:
     mov     alarm_hour, a
     sjmp    mode2_d
 mode2_b_setHours:
+    mov     a,  alarm_hour
+    cjne    a,  #0x12, mode2_b_setHours_inc
+    mov     a,  #0x01
+    da      a
+    mov     alarm_hour, a
+    sjmp    mode2_d
+mode2_b_setHours_inc:
+    add     a,  #0x01
+    da      a
+    mov     alarm_hour, a
     sjmp    mode2_d
 mode2_b_setMinutes:
+    mov     a,  alarm_min
+    cjne    a,  #0x59,  mode2_b_setMinutes_inc
+    mov     a,  #0x00
+    da      a
+    mov     alarm_min,  a
+    sjmp    mode2_d
+mode2_b_setMinutes_inc:
+    add     a,  #0x01
+    da      a
+    mov     alarm_min, a
     sjmp    mode2_d
 mode2_c:
     jb		tick_flag,	mode2_d
