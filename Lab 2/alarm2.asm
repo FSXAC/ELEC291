@@ -234,6 +234,8 @@ Timer2_checkAlarm:
     mov     a,  BCD_hour
     cjne    a,  alarm_hour, Timer2_checkAlarm_done
     mov     a,  BCD_minute
+    inc 	a
+    da		a
     cjne    a,  alarm_min,  Timer2_checkAlarm_done
     jb      am_pm_flag,	Timer2_checkAlarm_pm
     jb      alarm_ampm_flag,    Timer2_checkAlarm_done
@@ -281,6 +283,8 @@ setup:
     mov     BCD_hour,       a
     clr     am_pm_flag
     mov     alarm_hour,     a
+    mov     a,  #0x05
+    da      a
     mov     alarm_min,      a
     clr     alarm_ampm_flag
 
