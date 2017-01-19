@@ -11,7 +11,17 @@ CLK             equ 22118400 ; Microcontroller system crystal frequency in Hz
 TIMER0_RATE     equ 4096     ; 2048Hz squarewave (peak amplitude of CEM-1203 speaker)
 ;TIMER0_RELOAD   equ ((65536-(CLK/TIMER0_RATE)))
 TIMER0_RELOAD   equ 61342
-TIMER0_RELOAD1  equ 62009
+TIMER0_RELOAD1  equ 61093
+TIMER0_RELOAD2  equ 61342
+TIMER0_RELOAD3  equ 61093
+TIMER0_RELOAD4  equ 61342
+TIMER0_RELOAD5  equ 59938
+TIMER0_RELOAD6  equ 60829
+TIMER0_RELOAD7  equ 60252
+TIMER0_RELOAD8  equ 59252
+TIMER0_RELOAD9  equ 59252
+TIMER0_RELOAD10 equ 59252
+
 TIMER1_RATE		equ 1000
 TIMER1_RELOAD   equ ((65536-(CLK/TIMER1_RATE)))
 TIMER2_RATE     equ 1000     ; 1000Hz, for a timer tick of 1ms
@@ -63,6 +73,7 @@ mode:		 ds 1 ; modes
 cursor_pos:  ds 1 ; curosr position for setting time
 alarm_hour:  ds 1
 alarm_min:   ds 1
+sound_pos:   ds 1
 
 ; In the 8051 we have variables that are 1-bit in size.  We can use the setb, clr, jb, and jnb
 ; instructions with these variables.  This is how you define a 1-bit variable:
@@ -71,6 +82,7 @@ tick_flag: 	        dbit 1 ; Set to one in the ISR every time 500 ms had passed
 am_pm_flag:         dbit 1
 alarm_ampm_flag:    dbit 1
 sound_flag:         dbit 1
+alarm_toggle_flag:	dbit 1
 
 cseg
 ; These 'equ' must match the wiring between the microcontroller and the LCD!
@@ -97,20 +109,24 @@ string_alarm_hour:  db  '^^         ALARM',  	0
 string_alarm_min:   db  '   ^^      ALARM',  	0
 string_alarm_ampm:  db  '      ^^   ALARM',  	0
 
+;notes:
+;    dw  60000, 60000, 60500, 61000, 61500, 62000, 62500, 63000
+
 ;---------------------------------;
 ; Routine to initialize the ISR   ;
 ; for timer 0                     ;
 ;---------------------------------;
 Timer0_Init:
-    mov a, TMOD
-    anl a, #0xf0 ; Clear the bits for timer 0
-    orl a, #0x01 ; Configure timer 0 as 16-timer
-    mov TMOD, a
-    mov TH0, #high(TIMER0_RELOAD)
-    mov TL0, #low(TIMER0_RELOAD)
+    mov     a,      TMOD
+    anl     a,      #0xf0 ; Clear the bits for timer 0
+    orl     a,      #0x01 ; Configure timer 0 as 16-timer
+    mov     TMOD,   a
+    mov     TH0,    #high(TIMER0_RELOAD)
+    mov     TL0,    #low(TIMER0_RELOAD)
     ; Enable the timer and interrupts
-    setb ET0  ; Enable timer 0 interrupt
-    setb TR0  ; Start timer 0
+    setb    ET0  ; Enable timer 0 interrupt
+    setb    TR0  ; Start timer 0
+    mov     sound_pos,  #0x00
     ret
 
 ;---------------------------------;
@@ -121,19 +137,106 @@ Timer0_Init:
 Timer0_ISR:
     ;clr TF0  ; According to the data sheet this is done for us already.
     ; In mode 1 we need to reload the timer.
+;    push		acc
+;    clr     TR0
+;    mov 	a,	sound_pos
+;    jz      Timer0_ISR_1
+;    mov     TH0, #high(TIMER0_RELOAD)
+;    mov     TL0, #low(TIMER0_RELOAD)
+;    sjmp    Timer0_ISR_done
+;Timer0_ISR_1:
+;    mov     TH0, #high(TIMER0_RELOAD1)
+;    mov     TL0, #low(TIMER0_RELOAD1)
+;    sjmp    Timer0_ISR_done
+;Timer0_ISR_done:
+;    setb    TR0
+;    cpl     SOUND_OUT ; Connect speaker to P3.7!
+;    pop		acc
+;    reti
+    push	acc
     clr     TR0
-    jb      sound_flag, Timer0_ISR_1
-    mov     TH0, #high(TIMER0_RELOAD)
-    mov     TL0, #low(TIMER0_RELOAD)
+    mov 	a,	sound_pos
+
+    cjne    a,  #0x0A,  Timer0_ISR_not10
+    mov     TH0, #high(TIMER0_RELOAD10)
+    mov     TL0, #low(TIMER0_RELOAD10)
     sjmp    Timer0_ISR_done
-Timer0_ISR_1:
+Timer0_ISR_not10:
+    cjne    a,  #0x09,  Timer0_ISR_not9
+    mov     TH0, #high(TIMER0_RELOAD9)
+    mov     TL0, #low(TIMER0_RELOAD9)
+    sjmp    Timer0_ISR_done
+Timer0_ISR_not9:
+    cjne    a,  #0x08,  Timer0_ISR_not8
+    mov     TH0, #high(TIMER0_RELOAD8)
+    mov     TL0, #low(TIMER0_RELOAD8)
+    sjmp    Timer0_ISR_done
+Timer0_ISR_not8:
+    cjne    a,  #0x07,  Timer0_ISR_not7
+    mov     TH0, #high(TIMER0_RELOAD7)
+    mov     TL0, #low(TIMER0_RELOAD7)
+    sjmp    Timer0_ISR_done
+Timer0_ISR_not7:
+    cjne    a,  #0x06,  Timer0_ISR_not6
+    mov     TH0, #high(TIMER0_RELOAD6)
+    mov     TL0, #low(TIMER0_RELOAD6)
+    sjmp    Timer0_ISR_done
+Timer0_ISR_not6:
+    cjne    a,  #0x05,  Timer0_ISR_not5
+    mov     TH0, #high(TIMER0_RELOAD5)
+    mov     TL0, #low(TIMER0_RELOAD5)
+    sjmp    Timer0_ISR_done
+Timer0_ISR_not5:
+    cjne    a,  #0x04,  Timer0_ISR_not4
+    mov     TH0, #high(TIMER0_RELOAD4)
+    mov     TL0, #low(TIMER0_RELOAD4)
+    sjmp    Timer0_ISR_done
+Timer0_ISR_not4:
+    cjne    a,  #0x03,  Timer0_ISR_not3
+    mov     TH0, #high(TIMER0_RELOAD3)
+    mov     TL0, #low(TIMER0_RELOAD3)
+    sjmp    Timer0_ISR_done
+Timer0_ISR_not3:
+    cjne    a,  #0x02,  Timer0_ISR_not2
+    mov     TH0, #high(TIMER0_RELOAD2)
+    mov     TL0, #low(TIMER0_RELOAD2)
+    sjmp    Timer0_ISR_done
+Timer0_ISR_not2:
+    cjne    a,  #0x01,  Timer0_ISR_not1
     mov     TH0, #high(TIMER0_RELOAD1)
     mov     TL0, #low(TIMER0_RELOAD1)
     sjmp    Timer0_ISR_done
+Timer0_ISR_not1:
+    mov     TH0, #high(TIMER0_RELOAD)
+    mov     TL0, #low(TIMER0_RELOAD)
 Timer0_ISR_done:
     setb    TR0
     cpl     SOUND_OUT ; Connect speaker to P3.7!
+    pop		acc
     reti
+
+
+;Timer0_ISR:
+;    push    acc
+;    push    psw
+;    clr     TR0
+;    mov     dptr,   #notes
+;    ; MSB
+;    clr     a
+;    movc    a,  @a+dptr
+;    mov     TH0,    a
+;    inc     dptr
+;    ; LSB
+;    clr     a
+;    movc    a,  @a+dptr
+;    mov     TL0,    a
+;    ; move sound position
+;    setb    TR0
+;    cpl     SOUND_OUT
+;    pop     AR0
+;    pop     psw
+;    pop     acc
+;    reti
 
 ;---------------------------------;
 ; Routine to initialize the ISR   ;
@@ -177,7 +280,17 @@ Timer2_ISR_incDone:
     cjne    a,  #high(TIME_RATE),   Timer2_ISR_done
 
     ; toggle sound
-    cpl     sound_flag
+    ;cpl     sound_flag
+
+    ; CHANGED
+   	mov 	a,	sound_pos
+    cjne    a,  #0x0A,  Timer2_ISR_inDone_incSound
+    mov     sound_pos,  #0x00
+    sjmp    Timer2_ISR_inDone_incSound_done
+Timer2_ISR_inDone_incSound:
+    inc     sound_pos
+Timer2_ISR_inDone_incSound_done:
+    ; END OF CHANGED
 
     ; 500 milliseconds have passed.  Set a flag so the main program knows
     setb    tick_flag ; Let the main program know [] second had passed
@@ -194,8 +307,10 @@ Timer2_ISR_incDone:
     mov 	BCD_second,    a
 
     ; check if alarm is up
+    jnb     alarm_toggle_flag,  Timer2_ISR_skipAlarm
     lcall   Timer2_checkAlarm
 
+Timer2_ISR_skipAlarm:
     ; set minute
     mov		a,	BCD_minute
     cjne	a,	#0x59,     Timer2_ISR_incMinute
@@ -253,10 +368,12 @@ Timer2_checkAlarm:
     jb      am_pm_flag,	Timer2_checkAlarm_pm
     jb      alarm_ampm_flag,    Timer2_checkAlarm_done
     setb    TR0
+    mov     sound_pos,  #0x00
     sjmp    Timer2_checkAlarm_done
 Timer2_checkAlarm_pm:
     jnb     alarm_ampm_flag,    Timer2_checkAlarm_done
     setb    TR0
+    mov     sound_pos,  #0x00
     sjmp    Timer2_checkAlarm_done
 Timer2_checkAlarm_done:
     ret
@@ -285,6 +402,9 @@ setup:
 
     ; something important
     setb    tick_flag
+
+    ; alarm is off by default
+    clr     alarm_toggle_flag
 
     ; set mode
     mov		mode,			#0x00
@@ -369,8 +489,11 @@ mode0_b:
     jb      BUTTON_2,   mode0_b
     jnb     BUTTON_2,   $
     ; button 2 pressed (turn off alarm (when on), toggle when off)
-    jnb     TR0,        mode0_d ;temp
+    jnb     TR0,        mode0_b_toggleAlarm
     clr     TR0
+    sjmp    mode0_d
+mode0_b_toggleAlarm:
+    cpl     alarm_toggle_flag
     sjmp    mode0_d
 mode0_c:
     jb		tick_flag,	mode0_d
@@ -389,9 +512,17 @@ mode0_d:
     Set_Cursor(1, 10)
     jb 		am_pm_flag, mode0_setpm
     Display_char(#'A')
-    ljmp	loop
-    mode0_setpm:
+    sjmp	mode0_setAlarm
+mode0_setpm:
     Display_char(#'P')
+    sjmp    mode0_setAlarm
+mode0_setAlarm:
+    Set_Cursor(1, 16)
+    jb      alarm_toggle_flag,  mode0_setAlarmOn
+    Display_char(#' ')
+    ljmp    loop
+mode0_setAlarmOn:
+    Display_char(#'!')
     ljmp    loop
 
 ;===[MODE 1]===
