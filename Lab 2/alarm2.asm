@@ -13,10 +13,11 @@ TIMER0_RATE     equ 4096     ; 2048Hz squarewave (peak amplitude of CEM-1203 spe
 TIMER0_RELOAD   equ 61342
 TIMER0_RELOAD1  equ 62009
 TIMER1_RATE		equ 1000
-TIMER2_RELOAD   equ ((65536-(CLK/TIMER1_RATE)))
+TIMER1_RELOAD   equ ((65536-(CLK/TIMER1_RATE)))
 TIMER2_RATE     equ 1000     ; 1000Hz, for a timer tick of 1ms
 TIMER2_RELOAD   equ ((65536-(CLK/TIMER2_RATE)))
 TIME_RATE       equ 1000
+TIME_RATE_1		equ	200
 DEBOUNCE_DELAY	equ	50
 
 ; pin assignments
@@ -35,7 +36,7 @@ org 0x0003
 
 ; Timer/Counter 0 overflow interrupt vector
 org 0x000B
-    ljmp Timer0_ISR
+    ljmp 	Timer0_ISR
 
 ; External interrupt 1 vector (not used in this code)
 org 0x0013
@@ -43,7 +44,7 @@ org 0x0013
 
 ; Timer/Counter 1 overflow interrupt vector (not used in this code)
 org 0x001B
-    reti
+    ljmp	Timer1_ISR
 
 ; Serial port receive/transmit interrupt vector (not used in this code)
 org 0x0023
@@ -51,11 +52,12 @@ org 0x0023
 
 ; Timer/Counter 2 overflow interrupt vector
 org 0x002B
-    ljmp Timer2_ISR
+    ljmp 	Timer2_ISR
 
 ; In the 8051 we can define direct access variables starting at location 0x30 up to location 0x7F
 dseg at 0x30
 Count1ms:    ds 2 ; Used to determine when half second has passed
+Count1ms2:   ds 2
 BCD_hour:	 ds 1
 BCD_minute:	 ds 1
 BCD_second:  ds 1 ; The BCD counter incrememted in the ISR and displayed in the main loop
@@ -103,14 +105,18 @@ string_alarm_ampm:  db  '      ^^   ALARM',  	0
 ;---------------------------------;
 Timer0_Init:
     mov a, TMOD
-    anl a, #0xf0 ; Clear the bits for timer 0
-    orl a, #0x01 ; Configure timer 0 as 16-timer
-    mov TMOD, a
-    mov TH0, #high(TIMER0_RELOAD)
-    mov TL0, #low(TIMER0_RELOAD)
+    anl a, #0x00 ; Clear the bits for timer 0
+    orl a, #0x11 ; Configure timer 0 as 16-timer
+    mov     TMOD, a
+    mov     TH0,    #high(TIMER0_RELOAD)
+    mov     TL0,    #low(TIMER0_RELOAD)
+    mov     TH1,    #high(TIMER1_RELOAD)
+    mov     TL1,    #low(TIMER1_RELOAD)
     ; Enable the timer and interrupts
-    setb ET0  ; Enable timer 0 interrupt
-    setb TR0  ; Start timer 0
+    setb    ET0  ; Enable timer 0 interrupt
+    setb    ET1
+    setb    TR0  ; Start timer 0
+    setb    TR1
     ret
 
 ;---------------------------------;
@@ -134,6 +140,28 @@ Timer0_ISR_done:
     setb    TR0
     cpl     SOUND_OUT ; Connect speaker to P3.7!
     reti
+
+
+
+
+Timer1_ISR:
+    clr     TR1
+    ; Increment the 16-bit one mili second counter
+    inc     Count1ms2+0         ; Increment the low 8-bits first
+    mov     a,  Count1ms2+0     ; If the low 8-bits overflow, then increment high 8-bits
+    jnz     Timer2_ISR_incDone
+    inc     Count1ms2+1
+Timer1_ISR_incDone:
+    mov     a,  Count1ms2+0
+    cjne    a,  #low(TIME_RATE_1),    Timer1_ISR_done
+    mov     a,  Count1ms2+1
+    cjne    a,  #high(TIME_RATE_1),   Timer1_ISR_done
+    cpl     sound_flag
+Timer1_ISR_done:
+    setb    TR1
+    reti
+
+
 
 ;---------------------------------;
 ; Routine to initialize the ISR   ;
@@ -177,7 +205,7 @@ Timer2_ISR_incDone:
     cjne    a,  #high(TIME_RATE),   Timer2_ISR_done
 
     ; toggle sound
-    cpl     sound_flag
+    cpl     TR0
 
     ; 500 milliseconds have passed.  Set a flag so the main program knows
     setb    tick_flag ; Let the main program know [] second had passed
@@ -252,11 +280,11 @@ Timer2_checkAlarm:
     cjne    a,  alarm_min,  Timer2_checkAlarm_done
     jb      am_pm_flag,	Timer2_checkAlarm_pm
     jb      alarm_ampm_flag,    Timer2_checkAlarm_done
-    setb    TR0
+    setb    TR1
     sjmp    Timer2_checkAlarm_done
 Timer2_checkAlarm_pm:
     jnb     alarm_ampm_flag,    Timer2_checkAlarm_done
-    setb    TR0
+    setb    TR1
     sjmp    Timer2_checkAlarm_done
 Timer2_checkAlarm_done:
     ret
@@ -277,6 +305,7 @@ setup:
 
     ; stop alarm sound
     clr     TR0
+    clr 	TR1
     clr     sound_flag
 
     ; set initial message
