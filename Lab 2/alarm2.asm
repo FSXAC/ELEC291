@@ -12,13 +12,13 @@ TIMER0_RATE     equ 4096     ; 2048Hz squarewave (peak amplitude of CEM-1203 spe
 TIMER0_RELOAD   equ ((65536-(CLK/TIMER0_RATE)))
 TIMER2_RATE     equ 1000     ; 1000Hz, for a timer tick of 1ms
 TIMER2_RELOAD   equ ((65536-(CLK/TIMER2_RATE)))
-TIME_RATE       equ 30
-DEBOUNCE_DELAY	equ	20
+TIME_RATE       equ 1000
+DEBOUNCE_DELAY	equ	50
 
 ; pin assignments
 BUTTON_BOOT     equ P4.5
-BUTTON_1        equ P2.5
-BUTTON_2        equ P2.1
+BUTTON_1        equ P2.1
+BUTTON_2        equ P2.5
 SOUND_OUT       equ P3.7
 
 ; Reset vector
@@ -56,13 +56,16 @@ BCD_hour:	 ds 1
 BCD_minute:	 ds 1
 BCD_second:  ds 1 ; The BCD counter incrememted in the ISR and displayed in the main loop
 mode:		 ds 1 ; modes
-mode1_pos:   ds 1 ; curosr position for setting time
+cursor_pos:  ds 1 ; curosr position for setting time
+alarm_hour:  ds 1
+alarm_min:   ds 1
 
 ; In the 8051 we have variables that are 1-bit in size.  We can use the setb, clr, jb, and jnb
 ; instructions with these variables.  This is how you define a 1-bit variable:
 bseg
-tick_flag: 	    dbit 1 ; Set to one in the ISR every time 500 ms had passed
-am_pm_flag:     dbit 1
+tick_flag: 	        dbit 1 ; Set to one in the ISR every time 500 ms had passed
+am_pm_flag:         dbit 1
+alarm_ampm_flag:    dbit 1
 
 cseg
 ; These 'equ' must match the wiring between the microcontroller and the LCD!
@@ -77,12 +80,16 @@ $NOLIST
 $include(LCD_4bit.inc) ; A library of LCD related functions and utility macros
 $LIST
 
-;                       1234567890123456    <- This helps determine the location of the counter
-Initial_Message:  	db 	'00:00:00 XM', 		0
-string_date:		db 	'THUR, JAN. 19', 	0
-string_mode1_hour:	db 	'^^             ',	0
-string_mode1_min:	db	'   ^^          ',	0
-string_mode1_sec:	db	'      ^^       ',	0
+;                        1234567890123456    <- This helps determine the location of the counter
+Initial_Message:  	db 	'00:00:00 XM     ',  	0
+string_date:		db 	'THUR, JAN. 19   ', 	0
+string_mode1_hour:	db 	'^^              ',		0
+string_mode1_min:	db	'   ^^           ',		0
+string_mode1_sec:	db	'      ^^        ',		0
+string_alarm:       db  'XX:XX XM    SET ',  	0
+string_alarm_hour:  db  '^^         ALARM',  	0
+string_alarm_min:   db  '   ^^      ALARM',  	0
+string_alarm_ampm:  db  '      ^^   ALARM',  	0
 
 ;---------------------------------;
 ; Routine to initialize the ISR   ;
@@ -237,9 +244,14 @@ setup:
     ; set mode
     mov		mode,			#0x00
 
+    ; initialize time
     mov     BCD_second,     #0x00
     mov     BCD_minute,     #0x00
     mov     BCD_hour,       #0x00
+    clr     am_pm_flag
+    mov     alarm_hour,     #0x00
+    mov     alarm_min,      #0x00
+    clr     alarm_ampm_flag
 
     ; After initialization the program stays in this 'forever' loop
 loop:
@@ -252,10 +264,15 @@ loop:
     ljmp	mode1
 loop_notMode1:
     clr     c
-    mov 	a,  #mode
+    mov 	a,  mode
     subb	a, 	#0x02
-    jnz		loop		    ; if mode == 2
-    ljmp    loop
+    jnz		loop_notMode2   ; if mode == 2
+    ljmp    mode2
+loop_notMode2:
+	; reset mode back to 0
+	mov		a, 		#0x00
+	mov		mode, 	a
+    ljmp    mode0_d
 
 mode0:
     jb      BUTTON_BOOT, mode0_a  		       ; if the 'BOOT' button is not pressed skip
@@ -264,24 +281,35 @@ mode0:
     jnb    	BUTTON_BOOT, $		               ; Wait for button release.  The '$' means: jump to same instruction.
                                                ; A valid press of the 'BOOT' button has been detected, reset the BCD counter.
                                                ; But first stop timer 2 and reset the milli-seconds counter, to resync everything.
-    clr    	a
 
     ; boot button is pressed here (goto mode 1)
-    mov     mode1_pos,  a
+    ; set position variable
+    clr    	a
+    mov     cursor_pos,  a
+    ; change mode
     mov     a,      #0x01
     mov     mode,   a
-
-    ; Display the new value
     sjmp   	mode0_d
+
 mode0_a:
     jb 		BUTTON_1,	mode0_b
     Wait_Milli_Seconds(#DEBOUNCE_DELAY)
     jb      BUTTON_1,   mode0_b
     jnb     BUTTON_1,   $
     ; button 1 pressed (set alarm) (goto mode 2)
-    ;mov     a,      #0x02
-    ;mov     mode,   a
-    sjmp    mode0_d
+    ; set curosr variable
+    clr    	a
+    mov     cursor_pos,  a
+    ; setup screen
+    Set_Cursor(1, 1)
+    Send_Constant_String(#string_alarm)
+    Set_Cursor(2, 1)
+    Send_Constant_String(#string_alarm_hour)
+    ; change mode
+    mov     a,      #0x02
+    mov     mode,   a
+    ljmp    loop
+
 mode0_b:
     jb      BUTTON_2,   mode0_c
     Wait_Milli_Seconds(#DEBOUNCE_DELAY)
@@ -290,9 +318,11 @@ mode0_b:
     jnb     BUTTON_2,   $
     ; button 2 pressed (...)
     sjmp    mode0_d
+
 mode0_c:
     jb		tick_flag,	mode0_d
     ljmp	loop
+
 mode0_d:
     clr    	tick_flag ; We clear this flag in the main ; display every second
     Set_Cursor(2, 1)
@@ -328,12 +358,12 @@ mode1_a:
     jb      BUTTON_1,       mode1_b
     jnb     BUTTON_1,       $
     ; valid button 1: change position
-    mov     a,  mode1_pos
+    mov     a,  cursor_pos
     cjne    a,  #0x02,  mode1_a_inc
-    mov     mode1_pos,  #0x00
+    mov     cursor_pos,  #0x00
     ljmp    mode1_d
 mode1_a_inc:
-    inc     mode1_pos
+    inc     cursor_pos
     ljmp    mode1_d
 mode1_b:
     jb      BUTTON_2,       mode1_c
@@ -342,7 +372,7 @@ mode1_b:
     jnb     BUTTON_2,       $
     ; valid button 2: increment current position value
     clr     c
-    mov     a,  mode1_pos
+    mov     a,  cursor_pos
     jz      mode1_b_setHours
     subb    a,  #0x01
     jz      mode1_b_setMinutes
@@ -400,7 +430,7 @@ mode1_d:
     ; display cursor
     Set_Cursor(2, 1)
     clr     c
-    mov     a,  mode1_pos
+    mov     a,  cursor_pos
     jz      mode1_d_setHours
     subb    a,  #0x01
     jz      mode1_d_setMinutes
@@ -435,18 +465,57 @@ mode2:
     jb      BUTTON_BOOT,    mode2_a
     jnb     BUTTON_BOOT,    $
     ; boot button functions (save alarm)
+    ; set screen
+    Set_Cursor(1, 1)
+    Send_Constant_String(#Initial_Message)
+    ; change mode back to 0
+    mov     a,      #0x00
+    mov     mode,   a
+    ljmp    loop
 mode2_a:
     jb      BUTTON_1,       mode2_b
     Wait_Milli_Seconds(#DEBOUNCE_DELAY)
     jb      BUTTON_BOOT,    mode2_b
     jnb     BUTTON_BOOT,    $
     ; button 1 function (next pos)
+    sjmp    mode2_d
 mode2_b:
     jb      BUTTON_2,       mode2_c
     Wait_Milli_Seconds(#DEBOUNCE_DELAY)
     jb      BUTTON_2,       mode2_c
     jnb     BUTTON_2,       $
     ; button 2 function (increment)
+    sjmp    mode2_d
 mode2_c:
-	ljmp	loop
+    jb		tick_flag,	mode2_d
+	sjmp	mode2_d
+mode2_d:
+    clr    	tick_flag
+    ; display cursor
+    Set_Cursor(2, 1)
+    clr     c
+    mov     a,  cursor_pos
+    jz      mode2_d_setHours
+    subb    a,  #0x01
+    jz      mode2_d_setMinutes
+    Send_Constant_String(#string_alarm_ampm)
+    sjmp    mode2_d_display
+mode2_d_setHours:
+    Send_Constant_String(#string_alarm_hour)
+    sjmp    mode2_d_display
+mode2_d_setMinutes:
+    Send_Constant_String(#string_alarm_min)
+    sjmp	mode2_d_display
+mode2_d_display:
+    Set_Cursor(1, 1)
+    Display_BCD(#alarm_hour)
+    Set_Cursor(1, 4)
+    Display_BCD(#alarm_min)
+    Set_Cursor(1, 7)
+    jb 		alarm_ampm_flag, mode2_setpm
+    Display_char(#'A')
+    ljmp	loop
+mode2_setpm:
+    Display_char(#'P')
+    ljmp    loop
 END
