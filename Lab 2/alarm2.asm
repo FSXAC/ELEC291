@@ -1,3 +1,4 @@
+
 ; ISR_example.asm: a) Increments/decrements a BCD variable every half second using
 ; an ISR for timer 2; b) Generates a 2kHz square wave at pin P3.7 using
 ; an ISR for timer 0; and c) in the 'main' loop it displays the variable
@@ -475,10 +476,16 @@ mode2:
 mode2_a:
     jb      BUTTON_1,       mode2_b
     Wait_Milli_Seconds(#DEBOUNCE_DELAY)
-    jb      BUTTON_BOOT,    mode2_b
-    jnb     BUTTON_BOOT,    $
+    jb      BUTTON_1,       mode2_b
+    jnb     BUTTON_1,       $
     ; button 1 function (next pos)
+    mov     a,  cursor_pos
+    cjne    a,  #0x02,  mode2_a_inc
+    mov     cursor_pos, #0x00
     sjmp    mode2_d
+mode2_a_inc:
+    inc     cursor_pos
+    ljmp    mode2_d
 mode2_b:
     jb      BUTTON_2,       mode2_c
     Wait_Milli_Seconds(#DEBOUNCE_DELAY)
@@ -488,7 +495,7 @@ mode2_b:
     sjmp    mode2_d
 mode2_c:
     jb		tick_flag,	mode2_d
-	sjmp	mode2_d
+	ljmp	loop
 mode2_d:
     clr    	tick_flag
     ; display cursor
@@ -507,10 +514,10 @@ mode2_d_setMinutes:
     Send_Constant_String(#string_alarm_min)
     sjmp	mode2_d_display
 mode2_d_display:
-    Set_Cursor(1, 1)
-    Display_BCD(#alarm_hour)
-    Set_Cursor(1, 4)
-    Display_BCD(#alarm_min)
+    ;Set_Cursor(1, 1)
+    ;Display_BCD(#alarm_hour)
+    ;Set_Cursor(1, 4)
+    ;Display_BCD(#BCD_second)
     Set_Cursor(1, 7)
     jb 		alarm_ampm_flag, mode2_setpm
     Display_char(#'A')
