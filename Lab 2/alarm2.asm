@@ -9,7 +9,7 @@ $MODLP52
 $LIST
 
 CLK             equ 22118400 ; Microcontroller system crystal frequency in Hz
-TIMER0_RATE     equ 4096     ; 2048Hz squarewave (peak amplitude of CEM-1203 speaker)
+TIMER0_RATE     equ 2048     ; 2048Hz squarewave (peak amplitude of CEM-1203 speaker)
 TIMER0_RELOAD   equ ((65536-(CLK/TIMER0_RATE)))
 TIMER2_RATE     equ 1000     ; 1000Hz, for a timer tick of 1ms
 TIMER2_RELOAD   equ ((65536-(CLK/TIMER2_RATE)))
@@ -82,12 +82,12 @@ $include(LCD_4bit.inc) ; A library of LCD related functions and utility macros
 $LIST
 
 ;                        1234567890123456    <- This helps determine the location of the counter
-Initial_Message:  	db 	'00:00:00 XM     ',  	0
+Initial_Message:  	db 	'--:--:-- -M     ',  	0
 string_date:		db 	'THUR, JAN. 19   ', 	0
 string_mode1_hour:	db 	'^^              ',		0
 string_mode1_min:	db	'   ^^           ',		0
 string_mode1_sec:	db	'      ^^        ',		0
-string_alarm:       db  'XX:XX XM    SET ',  	0
+string_alarm:       db  '--:-- -M    SET ',  	0
 string_alarm_hour:  db  '^^         ALARM',  	0
 string_alarm_min:   db  '   ^^      ALARM',  	0
 string_alarm_ampm:  db  '      ^^   ALARM',  	0
@@ -246,12 +246,14 @@ setup:
     mov		mode,			#0x00
 
     ; initialize time
-    mov     BCD_second,     #0x00
-    mov     BCD_minute,     #0x00
-    mov     BCD_hour,       #0x00
+    mov     a,  #0x00
+    da      a
+    mov     BCD_second,     a
+    mov     BCD_minute,     a
+    mov     BCD_hour,       a
     clr     am_pm_flag
-    mov     alarm_hour,     #0x00
-    mov     alarm_min,      #0x00
+    mov     alarm_hour,     a
+    mov     alarm_min,      a
     clr     alarm_ampm_flag
 
     ; After initialization the program stays in this 'forever' loop
@@ -492,6 +494,32 @@ mode2_b:
     jb      BUTTON_2,       mode2_c
     jnb     BUTTON_2,       $
     ; button 2 function (increment)
+    clr     c
+    mov     a,  cursor_pos
+    jz      mode2_b_setHours
+    subb    a,  #0x01
+    jz      mode2_b_setMinutes
+    ; set am pm
+    cpl     alarm_ampm_flag
+    mov 	R0,	alarm_hour
+    cjne    R0, #0x12,  mode2_b_hourNot12
+    jb      alarm_ampm_flag,	mode2_d
+    ; if 12 and am, change to 00
+    mov     a,  #0x00
+    da      a
+    mov     alarm_hour, a
+    sjmp    mode2_d
+mode2_b_hourNot12:
+    cjne    R0, #0x00,  mode2_d
+    jnb      alarm_ampm_flag,   mode2_d
+    ; if 0 and pm, change to 12
+    mov     a,  #0x12
+    da      a
+    mov     alarm_hour, a
+    sjmp    mode2_d
+mode2_b_setHours:
+    sjmp    mode2_d
+mode2_b_setMinutes:
     sjmp    mode2_d
 mode2_c:
     jb		tick_flag,	mode2_d
@@ -514,10 +542,10 @@ mode2_d_setMinutes:
     Send_Constant_String(#string_alarm_min)
     sjmp	mode2_d_display
 mode2_d_display:
-    ;Set_Cursor(1, 1)
-    ;Display_BCD(#alarm_hour)
-    ;Set_Cursor(1, 4)
-    ;Display_BCD(#BCD_second)
+    Set_Cursor(1, 1)
+    Display_BCD(alarm_hour)
+    Set_Cursor(1, 4)
+    Display_BCD(alarm_min)
     Set_Cursor(1, 7)
     jb 		alarm_ampm_flag, mode2_setpm
     Display_char(#'A')
