@@ -8,11 +8,15 @@ $MODLP52
 $LIST
 
 CLK             equ 22118400 ; Microcontroller system crystal frequency in Hz
-TIMER0_RATE     equ 2048     ; 2048Hz squarewave (peak amplitude of CEM-1203 speaker)
-TIMER0_RELOAD   equ ((65536-(CLK/TIMER0_RATE)))
+TIMER0_RATE     equ 4096     ; 2048Hz squarewave (peak amplitude of CEM-1203 speaker)
+;TIMER0_RELOAD   equ ((65536-(CLK/TIMER0_RATE)))
+TIMER0_RELOAD   equ 61342
+TIMER0_RELOAD1  equ 62009
+TIMER1_RATE		equ 1000
+TIMER2_RELOAD   equ ((65536-(CLK/TIMER1_RATE)))
 TIMER2_RATE     equ 1000     ; 1000Hz, for a timer tick of 1ms
 TIMER2_RELOAD   equ ((65536-(CLK/TIMER2_RATE)))
-TIME_RATE       equ 200
+TIME_RATE       equ 1000
 DEBOUNCE_DELAY	equ	50
 
 ; pin assignments
@@ -66,6 +70,7 @@ bseg
 tick_flag: 	        dbit 1 ; Set to one in the ISR every time 500 ms had passed
 am_pm_flag:         dbit 1
 alarm_ampm_flag:    dbit 1
+sound_flag:         dbit 1
 
 cseg
 ; These 'equ' must match the wiring between the microcontroller and the LCD!
@@ -117,8 +122,15 @@ Timer0_ISR:
     ;clr TF0  ; According to the data sheet this is done for us already.
     ; In mode 1 we need to reload the timer.
     clr     TR0
+    jb      sound_flag, Timer0_ISR_1
     mov     TH0, #high(TIMER0_RELOAD)
     mov     TL0, #low(TIMER0_RELOAD)
+    sjmp    Timer0_ISR_done
+Timer0_ISR_1:
+    mov     TH0, #high(TIMER0_RELOAD1)
+    mov     TL0, #low(TIMER0_RELOAD1)
+    sjmp    Timer0_ISR_done
+Timer0_ISR_done:
     setb    TR0
     cpl     SOUND_OUT ; Connect speaker to P3.7!
     reti
@@ -164,7 +176,8 @@ Timer2_ISR_incDone:
     mov     a,  Count1ms+1
     cjne    a,  #high(TIME_RATE),   Timer2_ISR_done
 
-    ;cpl     TR0
+    ; toggle sound
+    cpl     sound_flag
 
     ; 500 milliseconds have passed.  Set a flag so the main program knows
     setb    tick_flag ; Let the main program know [] second had passed
@@ -262,8 +275,9 @@ setup:
     setb    EA              ; Enable Global interrupts
     lcall   LCD_4BIT
 
-    ; stop timer 0 (alarm)
+    ; stop alarm sound
     clr     TR0
+    clr     sound_flag
 
     ; set initial message
     Set_Cursor(1, 1)
@@ -283,7 +297,7 @@ setup:
     mov     BCD_hour,       a
     clr     am_pm_flag
     mov     alarm_hour,     a
-    mov     a,  #0x05
+    mov     a,  #0x01
     da      a
     mov     alarm_min,      a
     clr     alarm_ampm_flag
@@ -354,9 +368,10 @@ mode0_b:
     jb      BUTTON_2,   mode0_c
     jb      BUTTON_2,   mode0_b
     jnb     BUTTON_2,   $
-    ; button 2 pressed (...)
+    ; button 2 pressed (turn off alarm (when on), toggle when off)
+    jnb     TR0,        mode0_d ;temp
+    clr     TR0
     sjmp    mode0_d
-
 mode0_c:
     jb		tick_flag,	mode0_d
     ljmp	loop
