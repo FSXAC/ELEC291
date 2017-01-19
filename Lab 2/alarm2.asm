@@ -1,4 +1,3 @@
-
 ; ISR_example.asm: a) Increments/decrements a BCD variable every half second using
 ; an ISR for timer 2; b) Generates a 2kHz square wave at pin P3.7 using
 ; an ISR for timer 0; and c) in the 'main' loop it displays the variable
@@ -13,7 +12,7 @@ TIMER0_RATE     equ 2048     ; 2048Hz squarewave (peak amplitude of CEM-1203 spe
 TIMER0_RELOAD   equ ((65536-(CLK/TIMER0_RATE)))
 TIMER2_RATE     equ 1000     ; 1000Hz, for a timer tick of 1ms
 TIMER2_RELOAD   equ ((65536-(CLK/TIMER2_RATE)))
-TIME_RATE       equ 1000
+TIME_RATE       equ 200
 DEBOUNCE_DELAY	equ	50
 
 ; pin assignments
@@ -84,9 +83,10 @@ $LIST
 ;                        1234567890123456    <- This helps determine the location of the counter
 Initial_Message:  	db 	'--:--:-- -M     ',  	0
 string_date:		db 	'THUR, JAN. 19   ', 	0
-string_mode1_hour:	db 	'^^              ',		0
-string_mode1_min:	db	'   ^^           ',		0
-string_mode1_sec:	db	'      ^^        ',		0
+string_mode0:		db	'--:--:-- -M SET ',		0
+string_mode1_hour:	db 	'^^          TIME',		0
+string_mode1_min:	db	'   ^^       TIME',		0
+string_mode1_sec:	db	'      ^^    TIME',		0
 string_alarm:       db  '--:-- -M    SET ',  	0
 string_alarm_hour:  db  '^^         ALARM',  	0
 string_alarm_min:   db  '   ^^      ALARM',  	0
@@ -164,9 +164,10 @@ Timer2_ISR_incDone:
     mov     a,  Count1ms+1
     cjne    a,  #high(TIME_RATE),   Timer2_ISR_done
 
+    ;cpl     TR0
+
     ; 500 milliseconds have passed.  Set a flag so the main program knows
     setb    tick_flag ; Let the main program know [] second had passed
-    cpl 	TR0 ; Enable/disable timer/counter 0. This line creates a beep-silence-beep-silence sound.
     ; Reset to zero the milli-seconds counter, it is a 16-bit variable
     clr     a
     mov     Count1ms+0, a
@@ -178,6 +179,10 @@ Timer2_ISR_incDone:
     mov 	a,	#0         ; reset second, increment minute
     da 		a
     mov 	BCD_second,    a
+
+    ; check if alarm is up
+    lcall   Timer2_checkAlarm
+
     ; set minute
     mov		a,	BCD_minute
     cjne	a,	#0x59,     Timer2_ISR_incMinute
@@ -203,7 +208,7 @@ Timer2_ISR_PM12:
     mov 	a,	#0
     da		a
     mov 	BCD_hour,	a
-    sjmp Timer2_ISR_done
+    sjmp    Timer2_ISR_done
 Timer2_ISR_incSecond:
     add 	a, 	#0x01
     da 		a
@@ -224,6 +229,23 @@ Timer2_ISR_done:
     pop acc
     reti
 
+Timer2_checkAlarm:
+    ; now would be a good time to check if alarm time == current time
+    mov     a,  BCD_hour
+    cjne    a,  alarm_hour, Timer2_checkAlarm_done
+    mov     a,  BCD_minute
+    cjne    a,  alarm_min,  Timer2_checkAlarm_done
+    jb      am_pm_flag,	Timer2_checkAlarm_pm
+    jb      alarm_ampm_flag,    Timer2_checkAlarm_done
+    setb    TR0
+    sjmp    Timer2_checkAlarm_done
+Timer2_checkAlarm_pm:
+    jnb     alarm_ampm_flag,    Timer2_checkAlarm_done
+    setb    TR0
+    sjmp    Timer2_checkAlarm_done
+Timer2_checkAlarm_done:
+    ret
+
 ;---------------------------------;
 ; Main program. Includes hardware ;
 ; initialization and 'forever'    ;
@@ -238,8 +260,14 @@ setup:
     setb    EA              ; Enable Global interrupts
     lcall   LCD_4BIT
 
+    ; stop timer 0 (alarm)
+    clr     TR0
+
+    ; set initial message
     Set_Cursor(1, 1)
     Send_Constant_String(#Initial_Message)
+
+    ; something important
     setb    tick_flag
 
     ; set mode
@@ -289,6 +317,9 @@ mode0:
     ; set position variable
     clr    	a
     mov     cursor_pos,  a
+    ; setup screen
+    Set_Cursor(1, 1)
+    Send_Constant_String(#string_mode0)
     ; change mode
     mov     a,      #0x01
     mov     mode,   a
@@ -352,6 +383,8 @@ mode1:
     jb      BUTTON_BOOT,    mode1_a
     jnb     BUTTON_BOOT,    $
     ; valid boot button register (save and go back to mode 0)
+    Set_Cursor(1, 1)
+    Send_Constant_String(#Initial_Message)
     mov     a,      #0x00
     mov     mode,   a
     ljmp    mode1_d
