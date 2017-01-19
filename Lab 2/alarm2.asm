@@ -34,6 +34,7 @@ BUTTON_BOOT     equ P4.5
 BUTTON_1        equ P2.1
 BUTTON_2        equ P2.5
 SOUND_OUT       equ P3.7
+SOUND_OUT2      equ P2.0
 
 ; Reset vector
 org 0x0000
@@ -53,7 +54,7 @@ org 0x0013
 
 ; Timer/Counter 1 overflow interrupt vector (not used in this code)
 org 0x001B
-    reti
+    ljmp Timer1_ISR
 
 ; Serial port receive/transmit interrupt vector (not used in this code)
 org 0x0023
@@ -83,6 +84,7 @@ am_pm_flag:         dbit 1
 alarm_ampm_flag:    dbit 1
 sound_flag:         dbit 1
 alarm_toggle_flag:	dbit 1
+timer1_flag:        dbit 1
 
 cseg
 ; These 'equ' must match the wiring between the microcontroller and the LCD!
@@ -118,14 +120,18 @@ string_alarm_ampm:  db  '      ^^   ALARM',  	0
 ;---------------------------------;
 Timer0_Init:
     mov     a,      TMOD
-    anl     a,      #0xf0 ; Clear the bits for timer 0
-    orl     a,      #0x01 ; Configure timer 0 as 16-timer
+    anl     a,      #0x00 ; Clear the bits for timer 0
+    orl     a,      #0x11 ; Configure timer 0 as 16-timer
     mov     TMOD,   a
     mov     TH0,    #high(TIMER0_RELOAD)
     mov     TL0,    #low(TIMER0_RELOAD)
+    mov     TH1,    #high(TIMER0_RELOAD)
+    mov     TL1,    #low(TIMER0_RELOAD)
     ; Enable the timer and interrupts
     setb    ET0  ; Enable timer 0 interrupt
     setb    TR0  ; Start timer 0
+    setb    ET1
+    setb    TR1
     mov     sound_pos,  #0x00
     ret
 
@@ -137,22 +143,6 @@ Timer0_Init:
 Timer0_ISR:
     ;clr TF0  ; According to the data sheet this is done for us already.
     ; In mode 1 we need to reload the timer.
-;    push		acc
-;    clr     TR0
-;    mov 	a,	sound_pos
-;    jz      Timer0_ISR_1
-;    mov     TH0, #high(TIMER0_RELOAD)
-;    mov     TL0, #low(TIMER0_RELOAD)
-;    sjmp    Timer0_ISR_done
-;Timer0_ISR_1:
-;    mov     TH0, #high(TIMER0_RELOAD1)
-;    mov     TL0, #low(TIMER0_RELOAD1)
-;    sjmp    Timer0_ISR_done
-;Timer0_ISR_done:
-;    setb    TR0
-;    cpl     SOUND_OUT ; Connect speaker to P3.7!
-;    pop		acc
-;    reti
     push	acc
     clr     TR0
     mov 	a,	sound_pos
@@ -215,28 +205,13 @@ Timer0_ISR_done:
     pop		acc
     reti
 
-
-;Timer0_ISR:
-;    push    acc
-;    push    psw
-;    clr     TR0
-;    mov     dptr,   #notes
-;    ; MSB
-;    clr     a
-;    movc    a,  @a+dptr
-;    mov     TH0,    a
-;    inc     dptr
-;    ; LSB
-;    clr     a
-;    movc    a,  @a+dptr
-;    mov     TL0,    a
-;    ; move sound position
-;    setb    TR0
-;    cpl     SOUND_OUT
-;    pop     AR0
-;    pop     psw
-;    pop     acc
-;    reti
+Timer1_ISR:
+    clr     TR1
+    mov     TH0, #high(TIMER0_RELOAD10)
+    mov     TL0, #low(TIMER0_RELOAD10)
+    setb    TR1
+    cpl     SOUND_OUT2
+    reti
 
 ;---------------------------------;
 ; Routine to initialize the ISR   ;
@@ -280,8 +255,6 @@ Timer2_ISR_incDone:
     cjne    a,  #high(TIME_RATE),   Timer2_ISR_done
 
     ; toggle sound
-    ;cpl     sound_flag
-
     ; CHANGED
    	mov 	a,	sound_pos
     cjne    a,  #0x0A,  Timer2_ISR_inDone_incSound
@@ -292,6 +265,9 @@ Timer2_ISR_inDone_incSound:
 Timer2_ISR_inDone_incSound_done:
     ; END OF CHANGED
 
+    jnb     timer1_flag,    Timer2_ISR_noTimer1
+    cpl     TR1
+Timer2_ISR_noTimer1:
     ; 500 milliseconds have passed.  Set a flag so the main program knows
     setb    tick_flag ; Let the main program know [] second had passed
     ; Reset to zero the milli-seconds counter, it is a 16-bit variable
@@ -369,11 +345,13 @@ Timer2_checkAlarm:
     jb      alarm_ampm_flag,    Timer2_checkAlarm_done
     setb    TR0
     mov     sound_pos,  #0x00
+    setb    timer1_flag
     sjmp    Timer2_checkAlarm_done
 Timer2_checkAlarm_pm:
     jnb     alarm_ampm_flag,    Timer2_checkAlarm_done
     setb    TR0
     mov     sound_pos,  #0x00
+    setb    timer1_flag
     sjmp    Timer2_checkAlarm_done
 Timer2_checkAlarm_done:
     ret
@@ -394,7 +372,9 @@ setup:
 
     ; stop alarm sound
     clr     TR0
+    clr     TR1
     clr     sound_flag
+    clr     timer1_flag
 
     ; set initial message
     Set_Cursor(1, 1)
@@ -461,7 +441,7 @@ mode0:
     ; change mode
     mov     a,      #0x01
     mov     mode,   a
-    sjmp   	mode0_d
+    ljmp   	mode0_d
 
 mode0_a:
     jb 		BUTTON_1,	mode0_b
@@ -470,6 +450,17 @@ mode0_a:
     jnb     BUTTON_1,   $
     ; button 1 pressed (set alarm) (goto mode 2)
     ; set curosr variable
+    jnb     TR0,        mode0_a_setAlarm
+    ; when alarm is off, this is the snooze button
+    clr     TR0
+    clr     timer1_flag
+    clr     TR1
+    mov     a,  BCD_minute
+    add     a,  #0x01
+    da      a
+    mov     alarm_min,  a
+    sjmp    mode0_d
+mode0_a_setAlarm:
     clr    	a
     mov     cursor_pos,  a
     ; setup screen
@@ -490,7 +481,10 @@ mode0_b:
     jnb     BUTTON_2,   $
     ; button 2 pressed (turn off alarm (when on), toggle when off)
     jnb     TR0,        mode0_b_toggleAlarm
+    ; do the following when alarm is on
     clr     TR0
+    clr     timer1_flag
+    clr     TR1
     sjmp    mode0_d
 mode0_b_toggleAlarm:
     cpl     alarm_toggle_flag
