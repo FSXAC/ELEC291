@@ -1,0 +1,20 @@
+NAME	DELAY
+
+?PR?_Delay10MC?DELAY SEGMENT CODE 
+ 
+	PUBLIC	_Delay10MC
+
+	RSEG  ?PR?_Delay10MC?DELAY
+_Delay10MC:
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	DJNZ R7, _Delay10MC
+	RET  	
+
+	END

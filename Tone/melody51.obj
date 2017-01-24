@@ -1,0 +1,1020 @@
+<MODULE>
+melody51
+</MODULE>
+
+<OPTC51>
+--model-small
+</OPTC51>
+
+<SEGMENTS>
+R_GSINIT,code,0000,NO
+R_BSEG,bit,0000,NO
+R_XSEG,xdata,0000,NO
+BIT_BANK,data,0000,OV
+R_CONST,code,0000,NO
+rbank0,data,0000,OV
+R_PSEG,xdata,0000,NO
+R_DINIT,code,0000,NO
+R_DSEG,data,002A,NO
+R_OSEG,data,0001,OV
+R_IXSEG,xdata,0000,NO
+R_ISEG,idata,0000,NO
+R_HOME,code,0000,NO
+R_XINIT,code,0000,NO
+R_CSEG,code,09D0,NO
+</SEGMENTS>
+
+<LOCALS>
+L006015?,R_CSEG,0122,0000
+L006008?,R_CSEG,010C,0000
+L006007?,R_CSEG,010A,0000
+L006005?,R_CSEG,0124,0000
+L006001?,R_CSEG,0102,0000
+L007002?,R_CSEG,0134,0000
+L014002?,R_CSEG,0998,0000
+</LOCALS>
+
+<PUBLICS>
+_PinkPanther,R_CSEG,06B6,0000
+_main,R_CSEG,0998,0000
+_Melodyplay_PARM_2,R_DSEG,0028,0002
+_BeethovenPlay,R_CSEG,07F4,0000
+_T2ISR,R_CSEG,0000,0000
+_Flintstones,R_CSEG,02AE,0000
+_delay_ms,R_CSEG,00FE,0000
+_wholeN,R_DSEG,0004,0002
+_sixtyFourN,R_DSEG,0018,0002
+_Melodyplay,R_CSEG,0125,0000
+_LooneyToons,R_CSEG,0140,0000
+_qtrN_us,R_DSEG,0002,0002
+_qtrN,R_DSEG,0000,0002
+_AdamsFamily,R_CSEG,0458,0000
+_thirtyTwoN_us,R_DSEG,0016,0002
+_PlayNote,R_CSEG,00E0,0000
+_Saregama,R_CSEG,08C6,0000
+_sixN,R_DSEG,001C,0002
+_twelveN,R_DSEG,0020,0002
+_PlayNote_PARM_2,R_OSEG,0000,0001
+_wholeN_us,R_DSEG,0006,0002
+_EndNote,R_CSEG,00F5,0000
+_twelveN_us,R_DSEG,0022,0002
+_sixtyFourN_us,R_DSEG,001A,0002
+_twentyFourN_us,R_DSEG,0026,0002
+_halfN,R_DSEG,0008,0002
+_halfN_us,R_DSEG,000A,0002
+_twentyFourN,R_DSEG,0024,0002
+_thirtyTwoN,R_DSEG,0014,0002
+_eighthN_us,R_DSEG,000E,0002
+_sixteenN_us,R_DSEG,0012,0002
+_sixteenN,R_DSEG,0010,0002
+_sixN_us,R_DSEG,001E,0002
+_MelodyTempo,R_CSEG,0005,0000
+_eighthN,R_DSEG,000C,0002
+</PUBLICS>
+
+<EXTERNALS>
+__divslong_PARM_2,any,0000,0000
+__divuint_PARM_2,any,0000,0000
+__divslong,any,0000,0000
+_crt0,any,0000,0000
+__divuint,any,0000,0000
+_Delay10MC,any,0000,0000
+</EXTERNALS>
+
+<CODE AT 0000>
+</CODE>
+
+<CODE R_HOME>
+</CODE>
+
+<CODE R_GSINIT>
+</CODE>
+
+<CODE R_CSEG>
+</CODE>
+
+<CODE AT 0000>
+02 addr16(_crt0;)  
+</CODE>
+
+<CODE AT 002B>
+02 addr16(_T2ISR;)  
+</CODE>
+
+<CODE R_HOME>
+</CODE>
+
+<CODE R_GSINIT>
+</CODE>
+
+<CODE R_GSINIT>
+</CODE>
+
+<CODE R_DINIT>
+</CODE>
+
+<CODE R_CSEG>
+D2 B7
+C2 CF
+32
+AA 82
+AB 83
+8A data8(__divslong_PARM_2;)
+EB
+F5 data8(__divslong_PARM_2;0x0001;+;)
+33
+95 E0
+F5 data8(__divslong_PARM_2;0x0002;+;)
+F5 data8(__divslong_PARM_2;0x0003;+;)
+90 EA 60
+E4
+F5 F0
+12 addr16(__divslong;)  
+AA 82
+AB 83
+8A data8(_qtrN;)
+8B data8(_qtrN;0x0001;+;)
+85 data8(_qtrN;) data8(_wholeN;)
+E5 data8(_qtrN;0x0001;+;)
+C5 data8(_wholeN;)
+25 E0
+C5 data8(_wholeN;)
+33
+C5 data8(_wholeN;)
+25 E0
+C5 data8(_wholeN;)
+33
+F5 data8(_wholeN;0x0001;+;)
+85 data8(_qtrN;) data8(_halfN;)
+E5 data8(_qtrN;0x0001;+;)
+C5 data8(_halfN;)
+25 E0
+C5 data8(_halfN;)
+33
+F5 data8(_halfN;0x0001;+;)
+85 data8(_qtrN;) data8(_eighthN;)
+E5 data8(_qtrN;0x0001;+;)
+C3
+13
+C5 data8(_eighthN;)
+13
+C5 data8(_eighthN;)
+F5 data8(_eighthN;0x0001;+;)
+85 data8(_qtrN;) data8(_sixteenN;)
+E5 data8(_qtrN;0x0001;+;)
+C3
+13
+C5 data8(_sixteenN;)
+13
+C5 data8(_sixteenN;)
+C3
+13
+C5 data8(_sixteenN;)
+13
+C5 data8(_sixteenN;)
+F5 data8(_sixteenN;0x0001;+;)
+85 data8(_qtrN;) data8(_thirtyTwoN;)
+E5 data8(_qtrN;0x0001;+;)
+C4
+23
+C5 data8(_thirtyTwoN;)
+C4
+23
+54 1F
+65 data8(_thirtyTwoN;)
+C5 data8(_thirtyTwoN;)
+54 1F
+C5 data8(_thirtyTwoN;)
+65 data8(_thirtyTwoN;)
+C5 data8(_thirtyTwoN;)
+F5 data8(_thirtyTwoN;0x0001;+;)
+85 data8(_qtrN;) data8(_sixtyFourN;)
+E5 data8(_qtrN;0x0001;+;)
+C4
+C5 data8(_sixtyFourN;)
+C4
+54 0F
+65 data8(_sixtyFourN;)
+C5 data8(_sixtyFourN;)
+54 0F
+C5 data8(_sixtyFourN;)
+65 data8(_sixtyFourN;)
+C5 data8(_sixtyFourN;)
+F5 data8(_sixtyFourN;0x0001;+;)
+75 data8(__divuint_PARM_2;) 06
+E4
+F5 data8(__divuint_PARM_2;0x0001;+;)
+85 data8(_wholeN;) 82
+85 data8(_wholeN;0x0001;+;) 83
+12 addr16(__divuint;)  
+85 82 data8(_sixN;)
+85 83 data8(_sixN;0x0001;+;)
+75 data8(__divuint_PARM_2;) 0C
+E4
+F5 data8(__divuint_PARM_2;0x0001;+;)
+85 data8(_wholeN;) 82
+85 data8(_wholeN;0x0001;+;) 83
+12 addr16(__divuint;)  
+85 82 data8(_twelveN;)
+85 83 data8(_twelveN;0x0001;+;)
+75 data8(__divuint_PARM_2;) 18
+E4
+F5 data8(__divuint_PARM_2;0x0001;+;)
+85 data8(_wholeN;) 82
+85 data8(_wholeN;0x0001;+;) 83
+12 addr16(__divuint;)  
+85 82 data8(_twentyFourN;)
+85 83 data8(_twentyFourN;0x0001;+;)
+22
+AA 82
+8A CB
+85 data8(_PlayNote_PARM_2;) CA
+8A CD
+85 data8(_PlayNote_PARM_2;) CC
+C2 CF
+D2 CA
+D2 AD
+D2 AF
+22
+C2 AF
+C2 CA
+C2 CF
+D2 B7
+22
+AA 82
+AB 83
+EA
+4B
+60 rel2(L006007?;)
+7C 01
+80 rel2(L006008?;)
+7C 00
+EC
+60 rel2(L006005?;)
+75 82 64
+C0 02
+C0 03
+12 addr16(_Delay10MC;)  
+D0 03
+D0 02
+1A
+BA FF rel3(L006015?;)
+1B
+80 rel2(L006001?;)
+22
+AA 82
+AB 83
+EA
+4B
+60 rel2(L007002?;)
+8B 82
+8A data8(_PlayNote_PARM_2;)
+12 addr16(_PlayNote;)  
+85 data8(_Melodyplay_PARM_2;) 82
+85 data8(_Melodyplay_PARM_2;0x0001;+;) 83
+12 addr16(_delay_ms;)  
+02 addr16(_EndNote;)  
+90 00 8C
+12 addr16(_MelodyTempo;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 9A
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 85
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 56
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD C8
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD C8
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 9A
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 85
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 56
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 6E
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 85
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 85
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 85
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 85
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 56
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 85
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 56
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD C8
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 82
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD E8
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD C8
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 34
+12 addr16(_Melodyplay;)  
+85 data8(_wholeN;) data8(_Melodyplay_PARM_2;)
+85 data8(_wholeN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+02 addr16(_Melodyplay;)  
+90 00 C8
+12 addr16(_MelodyTempo;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD A6
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC 7A
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 3D
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD E8
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD A6
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC 7A
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD A6
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 5C
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 34
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 34
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 5C
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD A6
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC 7A
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC DC
+12 addr16(_Melodyplay;)  
+85 data8(_halfN;) data8(_Melodyplay_PARM_2;)
+85 data8(_halfN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 34
+12 addr16(_Melodyplay;)  
+85 data8(_halfN;) data8(_Melodyplay_PARM_2;)
+85 data8(_halfN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD A6
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC 7A
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 3D
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD E8
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD A6
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC 7A
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD A6
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 5C
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 34
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 34
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 5C
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD A6
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC 7A
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC DC
+12 addr16(_Melodyplay;)  
+85 data8(_halfN;) data8(_Melodyplay_PARM_2;)
+85 data8(_halfN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC 7A
+02 addr16(_Melodyplay;)  
+90 00 32
+12 addr16(_MelodyTempo;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 3D
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE AE
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE F4
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE AE
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 3D
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE D3
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE AE
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 9A
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE D3
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 9A
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 3D
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD E8
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE AE
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 3D
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE AE
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE F4
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE AE
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 3D
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE D3
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE AE
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 9A
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 3D
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 6E
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 9A
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE AE
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 3D
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 6E
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 9A
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE AE
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 3D
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 6E
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE C1
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE D3
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 6E
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 9A
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE C1
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE D3
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE D3
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 6E
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 9A
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE C1
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE D3
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE D3
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 3D
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 6E
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 9A
+12 addr16(_Melodyplay;)  
+85 data8(_thirtyTwoN;) data8(_Melodyplay_PARM_2;)
+85 data8(_thirtyTwoN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE AE
+02 addr16(_Melodyplay;)  
+90 00 A0
+12 addr16(_MelodyTempo;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC DC
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 0A
+12 addr16(_Melodyplay;)  
+85 data8(_halfN;) data8(_Melodyplay_PARM_2;)
+85 data8(_halfN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 5C
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 82
+12 addr16(_Melodyplay;)  
+85 data8(_halfN;) data8(_Melodyplay_PARM_2;)
+85 data8(_halfN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC DC
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 0A
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 5C
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 82
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 06
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC DC
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 0A
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+12 addr16(_Melodyplay;)  
+85 data8(_eighthN;) data8(_Melodyplay_PARM_2;)
+85 data8(_eighthN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 06
+12 addr16(_Melodyplay;)  
+85 data8(_halfN;) data8(_Melodyplay_PARM_2;)
+85 data8(_halfN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD E8
+12 addr16(_Melodyplay;)  
+85 data8(_halfN;) data8(_Melodyplay_PARM_2;)
+85 data8(_halfN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD C8
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 82
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 0A
+12 addr16(_Melodyplay;)  
+85 data8(_sixteenN;) data8(_Melodyplay_PARM_2;)
+85 data8(_sixteenN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC AD
+12 addr16(_Melodyplay;)  
+85 data8(_halfN;) data8(_Melodyplay_PARM_2;)
+85 data8(_halfN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 0A
+02 addr16(_Melodyplay;)  
+90 00 F0
+12 addr16(_MelodyTempo;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 85
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 6E
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 85
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 6E
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 85
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 06
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 56
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+12 addr16(_Melodyplay;)  
+85 data8(_halfN;) data8(_Melodyplay_PARM_2;)
+85 data8(_halfN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD C8
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC 44
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 85
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE E4
+12 addr16(_Melodyplay;)  
+85 data8(_halfN;) data8(_Melodyplay_PARM_2;)
+85 data8(_halfN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FF 03
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 0A
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD C8
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 06
+12 addr16(_Melodyplay;)  
+85 data8(_halfN;) data8(_Melodyplay_PARM_2;)
+85 data8(_halfN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+02 addr16(_Melodyplay;)  
+90 00 F0
+12 addr16(_MelodyTempo;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC 7A
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC DC
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 34
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 5C
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD A6
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD E8
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 3D
+12 addr16(_Melodyplay;)  
+85 data8(_wholeN;) data8(_Melodyplay_PARM_2;)
+85 data8(_wholeN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 00 00
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 3D
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FE 22
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD E8
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD A6
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 5C
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FD 34
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC DC
+12 addr16(_Melodyplay;)  
+85 data8(_qtrN;) data8(_Melodyplay_PARM_2;)
+85 data8(_qtrN;0x0001;+;) data8(_Melodyplay_PARM_2;0x0001;+;)
+90 FC 7A
+02 addr16(_Melodyplay;)  
+12 addr16(_AdamsFamily;)  
+90 03 E8
+12 addr16(_delay_ms;)  
+12 addr16(_LooneyToons;)  
+90 03 E8
+12 addr16(_delay_ms;)  
+12 addr16(_Flintstones;)  
+90 03 E8
+12 addr16(_delay_ms;)  
+12 addr16(_PinkPanther;)  
+90 03 E8
+12 addr16(_delay_ms;)  
+12 addr16(_BeethovenPlay;)  
+90 03 E8
+12 addr16(_delay_ms;)  
+12 addr16(_Saregama;)  
+90 03 E8
+12 addr16(_delay_ms;)  
+80 rel2(L014002?;)
+</CODE>
+
+<CODE R_CSEG>
+</CODE>
+
+<CODE R_XINIT>
+</CODE>
+
+<CODE R_CONST>
+</CODE>
+
+<CODE AT 002E>
+</CODE>

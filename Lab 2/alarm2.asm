@@ -21,12 +21,23 @@ TIMER0_RELOAD7  equ 60252
 TIMER0_RELOAD8  equ 59252
 TIMER0_RELOAD9  equ 59252
 TIMER0_RELOAD10 equ 59252
+;TIMER0_RELOAD   equ 60252
+;TIMER0_RELOAD1  equ 60829
+;TIMER0_RELOAD2  equ 61342
+;TIMER0_RELOAD3  equ 61578
+;TIMER0_RELOAD4  equ 62009
+;TIMER0_RELOAD5  equ 62394
+;TIMER0_RELOAD6  equ 62737
+;TIMER0_RELOAD7  equ 62894
+;TIMER0_RELOAD8  equ 62894
+;TIMER0_RELOAD9  equ 62894
+;TIMER0_RELOAD10 equ 62894
 
 TIMER1_RATE		equ 1000
 TIMER1_RELOAD   equ ((65536-(CLK/TIMER1_RATE)))
 TIMER2_RATE     equ 1000     ; 1000Hz, for a timer tick of 1ms
 TIMER2_RELOAD   equ ((65536-(CLK/TIMER2_RATE)))
-TIME_RATE       equ 1000
+TIME_RATE       equ 250
 DEBOUNCE_DELAY	equ	50
 
 ; pin assignments
@@ -54,7 +65,8 @@ org 0x0013
 
 ; Timer/Counter 1 overflow interrupt vector (not used in this code)
 org 0x001B
-    ljmp Timer1_ISR
+    ;ljmp Timer1_ISR
+	reti
 
 ; Serial port receive/transmit interrupt vector (not used in this code)
 org 0x0023
@@ -120,18 +132,18 @@ string_alarm_ampm:  db  '      ^^   ALARM',  	0
 ;---------------------------------;
 Timer0_Init:
     mov     a,      TMOD
-    anl     a,      #0x00 ; Clear the bits for timer 0
-    orl     a,      #0x11 ; Configure timer 0 as 16-timer
+    anl     a,      #0xf0 ; Clear the bits for timer 0
+    orl     a,      #0x01 ; Configure timer 0 as 16-timer
     mov     TMOD,   a
     mov     TH0,    #high(TIMER0_RELOAD)
     mov     TL0,    #low(TIMER0_RELOAD)
-    mov     TH1,    #high(TIMER0_RELOAD)
-    mov     TL1,    #low(TIMER0_RELOAD)
+    ;mov     TH1,    #high(TIMER0_RELOAD)
+    ;mov     TL1,    #low(TIMER0_RELOAD)
     ; Enable the timer and interrupts
     setb    ET0  ; Enable timer 0 interrupt
     setb    TR0  ; Start timer 0
-    setb    ET1
-    setb    TR1
+    ;setb    ET1
+    ;setb    TR1
     mov     sound_pos,  #0x00
     ret
 
@@ -205,13 +217,13 @@ Timer0_ISR_done:
     pop		acc
     reti
 
-Timer1_ISR:
-    clr     TR1
-    mov     TH0, #high(TIMER0_RELOAD10)
-    mov     TL0, #low(TIMER0_RELOAD10)
-    setb    TR1
-    cpl     SOUND_OUT2
-    reti
+;Timer1_ISR:
+;    clr     TR1
+;    mov     TH0, #high(TIMER0_RELOAD10)
+;    mov     TL0, #low(TIMER0_RELOAD10)
+;    setb    TR1
+;    cpl     SOUND_OUT2
+;    reti
 
 ;---------------------------------;
 ; Routine to initialize the ISR   ;
@@ -265,9 +277,9 @@ Timer2_ISR_inDone_incSound:
 Timer2_ISR_inDone_incSound_done:
     ; END OF CHANGED
 
-    jnb     timer1_flag,    Timer2_ISR_noTimer1
-    cpl     TR1
-Timer2_ISR_noTimer1:
+    ;jnb     timer1_flag,    Timer2_ISR_noTimer1
+    ;cpl     TR1
+;Timer2_ISR_noTimer1:
     ; 500 milliseconds have passed.  Set a flag so the main program knows
     setb    tick_flag ; Let the main program know [] second had passed
     ; Reset to zero the milli-seconds counter, it is a 16-bit variable
@@ -372,9 +384,9 @@ setup:
 
     ; stop alarm sound
     clr     TR0
-    clr     TR1
+    ;clr     TR1
     clr     sound_flag
-    clr     timer1_flag
+    ;clr     timer1_flag
 
     ; set initial message
     Set_Cursor(1, 1)
@@ -453,8 +465,8 @@ mode0_a:
     jnb     TR0,        mode0_a_setAlarm
     ; when alarm is off, this is the snooze button
     clr     TR0
-    clr     timer1_flag
-    clr     TR1
+    ;clr     timer1_flag
+    ;clr     TR1
     mov     a,  BCD_minute
     add     a,  #0x01
     da      a
