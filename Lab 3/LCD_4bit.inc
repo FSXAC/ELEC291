@@ -9,7 +9,7 @@ cseg
 Wait40uSec:
 	push AR0
 	mov R0, #177
-L0: 
+L0:
 	nop
 	nop
 	djnz R0, L0 ; 1+1+3 cycles->5*45.21123ns*177=40us
@@ -19,14 +19,14 @@ L0:
 ;---------------------------------;
 ; Wait 'R2' milliseconds          ;
 ;---------------------------------;
-Wait_Milli_Seconds mac
+sleep mac
 	push AR2
 	mov R2, %0
-	lcall ?Wait_Milli_Seconds
+	lcall ?sleep
 	pop AR2
 endmac
 
-?Wait_Milli_Seconds:
+?sleep:
 	push AR0
 	push AR1
 L3: mov R1, #45
@@ -37,7 +37,7 @@ L1: djnz R0, L1 ; 3 cycles->3*45.21123ns*166=22.51519us
     pop AR1
     pop AR0
     ret
-	
+
 ;---------------------------------;
 ; Toggles the 'E' pin in the LCD  ;
 ;---------------------------------;
@@ -81,7 +81,7 @@ WriteData mac
 	mov a, %0
 	lcall ?WriteData
 endmac
-	
+
 ?WriteData:
 	setb LCD_RS
 	ljmp LCD_byte
@@ -104,12 +104,12 @@ endmac
 LCD_4BIT:
 	clr LCD_E   ; Resting state of LCD's enable pin is zero
 	clr LCD_RW  ; We are only writing to the LCD in this program
-	
+
 	; After power on, let the LCD start up before initializing
 	; NOTE: the preprogrammed power-on delay of 16 ms on the AT89LP52
 	; seems to be enough.  That is why this line is commented out.
-	; Wait_Milli_Seconds(#40)
-	
+	; sleep(#40)
+
 	; First make sure the LCD is in 8-bit mode and then change to 4-bit mode
 	WriteCommand(#0x33)
 	WriteCommand(#0x33)
@@ -121,7 +121,7 @@ LCD_4BIT:
 	WriteCommand(#0x01) ;  Clear screen command (takes some time)
 
     ;Wait for the clear screen command to finish.
-	Wait_Milli_Seconds(#2)
+	sleep(#2)
     ret
 
 ;---------------------------------;
@@ -146,7 +146,7 @@ endmac
     inc dptr
     sjmp ?Send_Constant_String
 ?Send_Constant_String_Done:
-    ret	
+    ret
 
 ;---------------------------------;
 ; Set LCD cursor at row, column   ;
@@ -200,5 +200,3 @@ Display_char mac
 	lcall ?WriteData
 	pop acc
 endmac
-
-	
