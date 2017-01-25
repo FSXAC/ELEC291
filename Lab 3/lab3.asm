@@ -23,13 +23,14 @@ msg:
 msg_endl:
     db      '\r', '\n', 0
 msg_start:
-    db      'Voltage: ', 0
+    db      '> BCD Value: ', 0
 
 DSEG at 30H
     result: ds 		2
-    bcd:	ds 		1
-    x:		ds 		1
-    y:		ds		1
+    bcd:	ds 		5
+    x:		ds 		4
+    y:		ds		4
+    count:	ds		1
 
 BSEG
 	mf:		dbit 	1
@@ -81,6 +82,7 @@ SPIinit:
 
 ; send byte in R0, receive byte in R1
 SPIcomm:
+    push    ACC
     mov     R1,     #0
     mov     R2,     #8
 SPIcomm_loop:
@@ -88,13 +90,14 @@ SPIcomm_loop:
     rlc     a
     mov     R0,     a
     mov     ADC_MOSI,   c
-    setb    ADC_MISO
+    setb    ADC_SCLK
     mov     c,      ADC_MISO
     mov     a,      R1
     rlc     a
     mov     R1,     a
     clr     ADC_SCLK
     djnz    R2,     SPIcomm_loop
+    pop     ACC
     ret
 
 ; main program
@@ -107,14 +110,21 @@ setup:
     lcall   SPIInit
     lcall   InitSerialPort
 
-loop:
-    clr     ADC_CE
+    mov		count,	#0xA0
 
+loop:
+	mov	 	a,	count
+	add		a,	#0x99
+	da		a
+	mov 	count,	a
+
+    clr     ADC_CE
     ; starting bit is 1
     mov     R0,         #0x01
     lcall   SPIcomm
 
     ; read channel 0 & save to result, only care about lower 2 bits
+    ; read xxxxxxRR xxxxxxxx
     mov     R0,         #0x80
     lcall   SPIcomm
     mov     a,          R1
@@ -122,28 +132,39 @@ loop:
     mov     result+1,   a
 
     ; read rest of 8-bits
-    mov     R0,         #0x00 ; doesn't matter
+    ; read xxxxxxxx RRRRRRRR
+    mov     R0,         #0x55       ; doesn't matter
     lcall   SPIcomm
     mov     result,     R1
-
     setb    ADC_CE
-    sleep(#50)
+    sleep(#250)
 
     ; do something with result
+    ; print starting string
+    putBCD(count)
     mov     dptr,   #msg_start
     lcall   putString
 
     ; convert result into BCD
-    mov     a,      result
-    da      a
-    mov     result, a
+    mov     x,      result
+    mov     x+1,    result+1
+    mov     x+2,    #0x00
+    mov     x+3,    #0x00
+    lcall   hex2bcd
+    mov     result,     x
+    mov     result+1,   x+1
 
     ; print BCD
+    putBCD(result+1)
     putBCD(result)
 
+    ; print terminating string
     mov     dptr,   #msg_endl
     lcall   putString
-    ljmp    loop
 
-
+    ; countdown timeout
+    mov 	a,	count
+    cjne 	a,	#0x00,	loop1
+    sjmp	$
+loop1:	ljmp	loop
 END
