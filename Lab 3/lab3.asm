@@ -23,14 +23,13 @@ msg:
 msg_endl:
     db      '\r', '\n', 0
 msg_start:
-    db      '> BCD Value: ', 0
+    db      '>>> BCD Value: ', 0
 
 DSEG at 30H
     result: ds 		2
     bcd:	ds 		5
     x:		ds 		4
     y:		ds		4
-    count:	ds		1
 
 BSEG
 	mf:		dbit 	1
@@ -115,12 +114,6 @@ setup:
 
 ; loops forever
 loop:
-    ; decrement counter for timeout
-	mov	 	a,	count
-	add		a,	#0x99
-	da		a
-	mov 	count,	a
-
     clr     ADC_CE
     ; starting bit is 1
     mov     R0,         #0x01
@@ -144,15 +137,8 @@ loop:
 
     ; do something with result
     ; print starting string
-    putBCD(count)
-    mov     dptr,   #msg_start
-    lcall   putString
-
-    ; before BCD
-    putBCD(result+1)
-    putBCD(result)
-    mov     a,      #' '
-    lcall   putChar
+    ;mov     dptr,   #msg_start
+    ;lcall   putString
 
     ; convert result into BCD
     mov     x,      result
@@ -163,17 +149,19 @@ loop:
     mov     result,     bcd
     mov     result+1,   bcd+1
 
-    ; print BCD
+    ; print BCD for ADC value
     putBCD(result+1)
     putBCD(result)
+
+    ; compute Vout
+    ; x is already loaded
+    Load_y(5000)                    ; 5000mV reference
+    lcall   mul32
+    ; CONTINUE FROM HERE I NEED TO SHIT
+
 
     ; print terminating string
     mov     dptr,   #msg_endl
     lcall   putString
-
-    ; countdown timeout
-    mov 	a,	count
-    cjne 	a,	#0x00,	loop1
-    sjmp	$
-loop1:	ljmp	loop
+    ljmp	loop
 END
