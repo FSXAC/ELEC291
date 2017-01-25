@@ -110,9 +110,12 @@ setup:
     lcall   SPIInit
     lcall   InitSerialPort
 
+    ; set up counter
     mov		count,	#0xA0
 
+; loops forever
 loop:
+    ; decrement counter for timeout
 	mov	 	a,	count
 	add		a,	#0x99
 	da		a
@@ -145,14 +148,20 @@ loop:
     mov     dptr,   #msg_start
     lcall   putString
 
+    ; before BCD
+    putBCD(result+1)
+    putBCD(result)
+    mov     a,      #' '
+    lcall   putChar
+
     ; convert result into BCD
     mov     x,      result
     mov     x+1,    result+1
     mov     x+2,    #0x00
     mov     x+3,    #0x00
     lcall   hex2bcd
-    mov     result,     x
-    mov     result+1,   x+1
+    mov     result,     bcd
+    mov     result+1,   bcd+1
 
     ; print BCD
     putBCD(result+1)
