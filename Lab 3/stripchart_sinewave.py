@@ -1,10 +1,11 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import sys, time, math
 
 xsize=100
-   
+
 def data_gen():
     t = data_gen.t
     while True:
@@ -39,5 +40,5 @@ xdata, ydata = [], []
 
 # Important: Although blit=True makes graphing faster, we need blit=False to prevent
 # spurious lines to appear when resizing the stripchart.
-ani = animation.FuncAnimation(fig, run, data_gen, blit=False, interval=100, repeat=False)
+ani = animation.FuncAnimation(fig, run, data_gen, blit=False, interval=50, repeat=False)
 plt.show()

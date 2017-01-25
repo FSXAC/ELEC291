@@ -17,14 +17,6 @@ ADC_MOSI    equ     P2.1
 ADC_MISO    equ     P2.2
 ADC_SCLK    equ     P2.3
 
-; strings
-msg:
-    db      'THE END IS NEVER ', 0
-msg_endl:
-    db      '\r', '\n', 0
-msg_start:
-    db      '>>> BCD Value: ', 0
-
 DSEG at 30H
     result: ds 		2
     bcd:	ds 		5
@@ -109,9 +101,6 @@ setup:
     lcall   SPIInit
     lcall   InitSerialPort
 
-    ; set up counter
-    mov		count,	#0xA0
-
 ; loops forever
 loop:
     clr     ADC_CE
@@ -133,12 +122,7 @@ loop:
     lcall   SPIcomm
     mov     result,     R1
     setb    ADC_CE
-    sleep(#250)
-
-    ; do something with result
-    ; print starting string
-    ;mov     dptr,   #msg_start
-    ;lcall   putString
+    sleep(#50)
 
     ; convert result into BCD
     mov     x,      result
@@ -149,19 +133,38 @@ loop:
     mov     result,     bcd
     mov     result+1,   bcd+1
 
+    ; ignore 0 values because it's not right
+    mov		a,	result
+   	jnz		loop_putBCD
+   	mov 	a,	result+1
+   	jnz		loop_putBCD
+   	ljmp	loop
+
+loop_putBCD:
     ; print BCD for ADC value
     putBCD(result+1)
     putBCD(result)
+    mov     a,  #'\r'
+    lcall   putChar
+    mov     a,  #'\n'
+    lcall   putChar
 
     ; compute Vout
     ; x is already loaded
-    Load_y(5000)                    ; 5000mV reference
+    Load_y(50000)                    ; * 5000mV reference
     lcall   mul32
-    ; CONTINUE FROM HERE I NEED TO SHIT
-
-
+    Load_y(1023)                    ; / 1023 ratio
+    lcall   div32
+    Load_y(27300)                     ; - 273mV voltage to convert to celcius
+    lcall	sub32
+    lcall   hex2bcd
+    putBCD(bcd+1)
+    putBCD(bcd)
+    
     ; print terminating string
-    mov     dptr,   #msg_endl
-    lcall   putString
+    mov     a,  #'\r'
+    lcall   putChar
+    mov     a,  #'\n'
+    lcall   putChar
     ljmp	loop
 END
