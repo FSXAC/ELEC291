@@ -40,3 +40,29 @@ endmac
     lcall   putchar
     pop     acc
     ret
+
+barLED mac
+    push    ACC
+    push    AR0
+    mov     R0,     %0
+    mov     a,      #8
+    subb    a,      R0
+    lcall   ?barLED
+    pop     AR0
+    pop     ACC
+?barLED:
+    clr     LED_CLR
+    clr     LED_CLK
+    clr     LED_LATCH
+    setb    LED_DATA
+    setb    LED_CLR
+    dec     R0
+barLED_1:
+    cpl     LED_CLK
+    cpl     LED_CLK
+    djnz    R0, barLED_1
+
+    clr     LED_DATA
+
+    cpl     LED_CLK
+    cpl     LED_CLK

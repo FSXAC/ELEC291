@@ -17,6 +17,12 @@ ADC_MOSI    equ     P2.1
 ADC_MISO    equ     P2.2
 ADC_SCLK    equ     P2.3
 
+; pins for shift register
+LED_DATA    equ     P2.4
+LED_LATCH   equ     P2.5
+LED_CLK     equ     P2.6
+LED_CLR     equ     P2.7
+
 DSEG at 30H
     result: ds 		2
     bcd:	ds 		5
@@ -101,6 +107,14 @@ setup:
     lcall   SPIInit
     lcall   InitSerialPort
 
+    ; shift register
+    clr     LED_DATA
+    clr     LED_LATCH
+    clr     LED_CLK
+    clr     LED_CLR
+    sleep(#2)
+    setb    LED_CLR
+
 ; loops forever
 loop:
     clr     ADC_CE
@@ -140,6 +154,8 @@ loop:
    	jnz		loop_putBCD
    	ljmp	loop
 
+    ; toggle things into shift register
+
 loop_putBCD:
     ; print BCD for ADC value
     putBCD(result+1)
@@ -151,7 +167,7 @@ loop_putBCD:
 
     ; compute Vout
     ; x is already loaded
-    Load_y(50000)                    ; * 5000mV reference
+    Load_y(48500)                    ; * 2000mV reference
     lcall   mul32
     Load_y(1023)                    ; / 1023 ratio
     lcall   div32
@@ -160,11 +176,92 @@ loop_putBCD:
     lcall   hex2bcd
     putBCD(bcd+1)
     putBCD(bcd)
-    
+
     ; print terminating string
     mov     a,  #'\r'
     lcall   putChar
     mov     a,  #'\n'
     lcall   putChar
+
+    ; output to LED
+    mov     x,      bcd
+    mov     x+1,    bcd+1
+    mov     x+2,    bcd+2
+    mov     x+3,    bcd+3
+    Load_y(1000)
+    lcall   LED_low1
+;     lcall   x_gteq_y
+;     jnb     mf,     low1
+;     Load_y(1500)
+;     lcall   x_gteq_y
+;     jnb     mf,     low2
+;     Load_y(2000)
+;     lcall   x_gteq_y
+;     jnb     mf,     low3
+;     Load_y(3000)
+;     lcall   x_gteq_y
+;     jnb     mf,     low4
+;     Load_y(4000)
+;     lcall   x_gteq_y
+;     jnb     mf,     med1
+;     Load_y(5000)
+;     lcall   x_gteq_y
+;     jnb     mf,     med2
+;     Load_y(6000)
+;     lcall   x_gteq_y
+;     jnb     mf,     high1
+;     Load_y(7000)
+;     lcall   x_gteq_y
+;     jnb     mf,     high2
+;     ljmp	loop
+; low1:
+;     lcall   LED_low1
+;     ljmp    loop
+; low2:
+;     lcall   LED_low2
+;     ljmp    loop
+; low3:
+;     lcall   LED_low3
+;     ljmp    loop
+; low4:
+;     lcall   LED_low4
+;     ljmp    loop
+; med1:
+;     lcall   LED_med1
+;     ljmp    loop
+; med2:
+;     lcall   LED_med2
+;     ljmp    loop
+; high1:
+;     lcall   LED_high1
+;     ljmp    loop
+; high2:
+;     lcall   LED_high2
     ljmp	loop
+
+LED_low1:
+    clr     LED_CLR
+    clr     LED_CLK
+    clr     LED_LATCH
+    setb    LED_DATA
+    setb    LED_CLR
+    
+    cpl     LED_CLK
+    cpl     LED_CLK
+    clr     LED_DATA
+    cpl     LED_CLK
+    cpl     LED_CLK
+    cpl     LED_CLK
+    cpl     LED_CLK
+    cpl     LED_CLK
+    cpl     LED_CLK
+    cpl     LED_CLK
+    cpl     LED_CLK
+    cpl     LED_CLK
+    cpl     LED_CLK
+    cpl     LED_CLK
+    cpl     LED_CLK
+    cpl     LED_CLK
+    cpl     LED_CLK
+    setb    LED_LATCH
 END

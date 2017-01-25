@@ -56,9 +56,9 @@ public void draw() {
         adc_value       = getStringSPI(adc_value);
         adc_temperature = getStringSPI(PApplet.parseInt(adc_temperature * 100)) / 100;
 
-        println(str(adc_value) + '\t' + str(adc_temperature));
+        // println(str(adc_value) + '\t' + str(adc_temperature));
 
-        adc_voltage = adc_value / 1023.0f * 5;
+        adc_voltage = adc_value / 1023.0f * 4.85f;
         clc_temperature = (adc_voltage - 2.73f) * 100;
 
         // bound
