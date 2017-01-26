@@ -58,7 +58,7 @@ public void draw() {
 
         // println(str(adc_value) + '\t' + str(adc_temperature));
 
-        adc_voltage = adc_value / 1023.0f * 4.85f;
+        adc_voltage = adc_value / 1023.0f * 5;
         clc_temperature = (adc_voltage - 2.73f) * 100;
 
         // bound

@@ -167,12 +167,66 @@ loop_putBCD:
 
     ; compute Vout
     ; x is already loaded
-    Load_y(48500)                    ; * 2000mV reference
+    Load_y(10)
+    lcall	sub32
+    Load_y(48600)                    ; * 5000mV reference
     lcall   mul32
     Load_y(1023)                    ; / 1023 ratio
     lcall   div32
-    Load_y(27300)                     ; - 273mV voltage to convert to celcius
+    Load_y(27300)                     ; - 2730mV voltage to convert to celcius
     lcall	sub32
+
+    ; output to LED
+  	; < 10
+    Load_y(1000)
+    lcall   x_gteq_y
+    jb      mf,     low1
+    barLED(#1)
+    ljmp    loop_end
+low1: ; 10 < t < 20
+    Load_y(2000)
+    lcall   x_gteq_y
+    jb      mf,     low2
+    barLED(#2)
+    ljmp    loop_end
+low2: ; 20 < t < 25
+    Load_y(2500)
+    lcall   x_gteq_y
+    jb     mf,     low3
+    barLED(#3)
+    ljmp    loop_end
+low3: ; 25 < t < 35
+    Load_y(3500)
+    lcall   x_gteq_y
+    jb     mf,     low4
+    barLED(#4)
+    ljmp    loop_end
+low4: ; 35 < t < 45
+    Load_y(4500)
+    lcall   x_gteq_y
+    jb     mf,     med1
+    barLED(#5)
+    ljmp    loop_end
+med1: ; 45 < t < 60
+    Load_y(6000)
+    lcall   x_gteq_y
+    jb     mf,     med2
+    barLED(#6)
+    ljmp    loop_end
+med2: ; 60 < t < 70
+    Load_y(7000)
+    lcall   x_gteq_y
+    jb     mf,     high1
+    barLED(#7)
+    ljmp    loop_end
+high1: ; 70 < t < 80
+    Load_y(8000)
+    lcall   x_gteq_y
+    jb     mf,     loop_end
+    barLED(#8)
+    ljmp	loop_end
+loop_end:
+    ; print results to SPI
     lcall   hex2bcd
     putBCD(bcd+1)
     putBCD(bcd)
@@ -182,86 +236,5 @@ loop_putBCD:
     lcall   putChar
     mov     a,  #'\n'
     lcall   putChar
-
-    ; output to LED
-    mov     x,      bcd
-    mov     x+1,    bcd+1
-    mov     x+2,    bcd+2
-    mov     x+3,    bcd+3
-    Load_y(1000)
-    lcall   LED_low1
-;     lcall   x_gteq_y
-;     jnb     mf,     low1
-;     Load_y(1500)
-;     lcall   x_gteq_y
-;     jnb     mf,     low2
-;     Load_y(2000)
-;     lcall   x_gteq_y
-;     jnb     mf,     low3
-;     Load_y(3000)
-;     lcall   x_gteq_y
-;     jnb     mf,     low4
-;     Load_y(4000)
-;     lcall   x_gteq_y
-;     jnb     mf,     med1
-;     Load_y(5000)
-;     lcall   x_gteq_y
-;     jnb     mf,     med2
-;     Load_y(6000)
-;     lcall   x_gteq_y
-;     jnb     mf,     high1
-;     Load_y(7000)
-;     lcall   x_gteq_y
-;     jnb     mf,     high2
-;     ljmp	loop
-; low1:
-;     lcall   LED_low1
-;     ljmp    loop
-; low2:
-;     lcall   LED_low2
-;     ljmp    loop
-; low3:
-;     lcall   LED_low3
-;     ljmp    loop
-; low4:
-;     lcall   LED_low4
-;     ljmp    loop
-; med1:
-;     lcall   LED_med1
-;     ljmp    loop
-; med2:
-;     lcall   LED_med2
-;     ljmp    loop
-; high1:
-;     lcall   LED_high1
-;     ljmp    loop
-; high2:
-;     lcall   LED_high2
-    ljmp	loop
-
-LED_low1:
-    clr     LED_CLR
-    clr     LED_CLK
-    clr     LED_LATCH
-    setb    LED_DATA
-    setb    LED_CLR
-    
-    cpl     LED_CLK
-    cpl     LED_CLK
-    clr     LED_DATA
-    cpl     LED_CLK
-    cpl     LED_CLK
-    cpl     LED_CLK
-    cpl     LED_CLK
-    cpl     LED_CLK
-    cpl     LED_CLK
-    cpl     LED_CLK
-    cpl     LED_CLK
-    cpl     LED_CLK
-    cpl     LED_CLK
-    cpl     LED_CLK
-    cpl     LED_CLK
-    cpl     LED_CLK
-    cpl     LED_CLK
-    setb    LED_LATCH
+    ljmp    loop
 END
