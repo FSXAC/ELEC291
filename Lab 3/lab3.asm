@@ -2,6 +2,10 @@ $MODLP52
 org 0000H
     ljmp    setup
 
+; Timer/Counter 0 overflow interrupt vector
+org 0x000B
+    ljmp Timer0_ISR
+
 ; imports
 $include(math32.inc)
 $include(macros.inc)
@@ -10,6 +14,9 @@ $include(macros.inc)
 CLK     equ     22118400
 BAUD    equ     115200
 T1LOAD  equ     (0x100-CLK/(16*BAUD))
+
+; for the alarm
+T0LOAD  equ     ((65536-(CLK/4096)))
 
 ; pins for ADCs
 ADC_CE      equ     P2.0
@@ -34,6 +41,39 @@ BSEG
 
 CSEG
 
+;---------------------------------;
+; Routine to initialize the ISR   ;
+; for timer 0                     ;
+;---------------------------------;
+timer0_init:
+    ; clear bits for the timer
+    mov a,      TMOD
+    anl a,      #0xF0
+    orl a,      #0x01
+    mov TMOD,   a
+
+    ; set reload value
+    mov TH0,    #high(T0LOAD)
+    mov TL0,    #low(T0LOAD)
+
+    ; enable interrupts
+    setb    ET0
+    setb    TR0
+    ret
+
+;---------------------------------;
+; ISR for timer 0.  Set to execute;
+; every 1/4096Hz to generate a    ;
+; 2048 Hz square wave at pin P3.7 ;
+;---------------------------------;
+timer0_ISR:
+    ; operating in mode 1, reload the timer
+    clr     TR0
+    mov     TH0,    #high(T0LOAD)
+    mov     TL0,    #low(T0LOAD)
+    setb    TR0
+    cpl     P3.7
+    reti
 
 ; configure serial port and baudrate using timer 1
 InitSerialPort:
@@ -115,6 +155,12 @@ setup:
     sleep(#2)
     setb    LED_CLR
 
+    ; timer initialization
+    lcall   timer0_init
+
+    ; enable global interrupts
+    setb    EA
+
 ; loops forever
 loop:
     clr     ADC_CE
@@ -169,12 +215,15 @@ loop_putBCD:
     ; x is already loaded
     Load_y(10)
     lcall	sub32
-    Load_y(48600)                    ; * 5000mV reference
+    Load_y(49500)                    ; * 5000mV reference
     lcall   mul32
     Load_y(1023)                    ; / 1023 ratio
     lcall   div32
     Load_y(27300)                     ; - 2730mV voltage to convert to celcius
     lcall	sub32
+
+    ; clear sound
+    clr     TR0
 
     ; output to LED
   	; < 10
@@ -216,15 +265,20 @@ med1: ; 45 < t < 60
 med2: ; 60 < t < 70
     Load_y(7000)
     lcall   x_gteq_y
-    jb     mf,     high1
+    jb      mf,     high1
+    setb    TR0
     barLED(#7)
     ljmp    loop_end
 high1: ; 70 < t < 80
     Load_y(8000)
     lcall   x_gteq_y
-    jb     mf,     loop_end
+    jb      mf,     high2
+    setb    TR0
     barLED(#8)
     ljmp	loop_end
+high2:
+    setb    TR0
+    ljmp    loop_end
 loop_end:
     ; print results to SPI
     lcall   hex2bcd

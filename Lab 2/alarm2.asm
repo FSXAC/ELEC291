@@ -9,7 +9,7 @@ $LIST
 
 CLK             equ 22118400 ; Microcontroller system crystal frequency in Hz
 TIMER0_RATE     equ 4096     ; 2048Hz squarewave (peak amplitude of CEM-1203 speaker)
-;TIMER0_RELOAD   equ ((65536-(CLK/TIMER0_RATE)))
+;TIMER0_RELOAD   equ ((65536-(CLK/4096)))
 TIMER0_RELOAD   equ 61342
 TIMER0_RELOAD1  equ 61093
 TIMER0_RELOAD2  equ 61342

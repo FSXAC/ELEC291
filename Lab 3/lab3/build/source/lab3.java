@@ -36,6 +36,7 @@ float v_offset_tgt = 0;
 
 public void setup() {
     
+    strokeWeight(5);
 
     // list number of ports
     printArray(Serial.list());
@@ -58,7 +59,7 @@ public void draw() {
 
         // println(str(adc_value) + '\t' + str(adc_temperature));
 
-        adc_voltage = adc_value / 1023.0f * 5;
+        adc_voltage = (adc_value - 10) / 1023.0f * 4.95f;
         clc_temperature = (adc_voltage - 2.73f) * 100;
 
         // bound
@@ -66,12 +67,9 @@ public void draw() {
             clc_temperature = -40;
         }
 
-        // fix adc temperature to signed
-
-
         // for graphics
         // rectangles
-        fill(0, 5);
+        fill(0, 10);
         rect(0, 0, width, height);
         fill(20);
         rect(width - 80, 0, 80, height);
@@ -81,30 +79,32 @@ public void draw() {
         y_tgt    = map(clc_temperature, 0, 40, height - 50, 50);
         y2_prev  = y2;
         y2_tgt   = map(adc_temperature, 0, 40, height - 50, 50);
-        y        = lerp(y, y_tgt, 0.7f);
-        y2       = lerp(y2, y2_tgt, 0.7f);
+        y        = lerp(y, y_tgt, 0.1f);
+        y2       = lerp(y2, y2_tgt, 0.3f);
         v_offset = lerp(v_offset, v_offset_tgt, 0.5f);
 
-        stroke(
+        fill(
             map(y, 0.3f * (height - 50), 0.7f * (height - 50), 255, 0),
             sq(map(y, 0, height, -1, 1)) * 255,
             map(y, 0.3f * (height - 50), 0.7f * (height - 50), 0, 255)
             );
-        line(x, y2 + v_offset, x-5, y2_prev + v_offset);
-        strokeWeight(3);
-        stroke(
+        rect(x, y2 + v_offset, 5, height);
+        fill(
             map(y, 0.3f * (height - 50), 0.7f * (height - 50), 255, 0),
             (1 - sq(map(y, 0, height, -1, 1))) * 255,
             map(y, 0.3f * (height - 50), 0.7f * (height - 50), 0, 255)
             );
-        line(x, y + v_offset, x-5, y_prev + v_offset);
+        rect(x, y + v_offset, 5, height);
+
+        stroke(255);
+        line(x, y2 + v_offset, x-5, y2_prev + v_offset);
+        noStroke();
 
         if (x >= width - 80) {
             x = 0;
         } else {
             x+= 5;
         }
-        noStroke();
 
         fill(255);
         text(String.format("%.2f", clc_temperature) + " C", width - 75, y + v_offset);
@@ -114,6 +114,11 @@ public void draw() {
 
 public void mouseWheel(MouseEvent event) {
     v_offset_tgt += 20 * event.getCount();
+}
+
+public void mouseClicked() {
+    fill(0);
+    rect(0, 0, width, height);
 }
 
 public int getStringSPI(int default_val) {
