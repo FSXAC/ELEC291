@@ -112,7 +112,7 @@ putString_return:
     ret
 
 ; initialize SPI
-SPIinit:
+SPIInit:
     setb    ADC_MISO
     clr     ADC_SCLK
     ret

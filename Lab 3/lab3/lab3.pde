@@ -17,7 +17,7 @@ float v_offset     = 0;
 float v_offset_tgt = 0;
 
 void setup() {
-    size(500, 300);
+    size(1000, 500);
     strokeWeight(5);
 
     // list number of ports
@@ -39,7 +39,7 @@ void draw() {
         adc_value       = getStringSPI(adc_value);
         adc_temperature = getStringSPI(int(adc_temperature * 100)) / 100;
 
-        // println(str(adc_value) + '\t' + str(adc_temperature));
+        println(str(adc_value) + '\t' + str(adc_temperature));
 
         adc_voltage = (adc_value - 10) / 1023.0 * 4.95;
         clc_temperature = (adc_voltage - 2.73) * 100;

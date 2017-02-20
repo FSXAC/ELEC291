@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import sys, time, math
 
-xsize = 100
+xsize = 300
 
 # configure the serial port
 ser = serial.Serial(
-    port='COM5',
+    port='COM3',
     baudrate=115200,
     parity=serial.PARITY_NONE,
     stopbits=serial.STOPBITS_TWO,
@@ -17,8 +17,8 @@ ser.isOpen()
 
 # initial read
 initial_read  = ser.readline()
-initial_read2 = ser.readline()
-if int(initial_read[1:len(initial_read) - 2]) > int(initial_read2[1:len(initial_read2) - 2]):
+print(int(initial_read[1:len(initial_read) - 2]))
+if int(initial_read[1:len(initial_read) - 2]) < 1000:
     # skip one line
     ser.readline()
 
@@ -34,10 +34,14 @@ def data_gen():
     while True:
         ADC_num = ser.readline()
         ADC_num = int(ADC_num[1:len(ADC_num) - 2])
+        if ADC_num > 1000:
+            continue
         ADC_tmp = ser.readline()
         ADC_tmp = float(ADC_tmp[:len(ADC_tmp) - 2]) / 100
         t+=1
         # val=100.0*math.sin(t*2.0*3.1415/100.0)
+        #print(ADC_tmp)
+        time.sleep(0.)
         yield t, ADC_tmp
 
 def run(data):
@@ -50,7 +54,7 @@ def run(data):
             ax.set_xlim(t-xsize, t)
         line.set_data(xdata, ydata)
 
-    return line,
+    return line
 
 def on_close_figure(event):
     sys.exit(0)
@@ -60,7 +64,7 @@ fig = plt.figure()
 fig.canvas.mpl_connect('close_event', on_close_figure)
 ax = fig.add_subplot(111)
 line, = ax.plot([], [], lw=2)
-ax.set_ylim(0, 100)
+ax.set_ylim(20, 90)
 ax.set_xlim(0, xsize)
 ax.grid()
 xdata, ydata = [], []
