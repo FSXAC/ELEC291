@@ -1,3 +1,6 @@
+/* SIMPLE PROGRAM TO PRINT 'HELLO WORLD' VIA UART
+*/
+
 #include <C8051f38x.h>
 #include <stdio.h>
 
