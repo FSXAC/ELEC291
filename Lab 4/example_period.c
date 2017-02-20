@@ -23,7 +23,7 @@ void PORT_Init (void) {
 void SYSCLK_Init (void) {
 	// CLKSEL&=0b_1111_1000; // Not needed because CLKSEL==0 after reset
 #if (SYSCLK == 12000000L)
-	//CLKSEL|=0b_0000_0000;  // SYSCLK derived from the Internal High-Frequency Oscillator / 4
+	// CLKSEL|=0b_0000_0000;  // SYSCLK derived from the Internal High-Frequency Oscillator / 4
 #elif (SYSCLK == 24000000L)
 	CLKSEL |= 0b_0000_0010; // SYSCLK derived from the Internal High-Frequency Oscillator / 2.
 #elif (SYSCLK == 48000000L)
