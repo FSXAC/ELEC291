@@ -14,6 +14,8 @@
 #define LCD_D5 P1_2
 #define LCD_D6 P1_1
 #define LCD_D7 P1_0
+#define LCD_A  P0_7
+#define LCD_K  P0_6
 #define CHARS_PER_LINE 16
 
 char _c51_external_startup (void) {
@@ -127,6 +129,8 @@ void WriteCommand (unsigned char x) {
 void LCD_4BIT (void) {
 	LCD_E  = 0; // Resting state of LCD's enable is zero
 	LCD_RW = 0; // We are only writing to the LCD in this program
+    LCD_A  = 0;
+    LCD_K  = 1;
 	waitms(20);
 	// First make sure the LCD is in 8-bit mode and then change to 4-bit mode
 	WriteCommand(0x33);
