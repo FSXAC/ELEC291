@@ -1,8 +1,14 @@
-#include <C8051F38x.h>
+// lab 4
 
+// libarries
+#include <C8051F38x.h>
+#include <stdio.h>
+
+// timing
 #define SYSCLK    24000000L // SYSCLK frequency in Hz
 #define BAUDRATE    115200L // Baud rate of UART in bps
 
+// pin assignments
 #define LCD_RS P2_2
 #define LCD_RW P2_1 // Not used in this code
 #define LCD_E  P2_0
@@ -14,6 +20,7 @@
 #define LCD_K  P0_6
 #define CHARS_PER_LINE 16
 
+// init function
 char _c51_external_startup (void) {
     PCA0MD &= (~0x40) ;    // DISABLE WDT: clear Watchdog Enable bit
     VDM0CN  = 0x80; // enable VDD monitor
@@ -94,6 +101,38 @@ void delay(unsigned int ms) {
     for (i = 0; i < ms; i++) for (j = 0; j < 4; j++) delayUs(250);
 }
 
+// port IO initialization
+void PORT_init(void) {
+    // enable UTX as push-pull output
+    P0MDOUT |= 0x10;
+
+    // enable UART on P0.4(TX) and P0.5(RX)
+    XBR0     = 0x01;
+
+    // Enable crossbar and weak pull-ups
+    XBR1     = 0x40;
+}
+
+// oscillator initialization
+void SYSCLK_init(void) {
+    CKLSEL |= 0x03;
+    OSCICN |= 0x03;
+    RSTSRC  = 0x04;
+}
+
+// UART0 initialization
+void UART0_init(void) {
+    SCON0  = 0x10;
+    TH1    = 0x10000 - ((SYSCLK / BAUDRATE) / 2L);
+    CKCON &= ~0x0B;
+    CKCON |= 0x08;
+    TL1    = TH1;
+    TMOD  &= ~0xF0;
+    TMOD  |= 0x20;
+    TR1    = 1;
+    TI     = 1;
+}
+
 // pulse LCD clock
 void LCD_pulse(void) {
     LCD_E = 1;
@@ -168,7 +207,17 @@ void LCD_print(char *string, unsigned char line, bit clear) {
 }
 
 void main(void) {
+    PCA0MD &= ~0x40;
+    // initialize a bunch of stuff
+    PORT_init();
+    SYSCLK_init();
+    UART0_init();
     LCD_init();
+
+    // print to LCD
     LCD_print("This is a test", 1, 1);
     LCD_print("Well Well Well", 2, 1);
+
+    // print to terminal
+    printf("Hello bitch!\r\n");
 }
