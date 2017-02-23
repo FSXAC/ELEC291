@@ -118,3 +118,51 @@ void LCD_byte(unsigned char x) {
     LCD_D4 = ACC_0;
     LCD_pulse();
 }
+
+// write data to LCD
+void LCD_write(unsigned char x) {
+    LCD_RS = 1;
+    LCD_byte(x);
+    delay(2);
+}
+
+// send command to LCD
+void LCD_cmd(unsigned char x) {
+    LCD_RS = 0;
+    LCD_byte(x);
+    delay(5);
+}
+
+// initialize the LCD in 4 bit mode
+void LCD_init(void) {
+    LCD_E = 0;
+    LCD_RW = 0;
+    LCD_A  = 0;
+    LCD_K  = 1;
+    delay(20);
+
+    // First make sure the LCD is in 8-bit mode and then change to 4-bit mode
+    LCD_cmd(0x33);
+    LCD_cmd(0x33);
+    LCD_cmd(0x32);
+
+    // Configure the LCD
+    LCD_cmd(0x28);
+    LCD_cmd(0x0c);
+    LCD_cmd(0x01);
+    delay(20);
+}
+
+void LCD_print(char *string, unsigned char line, bit clear) {
+    int j = 0;
+    LCD_cmd(line == 2 ? 0xc0: 0x80);
+    delay(5);
+
+    // for (j = 0; string[j] != 0; j++) {
+    //     LCD_write(string[j]);
+    // }
+    // while (*string != 0) LCD_write(*string++);
+
+    while (string[j] != 0) LCD_write(string[j++]);
+    if (clear) for (; j < CHARS_PER_LINE; j++) LCD_write(' ');
+}
