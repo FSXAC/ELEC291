@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 // timing
-#define SYSCLK    24000000L // SYSCLK frequency in Hz
+#define SYSCLK    48000000L // SYSCLK frequency in Hz
 #define BAUDRATE    115200L // Baud rate of UART in bps
 
 // pin assignments
@@ -115,7 +115,7 @@ void PORT_init(void) {
 
 // oscillator initialization
 void SYSCLK_init(void) {
-    CKLSEL |= 0x03;
+    CLKSEL |= 0x03;
     OSCICN |= 0x03;
     RSTSRC  = 0x04;
 }
@@ -206,6 +206,7 @@ void LCD_print(char *string, unsigned char line, bit clear) {
     if (clear) for (; j < CHARS_PER_LINE; j++) LCD_write(' ');
 }
 
+int count = 0;
 void main(void) {
     PCA0MD &= ~0x40;
     // initialize a bunch of stuff
@@ -219,5 +220,8 @@ void main(void) {
     LCD_print("Well Well Well", 2, 1);
 
     // print to terminal
-    printf("Hello bitch!\r\n");
+    while (1) {
+        printf("(%d) Hello bitch!\r\n", count++);
+        delay(1000);
+    }
 }
