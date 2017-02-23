@@ -1,27 +1,32 @@
 // lab 4
 
-// libarries
+// libraries
 #include <C8051F38x.h>
 #include <stdio.h>
+#include "lab4.h"
 
-// timing
-#define SYSCLK    48000000L // SYSCLK frequency in Hz
-#define BAUDRATE    115200L // Baud rate of UART in bps
+void main(void) {
+    int count = 0;
+    PCA0MD &= ~0x40;
+    // initialize a bunch of stuff
+    PORT_init();
+    SYSCLK_init();
+    UART0_init();
+    LCD_init();
 
-// pin assignments
-#define LCD_RS P2_2
-#define LCD_RW P2_1 // Not used in this code
-#define LCD_E  P2_0
-#define LCD_D4 P1_3
-#define LCD_D5 P1_2
-#define LCD_D6 P1_1
-#define LCD_D7 P1_0
-#define LCD_A  P0_7
-#define LCD_K  P0_6
-#define CHARS_PER_LINE 16
+    // print to LCD
+    LCD_print("This is a test", 1, 1);
+    LCD_print("Well Well Well", 2, 1);
+
+    // print to terminal
+    while (1) {
+        printf("(%d) Hello bitch!\r\n", count++);
+        delay(1000);
+    }
+}
 
 // init function
-char _c51_external_startup (void) {
+char _c51_external_startup(void) {
     PCA0MD &= (~0x40) ;    // DISABLE WDT: clear Watchdog Enable bit
     VDM0CN  = 0x80; // enable VDD monitor
     RSTSRC  = 0x02|0x04; // Enable reset on missing clock detector and VDD
@@ -192,6 +197,7 @@ void LCD_init(void) {
     delay(20);
 }
 
+// prints a string to LCD
 void LCD_print(char *string, unsigned char line, bit clear) {
     int j = 0;
     LCD_cmd(line == 2 ? 0xc0: 0x80);
@@ -204,24 +210,4 @@ void LCD_print(char *string, unsigned char line, bit clear) {
 
     while (string[j] != 0) LCD_write(string[j++]);
     if (clear) for (; j < CHARS_PER_LINE; j++) LCD_write(' ');
-}
-
-int count = 0;
-void main(void) {
-    PCA0MD &= ~0x40;
-    // initialize a bunch of stuff
-    PORT_init();
-    SYSCLK_init();
-    UART0_init();
-    LCD_init();
-
-    // print to LCD
-    LCD_print("This is a test", 1, 1);
-    LCD_print("Well Well Well", 2, 1);
-
-    // print to terminal
-    while (1) {
-        printf("(%d) Hello bitch!\r\n", count++);
-        delay(1000);
-    }
 }
