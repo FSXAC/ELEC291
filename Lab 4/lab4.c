@@ -77,7 +77,7 @@ void delayUs(unsigned char us) {
     TMR3 = TMR3RL;
 
     // start timer 3, and wait for overflow
-    TMR3CN = 0x04
+    TMR3CN = 0x04;
     for (i = 0; i < us; i++) {
         while (!(TMR3CN & 0x80));
         TMR3CN &= ~(0x80);
@@ -91,14 +91,14 @@ void delayUs(unsigned char us) {
 void delay(unsigned int ms) {
     unsigned int i;
     unsigned char j;
-    for (i = 0; i < ms; i++) for (j = 0; j < 4; j++) delayU(250);
+    for (i = 0; i < ms; i++) for (j = 0; j < 4; j++) delayUs(250);
 }
 
 // pulse LCD clock
 void LCD_pulse(void) {
-    LED_E = 1;
-    delayU(40);
-    LED_E = 0;
+    LCD_E = 1;
+    delayUs(40);
+    LCD_E = 0;
 }
 
 // send byte to LCD
@@ -110,7 +110,7 @@ void LCD_byte(unsigned char x) {
     LCD_D5 = ACC_5;
     LCD_D4 = ACC_4;
     LCD_pulse();
-    delay(40);
+    delayUs(40);
     ACC    = x;
     LCD_D7 = ACC_3;
     LCD_D6 = ACC_2;
@@ -165,4 +165,10 @@ void LCD_print(char *string, unsigned char line, bit clear) {
 
     while (string[j] != 0) LCD_write(string[j++]);
     if (clear) for (; j < CHARS_PER_LINE; j++) LCD_write(' ');
+}
+
+void main(void) {
+    LCD_init();
+    LCD_print("This is a test", 1, 1);
+    LCD_print("Well Well Well", 2, 1);
 }
