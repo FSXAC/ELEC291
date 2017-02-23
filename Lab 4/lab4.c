@@ -7,11 +7,15 @@
 
 void main(void) {
     int count = 0;
+
+    // technicall start
     PCA0MD &= ~0x40;
+
     // initialize a bunch of stuff
     PORT_init();
     SYSCLK_init();
     UART0_init();
+    TIMER0_init();
     LCD_init();
 
     // print to LCD
@@ -136,6 +140,15 @@ void UART0_init(void) {
     TMOD  |= 0x20;
     TR1    = 1;
     TI     = 1;
+}
+
+// ubutuakuze timer 0
+void TIMER0_init(void) {
+    TMOD &= 0xF0;
+
+    // used as 16-bit counter
+    TMOD |= 0x05;
+    TR    = 0;
 }
 
 // pulse LCD clock

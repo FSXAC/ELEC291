@@ -22,6 +22,8 @@ void delay(unsigned int ms);
 void PORT_init(void);
 void SYSCLK_init(void);
 void UART0_init(void);
+void TIMER0_init(void);
+
 void LCD_pulse(void);
 void LCD_byte(unsigned char x);
 void LCD_write(unsigned char x);
