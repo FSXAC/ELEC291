@@ -1,10 +1,11 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1069 (Apr 23 2015) (MSVC)
-; This file was generated Wed Mar 01 16:28:01 2017
+; This file was generated Wed Mar 01 17:59:52 2017
 ;--------------------------------------------------------
 $name example_frequency
 $optc51 --model-small
+$printf_float
 	R_DSEG    segment data
 	R_CSEG    segment code
 	R_BSEG    segment bit
@@ -592,24 +593,44 @@ _TIMER0_Init:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
-;F                         Allocated to registers r2 r3 r4 r5 
+;freq                      Allocated to registers r2 r3 r4 r5 
+;capacitance               Allocated to registers r2 r3 r4 r5 
 ;------------------------------------------------------------
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:103: void main (void) {
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:106: PCA0MD &= ~0x40; // WDTE = 0 (clear watchdog timer enable)
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:107: PCA0MD &= ~0x40; // WDTE = 0 (clear watchdog timer enable)
 	anl	_PCA0MD,#0xBF
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:107: PORT_Init();     // Initialize Port I/O
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:108: PORT_Init();     // Initialize Port I/O
 	lcall	_PORT_Init
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:108: SYSCLK_Init ();  // Initialize Oscillator
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:109: SYSCLK_Init ();  // Initialize Oscillator
 	lcall	_SYSCLK_Init
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:109: UART0_Init();    // Initialize UART0
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:110: UART0_Init();    // Initialize UART0
 	lcall	_UART0_Init
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:110: TIMER0_Init();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:111: TIMER0_Init();
 	lcall	_TIMER0_Init
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:112: printf("\x1b[2J"); // Clear screen using ANSI escape sequence.
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:120: while(1) {
+L008002?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:121: TL0=0;
+	mov	_TL0,#0x00
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:122: TH0=0;
+	mov	_TH0,#0x00
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:123: overflow_count=0;
+	mov	_overflow_count,#0x00
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:124: TF0=0;
+	clr	_TF0
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:125: TR0=1; // Start Timer/Counter 0
+	setb	_TR0
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:126: waitms(1000);
+	mov	dptr,#0x03E8
+	lcall	_waitms
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:127: printf("%d\t", overflow_count);
+	mov	r2,_overflow_count
+	mov	r3,#0x00
+	push	ar2
+	push	ar3
 	mov	a,#__str_0
 	push	acc
 	mov	a,#(__str_0 >> 8)
@@ -617,57 +638,12 @@ _main:
 	mov	a,#0x80
 	push	acc
 	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:117: __FILE__, __DATE__, __TIME__);
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:116: "Compiled: %s, %s\n\n",
-	mov	a,#__str_4
-	push	acc
-	mov	a,#(__str_4 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	mov	a,#__str_3
-	push	acc
-	mov	a,#(__str_3 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	mov	a,#__str_2
-	push	acc
-	mov	a,#(__str_2 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	mov	a,#__str_1
-	push	acc
-	mov	a,#(__str_1 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
 	mov	a,sp
-	add	a,#0xf4
+	add	a,#0xfb
 	mov	sp,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:119: while(1) {
-L008002?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:120: TL0=0;
-	mov	_TL0,#0x00
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:121: TH0=0;
-	mov	_TH0,#0x00
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:122: overflow_count=0;
-	mov	_overflow_count,#0x00
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:123: TF0=0;
-	clr	_TF0
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:124: TR0=1; // Start Timer/Counter 0
-	setb	_TR0
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:125: waitms(1000);
-	mov	dptr,#0x03E8
-	lcall	_waitms
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:126: TR0=0; // Stop Timer/Counter 0
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:128: TR0=0; // Stop Timer/Counter 0
 	clr	_TR0
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:127: F=overflow_count*0x10000L+TH0*0x100L+TL0;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:129: freq=overflow_count*0x10000L+TH0*0x100L+TL0;
 	mov	r2,_overflow_count
 	mov	r3,#0x00
 	mov	ar5,r3
@@ -712,14 +688,18 @@ L008002?:
 	mov	a,r1
 	addc	a,r5
 	mov	r5,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:129: printf("\rf=%luHz", F);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:131: printf("f=%luHz\t", freq);
 	push	ar2
 	push	ar3
 	push	ar4
 	push	ar5
-	mov	a,#__str_5
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	mov	a,#__str_1
 	push	acc
-	mov	a,#(__str_5 >> 8)
+	mov	a,#(__str_1 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -727,17 +707,50 @@ L008002?:
 	mov	a,sp
 	add	a,#0xf9
 	mov	sp,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:130: printf("\x1b[0K"); // ANSI: Clear from cursor to end of line.
-	mov	a,#__str_6
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:137: capacitance = 295.3200 / freq;
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
+	mov	a,r5
+	lcall	___ulong2fs
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	mov	dptr,#0xA8F6
+	mov	b,#0x93
+	mov	a,#0x43
+	lcall	___fsdiv
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\example_frequency.c:139: printf("%fuF\n", capacitance);
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	mov	a,#__str_2
 	push	acc
-	mov	a,#(__str_6 >> 8)
+	mov	a,#(__str_2 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
 	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
+	mov	a,sp
+	add	a,#0xf9
+	mov	sp,a
 	ljmp	L008002?
 	rseg R_CSEG
 
@@ -745,52 +758,16 @@ L008002?:
 
 	rseg R_CONST
 __str_0:
-	db 0x1B
-	db '[2J'
+	db '%d'
+	db 0x09
 	db 0x00
 __str_1:
-	db 'Frequency measurement using Timer/Counter 0.'
-	db 0x0A
-	db 'File: %s'
-	db 0x0A
-	db 'Compil'
-	db 'ed: %s, %s'
-	db 0x0A
-	db 0x0A
+	db 'f=%luHz'
+	db 0x09
 	db 0x00
 __str_2:
-	db 'C:'
-	db 0x5C
-	db 'Users'
-	db 0x5C
-	db 'mansu'
-	db 0x5C
-	db 'OneDrive'
-	db 0x5C
-	db 'Documents'
-	db 0x5C
-	db '2017 UBC'
-	db 0x5C
-	db 'ELEC 291'
-	db 0x5C
-	db 'Lab 4'
-	db 0x5C
-	db 'ex'
-	db 'ample_frequency.c'
-	db 0x00
-__str_3:
-	db 'Mar  1 2017'
-	db 0x00
-__str_4:
-	db '16:28:01'
-	db 0x00
-__str_5:
-	db 0x0D
-	db 'f=%luHz'
-	db 0x00
-__str_6:
-	db 0x1B
-	db '[0K'
+	db '%fuF'
+	db 0x0A
 	db 0x00
 
 	CSEG

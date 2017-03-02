@@ -101,7 +101,8 @@ void TIMER0_Init(void) {
 }
 
 void main (void) {
-	unsigned long F;
+	unsigned long freq;
+	double capacitance;
 
 	PCA0MD &= ~0x40; // WDTE = 0 (clear watchdog timer enable)
 	PORT_Init();     // Initialize Port I/O
@@ -109,12 +110,12 @@ void main (void) {
 	UART0_Init();    // Initialize UART0
 	TIMER0_Init();
 
-	printf("\x1b[2J"); // Clear screen using ANSI escape sequence.
-
-	printf ("Frequency measurement using Timer/Counter 0.\n"
-	        "File: %s\n"
-	        "Compiled: %s, %s\n\n",
-	        __FILE__, __DATE__, __TIME__);
+	// printf("\x1b[2J"); // Clear screen using ANSI escape sequence.
+	//
+	// printf ("Frequency measurement using Timer/Counter 0.\n"
+	//         "File: %s\n"
+	//         "Compiled: %s, %s\n\n",
+	//         __FILE__, __DATE__, __TIME__);
 
 	while(1) {
 		TL0=0;
@@ -123,10 +124,18 @@ void main (void) {
 		TF0=0;
 		TR0=1; // Start Timer/Counter 0
 		waitms(1000);
+		printf("%d\t", overflow_count);
 		TR0=0; // Stop Timer/Counter 0
-		F=overflow_count*0x10000L+TH0*0x100L+TL0;
+		freq=overflow_count*0x10000L+TH0*0x100L+TL0;
 
-		printf("\rf=%luHz", F);
-		printf("\x1b[0K"); // ANSI: Clear from cursor to end of line.
+		printf("f=%luHz\t", freq);
+		// printf("\x1b[0K"); // ANSI: Clear from cursor to end of line.
+		// compute frequency
+        // freq = overflow_count * 0x10000L + TH0 * 0x1000L + TL0;
+
+        // compute capacitance
+        capacitance = 295.3200 / freq;
+		// printf("%lu\t", freq);
+        printf("%fuF\n", capacitance);
 	}
 }
