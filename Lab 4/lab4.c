@@ -84,7 +84,7 @@ void main(void) {
         }
 
         // output capacitance via SPI
-        printf("$%lu,%f%cF\n", freq, capacitance, unit_prefix[unit_prefix_select]);
+        printf("$%lu,%f,%cF\n", freq, capacitance, unit_prefix[unit_prefix_select]);
 
         // output capacitance to LCD
         if (BTN_0) {
@@ -98,15 +98,18 @@ void main(void) {
             }
             impedence = -1.0 / impedence;
 
-            if (BTN_2) {
-                sprintf(string_buffer, "|| Z=%.2f%c-90%c%c", abs(impedence), 0xDA, 0xDF, 0xF4);
-            } else {
-                sprintf(string_buffer, "|| Z=%.2fj%c", impedence, 0xF4);
-            }
+            if (BTN_2) sprintf(string_buffer, "|| Z=%.2f%c-90%c%c", abs(impedence), 0xDA, 0xDF, 0xF4);
+            else sprintf(string_buffer, "|| Z=%.2fj%c", impedence, 0xF4);
+        } else if (BTN_1) {
+            // show frequency
+            LCD_print("Frequency:", 1, 1);
+            if (BTN_2) sprintf(string_buffer, "W=%.2f rad/s", freq * 2 * M_PI);
+            else sprintf(string_buffer, "f=%luHz", freq);
         } else {
             LCD_print("[] Capacitance:", 1, 1);
             sprintf(string_buffer, "|| C=%.4f%cF", capacitance, unit_prefix[unit_prefix_select]);
         }
+
         LCD_print(string_buffer, 2, 1);
     }
 }

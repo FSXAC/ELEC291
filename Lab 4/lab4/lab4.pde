@@ -3,7 +3,8 @@ import processing.serial.*;
 final int BAUD_RATE = 115200;
 Serial ser;
 String serin;
-String[] serinp = {"0", "0"};
+String[] serinp = {"0", "0", "F"};
+String unit;
 
 // graph
 int vres = 5;
@@ -13,6 +14,7 @@ int unitsIndex = 0;
 
 int frequency     = 0;
 float capacitance = 0;
+float tau;
 
 void setup() {
     size(1000, 700);
@@ -30,17 +32,25 @@ void setup() {
 }
 
 void draw() {
+    // tau = map(mouseX, 0, width, 1, 100);
     if (ser.available() > 0) {
         serin = ser.readStringUntil('\n');
         if (serin != null) {
-            serin       = serin.substring(1, serin.length()-4);
+            background(250);
+            serin       = serin.substring(1, serin.length()-2);
             serinp      = serin.split(",");
             frequency   = Integer.parseInt(serinp[0]);
             capacitance = Float.parseFloat(serinp[1]);
+            unit = serinp[2];
+            tau = map(capacitance, 100, 1000, 1, 100);
+            drawGrid(5, ceil(frequency/500.0)*500);
+
+            // display info
+            text("Frequency: " + str(frequency) + " Hz", 200, 100);
+            text("Period: " + String.format("%.2e", 1.0/frequency) + "s", 200, 120);
+            text("Capacitance: " + String.format("%.2f", capacitance) + unit, 200, 140);
         }
     }
-    background(250);
-    drawGrid(5, ceil(frequency/500.0)*500);
 }
 
 void drawGrid(float amplitude, int frequency) {
@@ -59,7 +69,6 @@ void drawGrid(float amplitude, int frequency) {
 
     // horizontal axis
     line(100, height-100, width-100, height-100);
-    text("t", width-80, height-100);
 
     // zero
     text("0", 65, height-80);
@@ -83,7 +92,27 @@ void drawGrid(float amplitude, int frequency) {
     for (int i = 1; i <= hres; i++) {
         int x = 100+i*(width-200)/(hres+1);
         line(x, height-101, x, 100);
-        text(String.format("%.2f%s", i * delta_t, units[unitsIndex]), x, height-80);
+        text(String.format("%.2f", i * delta_t), x, height-80);
     }
+    text("t [" + units[unitsIndex] + "]", width-60, height-100);
 
+
+    float y=0, y_old;
+    strokeWeight(2);
+    stroke(255, 0, 0);
+    for (int t = 100; t < 100+4*89; t++) {
+        y_old = y;
+        y = 390*(1-exp(-(t-100)/tau));
+        line(t, y_old+209, t, y+209);
+    }
+    for (int t=456; t<456+4*89; t++) {
+        y_old = y;
+        y = 390*(exp(-(t-456)/tau));
+        line(t, y_old+209, t, y+209);
+    }
+    for (int t=812; t<812+1*89; t++) {
+        y_old = y;
+        y = 390*(1-exp(-(t-812)/tau));
+        line(t, y_old+209, t, y+209);
+    }
 }
