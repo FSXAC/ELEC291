@@ -8,6 +8,8 @@ String[] serinp = {"0", "0"};
 // graph
 int vres = 5;
 int hres = 8;
+String[] units = {"s", "ms", "us", "ns", "ps"};
+int unitsIndex = 0;
 
 int frequency     = 0;
 float capacitance = 0;
@@ -38,7 +40,7 @@ void draw() {
         }
     }
     background(250);
-    drawGrid(5, 200);
+    drawGrid(5, ceil(frequency/500.0)*500);
 }
 
 void drawGrid(float amplitude, int frequency) {
@@ -59,20 +61,29 @@ void drawGrid(float amplitude, int frequency) {
     line(100, height-100, width-100, height-100);
     text("t", width-80, height-100);
 
+    // zero
+    text("0", 65, height-80);
+
     // vertical minor axis
     stroke(200);
     for (int i = 1; i <= vres; i++) {
         int y = height-100-i*(height-200)/(vres+1);
         line(101, y, width-100, y);
-        text(String.format("%.2f", amplitude / (vres + 1) * i), 65, y);
+        text(String.format("%.2f", (amplitude) / vres * i), 65, y);
     }
 
     // horizontal minor axis
+    float delta_t = 0.25 / frequency; // quarter period
+    // change units
+    unitsIndex = 0;
+    while (delta_t < 0.1 && unitsIndex < 4) {
+        delta_t *= 1000;
+        unitsIndex++;
+    }
     for (int i = 1; i <= hres; i++) {
         int x = 100+i*(width-200)/(hres+1);
-        float delta_t = 1 / frequency 
         line(x, height-101, x, 100);
-        text(String.format())
+        text(String.format("%.2f%s", i * delta_t, units[unitsIndex]), x, height-80);
     }
 
 }
