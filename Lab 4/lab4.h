@@ -15,6 +15,11 @@
 #define LCD_K  P0_6
 #define CHARS_PER_LINE 16
 
+// buttons (inverted)
+#define BTN_0 !P2_7
+#define BTN_1 !P2_5
+#define BTN_2 !P2_3
+
 // function prototypes
 char _c51_external_startup(void);
 void PORT_init(void);

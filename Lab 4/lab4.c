@@ -10,6 +10,7 @@ unsigned char overflow_count;
 
 void main(void) {
     unsigned long freq;
+    double freq_prime;
     double capacitance;
     int sample_time;
     char string_buffer [20];
@@ -17,6 +18,9 @@ void main(void) {
     char unit_prefix[]     = "pnum";
     int unit_prefix_select = 2;
     double unit_prefix_mult;
+
+    // flags
+    unsigned char isComplex = 0;
 
     // technicall start
     PCA0MD &= ~0x40;
@@ -29,12 +33,17 @@ void main(void) {
     LCD_init();
 
     // print to LCD
-    LCD_print("CAPACITANCE:", 1, 1);
+    LCD_print("Capacitance:", 1, 1);
 
-    sample_time = 500;
+    sample_time = 100;
 
     // print to terminal
     while (1) {
+        // button control
+        if (P2_7) {
+            isComplex = isComplex ? 0 : 1;
+        }
+
         // reset clock
         TL0 = 0;
         TH0 = 0;
@@ -49,10 +58,17 @@ void main(void) {
         TR0 = 0;
 
         // compute frequency
-        freq = (overflow_count * 0x10000L + TH0 * 0x100L + TL0) * 1000.0 / sample_time;
+        freq_prime = (overflow_count * 0x10000L + TH0 * 0x100L + TL0) * 1000.0 / sample_time;
+        freq = freq_prime;
+
+        // resample capacitors that are too small/large
+        if (freq < 1)           continue;
+        else if (freq < 5)      sample_time = 3000;
+        else if (freq < 30)     sample_time = 500;
+        else                    sample_time = 300;
 
         // compute capacitance 295.32 = 1.44 / (RA + 2RB) * 1E6 (or other unit prefix)
-        capacitance = 295.3200 / freq;
+        capacitance = 295.3200 / freq_prime;
 
         // select appropriate prefix
         switch (unit_prefix_select) {
@@ -70,13 +86,13 @@ void main(void) {
             capacitance *= 1000;
             unit_prefix_select--;
         }
-        while (capacitance > 800 && unit_prefix_select < 3) {
+        while (capacitance > 800 && unit_prefix_select < 2) {
             capacitance /= 1000;
             unit_prefix_select++;
         }
 
         // output capacitance to LCD
-        sprintf(string_buffer, "C=%.4f %cF", capacitance, unit_prefix[unit_prefix_select]);
+        sprintf(string_buffer, "C=%.4f %cF %d", capacitance, unit_prefix[unit_prefix_select], isComplex);
         LCD_print(string_buffer, 2, 1);
 
         // output capacitance via SPI
