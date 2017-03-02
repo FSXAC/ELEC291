@@ -87,8 +87,7 @@ void main(void) {
         }
 
         // output capacitance via SPI
-        printf("f=%luHz\t", freq);
-        printf("%f%cF\n", capacitance, unit_prefix[unit_prefix_select]);
+        printf("$%lu,%f%c\n", freq, capacitance, unit_prefix[unit_prefix_select]);
 
         // output capacitance to LCD
         if (BTN_0) {
@@ -110,8 +109,6 @@ void main(void) {
             sprintf(string_buffer, "C=%.4f%cF", capacitance, unit_prefix[unit_prefix_select]);
         }
         LCD_print(string_buffer, 2, 1);
-
-
     }
 }
 
