@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1069 (Apr 23 2015) (MSVC)
-; This file was generated Thu Mar 02 01:16:18 2017
+; This file was generated Thu Mar 02 02:26:05 2017
 ;--------------------------------------------------------
 $name lab4
 $optc51 --model-small
@@ -27,6 +27,9 @@ $printf_float
 	public _main
 	public _LCD_print_PARM_3
 	public _LCD_print_PARM_2
+	public _bin_index
+	public _bin_sum
+	public _bin
 	public _overflow_count
 	public _PORT_init
 	public _SYSCLK_init
@@ -373,6 +376,12 @@ _SPIEN          BIT 0xf8
 	rseg R_DSEG
 _overflow_count:
 	ds 1
+_bin:
+	ds 12
+_bin_sum:
+	ds 4
+_bin_index:
+	ds 2
 _main_freq_1_59:
 	ds 4
 _main_freq_prime_1_59:
@@ -389,6 +398,8 @@ _main_unit_prefix_mult_1_59:
 	ds 4
 _main_impedence_1_59:
 	ds 4
+_main_x_1_59:
+	ds 2
 _main_sloc0_1_0:
 	ds 4
 _LCD_print_PARM_2:
@@ -445,6 +456,10 @@ _LCD_print_PARM_3:
 ; data variables initialization
 ;--------------------------------------------------------
 	rseg R_DINIT
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:12: int bin_index = 0;
+	clr	a
+	mov	_bin_index,a
+	mov	(_bin_index + 1),a
 	; The linker places a 'ret' at the end of segment R_DINIT.
 ;--------------------------------------------------------
 ; code
@@ -462,58 +477,60 @@ _LCD_print_PARM_3:
 ;unit_prefix_select        Allocated to registers r2 r3 
 ;unit_prefix_mult          Allocated with name '_main_unit_prefix_mult_1_59'
 ;impedence                 Allocated with name '_main_impedence_1_59'
+;x                         Allocated with name '_main_x_1_59'
+;freq_ave                  Allocated to registers r4 r5 r6 r7 
 ;sloc0                     Allocated with name '_main_sloc0_1_0'
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:12: void main(void) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:14: void main(void) {
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
 	using	0
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:19: char unit_prefix[]     = "pnum";
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:21: char unit_prefix[]     = "pnum";
 	mov	_main_unit_prefix_1_59,#0x70
 	mov	(_main_unit_prefix_1_59 + 0x0001),#0x6E
 	mov	(_main_unit_prefix_1_59 + 0x0002),#0x75
 	mov	(_main_unit_prefix_1_59 + 0x0003),#0x6D
 	mov	(_main_unit_prefix_1_59 + 0x0004),#0x00
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:20: int unit_prefix_select = 2;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:22: int unit_prefix_select = 2;
 	mov	r2,#0x02
 	mov	r3,#0x00
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:26: PCA0MD &= ~0x40;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:32: PCA0MD &= ~0x40;
 	anl	_PCA0MD,#0xBF
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:29: PORT_init();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:35: PORT_init();
 	push	ar2
 	push	ar3
 	lcall	_PORT_init
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:30: SYSCLK_init();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:36: SYSCLK_init();
 	lcall	_SYSCLK_init
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:31: UART0_init();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:37: UART0_init();
 	lcall	_UART0_init
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:32: TIMER0_init();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:38: TIMER0_init();
 	lcall	_TIMER0_init
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:33: LCD_init();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:39: LCD_init();
 	lcall	_LCD_init
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:35: sample_time = 100;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:41: sample_time = 100;
 	mov	_main_sample_time_1_59,#0x64
 	clr	a
 	mov	(_main_sample_time_1_59 + 1),a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:38: while (1) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:44: while (1) {
 L002043?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:40: TL0 = 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:46: TL0 = 0;
 	push	ar2
 	push	ar3
 	mov	_TL0,#0x00
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:41: TH0 = 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:47: TH0 = 0;
 	mov	_TH0,#0x00
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:42: overflow_count = 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:48: overflow_count = 0;
 	mov	_overflow_count,#0x00
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:45: TF0 = 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:51: TF0 = 0;
 	clr	_TF0
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:46: TR0 = 1;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:52: TR0 = 1;
 	setb	_TR0
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:47: delay(sample_time);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:53: delay(sample_time);
 	mov	dpl,_main_sample_time_1_59
 	mov	dph,(_main_sample_time_1_59 + 1)
 	push	ar2
@@ -521,9 +538,9 @@ L002043?:
 	lcall	_delay
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:50: TR0 = 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:56: TR0 = 0;
 	clr	_TR0
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:53: freq_prime = (overflow_count * 0x10000L + TH0 * 0x100L + TL0) * 1000.0 / sample_time;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:59: freq_prime = (overflow_count * 0x10000L + TH0 * 0x100L + TL0) * 1000.0 / sample_time;
 	mov	r6,_overflow_count
 	mov	r7,#0x00
 	mov	(_main_sloc0_1_0 + 3),r7
@@ -618,7 +635,7 @@ L002043?:
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:54: freq = freq_prime;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:60: freq = freq_prime;
 	mov	dpl,_main_freq_prime_1_59
 	mov	dph,(_main_freq_prime_1_59 + 1)
 	mov	b,(_main_freq_prime_1_59 + 2)
@@ -630,7 +647,7 @@ L002043?:
 	mov	(_main_freq_1_59 + 3),a
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:57: if (freq < 1)           continue;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:63: if (freq < 1)           continue;
 	clr	c
 	mov	a,_main_freq_1_59
 	subb	a,#0x01
@@ -642,10 +659,10 @@ L002043?:
 	subb	a,#0x00
 	pop	ar3
 	pop	ar2
-	jnc	L002074?
+	jnc	L002083?
 	ljmp	L002043?
-L002074?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:58: else if (freq < 5)      sample_time = 3000;
+L002083?:
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:64: else if (freq < 5)      sample_time = 3000;
 	clr	c
 	mov	a,_main_freq_1_59
 	subb	a,#0x05
@@ -660,7 +677,7 @@ L002074?:
 	mov	(_main_sample_time_1_59 + 1),#0x0B
 	sjmp	L002009?
 L002005?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:59: else if (freq < 30)     sample_time = 500;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:65: else if (freq < 30)     sample_time = 500;
 	clr	c
 	mov	a,_main_freq_1_59
 	subb	a,#0x1E
@@ -675,17 +692,143 @@ L002005?:
 	mov	(_main_sample_time_1_59 + 1),#0x01
 	sjmp	L002009?
 L002002?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:60: else                    sample_time = 300;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:66: else                    sample_time = 300;
 	mov	_main_sample_time_1_59,#0x2C
 	mov	(_main_sample_time_1_59 + 1),#0x01
 L002009?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:63: capacitance = 295.3200 / freq_prime;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:69: bin[bin_index] = freq_prime;
+	mov	r4,_bin_index
+	mov	a,(_bin_index + 1)
+	xch	a,r4
+	add	a,acc
+	xch	a,r4
+	rlc	a
+	xch	a,r4
+	add	a,acc
+	xch	a,r4
+	rlc	a
+	mov	r5,a
+	mov	a,r4
+	add	a,#_bin
+	mov	r0,a
+	mov	@r0,_main_freq_prime_1_59
+	inc	r0
+	mov	@r0,(_main_freq_prime_1_59 + 1)
+	inc	r0
+	mov	@r0,(_main_freq_prime_1_59 + 2)
+	inc	r0
+	mov	@r0,(_main_freq_prime_1_59 + 3)
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:70: bin_index = bin_index == 2 ? 0 : bin_index + 1;
+	mov	a,#0x02
+	cjne	a,_bin_index,L002086?
+	clr	a
+	cjne	a,(_bin_index + 1),L002086?
+	sjmp	L002087?
+L002086?:
+	sjmp	L002050?
+L002087?:
+	mov	r4,#0x00
+	mov	r5,#0x00
+	sjmp	L002051?
+L002050?:
+	mov	a,#0x01
+	add	a,_bin_index
+	mov	r4,a
+	clr	a
+	addc	a,(_bin_index + 1)
+	mov	r5,a
+L002051?:
+	mov	_bin_index,r4
+	mov	(_bin_index + 1),r5
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:71: bin_sum = 0;
+	mov	_bin_sum,#0x00
+	mov	(_bin_sum + 1),#0x00
+	mov	(_bin_sum + 2),#0x00
+	mov	(_bin_sum + 3),#0x00
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:72: for (x = 0; x < 3; x++) {
+	mov	_main_x_1_59,#0x03
+	clr	a
+	mov	(_main_x_1_59 + 1),a
+L002047?:
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:73: bin_sum += bin[bin_index];
+	mov	r6,_bin_index
+	mov	a,(_bin_index + 1)
+	xch	a,r6
+	add	a,acc
+	xch	a,r6
+	rlc	a
+	xch	a,r6
+	add	a,acc
+	xch	a,r6
+	rlc	a
+	mov	a,r6
+	add	a,#_bin
+	mov	r0,a
+	mov	ar6,@r0
+	inc	r0
+	mov	ar7,@r0
+	inc	r0
+	mov	ar4,@r0
+	inc	r0
+	mov	ar5,@r0
+	dec	r0
+	dec	r0
+	dec	r0
 	push	ar2
 	push	ar3
-	push	_main_freq_prime_1_59
-	push	(_main_freq_prime_1_59 + 1)
-	push	(_main_freq_prime_1_59 + 2)
-	push	(_main_freq_prime_1_59 + 3)
+	push	ar6
+	push	ar7
+	push	ar4
+	push	ar5
+	mov	dpl,_bin_sum
+	mov	dph,(_bin_sum + 1)
+	mov	b,(_bin_sum + 2)
+	mov	a,(_bin_sum + 3)
+	lcall	___fsadd
+	mov	_bin_sum,dpl
+	mov	(_bin_sum + 1),dph
+	mov	(_bin_sum + 2),b
+	mov	(_bin_sum + 3),a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	pop	ar2
+	dec	_main_x_1_59
+	mov	a,#0xff
+	cjne	a,_main_x_1_59,L002088?
+	dec	(_main_x_1_59 + 1)
+L002088?:
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:72: for (x = 0; x < 3; x++) {
+	mov	a,_main_x_1_59
+	orl	a,(_main_x_1_59 + 1)
+	jnz	L002047?
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:75: freq_ave = bin_sum / 3;
+	push	ar2
+	push	ar3
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x40
+	push	acc
+	push	acc
+	mov	dpl,_bin_sum
+	mov	dph,(_bin_sum + 1)
+	mov	b,(_bin_sum + 2)
+	mov	a,(_bin_sum + 3)
+	lcall	___fsdiv
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r6,b
+	mov	r7,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:78: capacitance = 295.3200 / freq_ave;
+	push	ar4
+	push	ar5
+	push	ar6
+	push	ar7
 	mov	dptr,#0xA8F6
 	mov	b,#0x93
 	mov	a,#0x43
@@ -699,20 +842,20 @@ L002009?:
 	mov	sp,a
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:66: switch (unit_prefix_select) {
-	cjne	r2,#0x00,L002077?
-	cjne	r3,#0x00,L002077?
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:81: switch (unit_prefix_select) {
+	cjne	r2,#0x00,L002090?
+	cjne	r3,#0x00,L002090?
 	sjmp	L002010?
-L002077?:
-	cjne	r2,#0x01,L002078?
-	cjne	r3,#0x00,L002078?
+L002090?:
+	cjne	r2,#0x01,L002091?
+	cjne	r3,#0x00,L002091?
 	sjmp	L002011?
-L002078?:
-	cjne	r2,#0x02,L002079?
-	cjne	r3,#0x00,L002079?
+L002091?:
+	cjne	r2,#0x02,L002092?
+	cjne	r3,#0x00,L002092?
 	sjmp	L002012?
-L002079?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:67: case 0: unit_prefix_mult = 1000L * 1000L; break;
+L002092?:
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:82: case 0: unit_prefix_mult = 1000L * 1000L; break;
 	cjne	r2,#0x03,L002014?
 	cjne	r3,#0x00,L002014?
 	sjmp	L002013?
@@ -721,37 +864,37 @@ L002010?:
 	mov	(_main_unit_prefix_mult_1_59 + 1),#0x24
 	mov	(_main_unit_prefix_mult_1_59 + 2),#0x74
 	mov	(_main_unit_prefix_mult_1_59 + 3),#0x49
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:68: case 1: unit_prefix_mult = 1000; break;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:83: case 1: unit_prefix_mult = 1000; break;
 	sjmp	L002015?
 L002011?:
 	mov	_main_unit_prefix_mult_1_59,#0x00
 	mov	(_main_unit_prefix_mult_1_59 + 1),#0x00
 	mov	(_main_unit_prefix_mult_1_59 + 2),#0x7A
 	mov	(_main_unit_prefix_mult_1_59 + 3),#0x44
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:69: case 2: unit_prefix_mult = 1; break;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:84: case 2: unit_prefix_mult = 1; break;
 	sjmp	L002015?
 L002012?:
 	mov	_main_unit_prefix_mult_1_59,#0x00
 	mov	(_main_unit_prefix_mult_1_59 + 1),#0x00
 	mov	(_main_unit_prefix_mult_1_59 + 2),#0x80
 	mov	(_main_unit_prefix_mult_1_59 + 3),#0x3F
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:70: case 3: unit_prefix_mult = 0.001; break;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:85: case 3: unit_prefix_mult = 0.001; break;
 	sjmp	L002015?
 L002013?:
 	mov	_main_unit_prefix_mult_1_59,#0x6F
 	mov	(_main_unit_prefix_mult_1_59 + 1),#0x12
 	mov	(_main_unit_prefix_mult_1_59 + 2),#0x83
 	mov	(_main_unit_prefix_mult_1_59 + 3),#0x3A
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:71: default: unit_prefix_mult = 1;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:86: default: unit_prefix_mult = 1;
 	sjmp	L002015?
 L002014?:
 	mov	_main_unit_prefix_mult_1_59,#0x00
 	mov	(_main_unit_prefix_mult_1_59 + 1),#0x00
 	mov	(_main_unit_prefix_mult_1_59 + 2),#0x80
 	mov	(_main_unit_prefix_mult_1_59 + 3),#0x3F
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:72: }
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:87: }
 L002015?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:73: capacitance *= unit_prefix_mult;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:88: capacitance *= unit_prefix_mult;
 	push	ar2
 	push	ar3
 	push	_main_unit_prefix_mult_1_59
@@ -772,7 +915,7 @@ L002015?:
 	mov	sp,a
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:77: while (capacitance <= 0.8 && unit_prefix_select > 0) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:92: while (capacitance <= 0.8 && unit_prefix_select > 0) {
 	mov	_main_sloc0_1_0,r2
 	mov	(_main_sloc0_1_0 + 1),r3
 L002017?:
@@ -794,7 +937,7 @@ L002017?:
 	add	a,#0xfc
 	mov	sp,a
 	mov	a,r4
-	jnz	L002062?
+	jnz	L002070?
 	clr	c
 	clr	a
 	subb	a,_main_sloc0_1_0
@@ -803,8 +946,8 @@ L002017?:
 	mov	b,(_main_sloc0_1_0 + 1)
 	xrl	b,#0x80
 	subb	a,b
-	jnc	L002062?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:78: capacitance *= 1000;
+	jnc	L002070?
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:93: capacitance *= 1000;
 	push	_main_capacitance_1_59
 	push	(_main_capacitance_1_59 + 1)
 	push	(_main_capacitance_1_59 + 2)
@@ -820,17 +963,17 @@ L002017?:
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:79: unit_prefix_select--;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:94: unit_prefix_select--;
 	dec	_main_sloc0_1_0
 	mov	a,#0xff
-	cjne	a,_main_sloc0_1_0,L002083?
+	cjne	a,_main_sloc0_1_0,L002096?
 	dec	(_main_sloc0_1_0 + 1)
-L002083?:
+L002096?:
 	mov	r2,_main_sloc0_1_0
 	mov	r3,(_main_sloc0_1_0 + 1)
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:81: while (capacitance > 800 && unit_prefix_select < 2) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:96: while (capacitance > 800 && unit_prefix_select < 2) {
 	sjmp	L002017?
-L002062?:
+L002070?:
 	mov	r4,_main_sloc0_1_0
 	mov	r5,(_main_sloc0_1_0 + 1)
 L002021?:
@@ -855,15 +998,15 @@ L002021?:
 	pop	ar5
 	pop	ar4
 	mov	a,r6
-	jz	L002073?
+	jz	L002082?
 	clr	c
 	mov	a,r4
 	subb	a,#0x02
 	mov	a,r5
 	xrl	a,#0x80
 	subb	a,#0x80
-	jnc	L002073?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:82: capacitance /= 1000;
+	jnc	L002082?
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:97: capacitance /= 1000;
 	push	ar4
 	push	ar5
 	clr	a
@@ -887,18 +1030,18 @@ L002021?:
 	mov	sp,a
 	pop	ar5
 	pop	ar4
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:83: unit_prefix_select++;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:98: unit_prefix_select++;
 	inc	r4
-	cjne	r4,#0x00,L002086?
+	cjne	r4,#0x00,L002099?
 	inc	r5
-L002086?:
+L002099?:
 	mov	ar2,r4
 	mov	ar3,r5
 	sjmp	L002021?
-L002073?:
+L002082?:
 	mov	ar2,r4
 	mov	ar3,r5
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:87: printf("$%lu,%f,%cF\n", freq, capacitance, unit_prefix[unit_prefix_select]);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:102: printf("$%lu,%f,%cF\n", freq, capacitance, unit_prefix[unit_prefix_select]);
 	mov	a,r4
 	add	a,#_main_unit_prefix_1_59
 	mov	r0,a
@@ -937,11 +1080,11 @@ L002073?:
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:90: if (BTN_0) {
-	jnb	_P2_7,L002087?
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:105: if (BTN_0) {
+	jnb	_P2_7,L002100?
 	ljmp	L002040?
-L002087?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:91: LCD_print("[] Impedence:", 1, 1);
+L002100?:
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:106: LCD_print("[] Impedence:", 1, 1);
 	mov	_LCD_print_PARM_2,#0x01
 	setb	_LCD_print_PARM_3
 	mov	dptr,#__str_2
@@ -955,25 +1098,25 @@ L002087?:
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:92: switch (unit_prefix_select) {
-	cjne	r4,#0x00,L002088?
-	cjne	r5,#0x00,L002088?
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:107: switch (unit_prefix_select) {
+	cjne	r4,#0x00,L002101?
+	cjne	r5,#0x00,L002101?
 	sjmp	L002024?
-L002088?:
-	cjne	r4,#0x01,L002089?
-	cjne	r5,#0x00,L002089?
+L002101?:
+	cjne	r4,#0x01,L002102?
+	cjne	r5,#0x00,L002102?
 	ljmp	L002025?
-L002089?:
-	cjne	r4,#0x02,L002090?
-	cjne	r5,#0x00,L002090?
+L002102?:
+	cjne	r4,#0x02,L002103?
+	cjne	r5,#0x00,L002103?
 	ljmp	L002026?
-L002090?:
-	cjne	r4,#0x03,L002091?
-	cjne	r5,#0x00,L002091?
+L002103?:
+	cjne	r4,#0x03,L002104?
+	cjne	r5,#0x00,L002104?
 	ljmp	L002027?
-L002091?:
+L002104?:
 	ljmp	L002028?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:93: case 0: impedence = capacitance / 1000 / 1000 / 1000 / 1000 * freq * 2 * M_PI; break;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:108: case 0: impedence = capacitance / 1000 / 1000 / 1000 / 1000 * freq * 2 * M_PI; break;
 L002024?:
 	push	ar2
 	push	ar3
@@ -1104,7 +1247,7 @@ L002024?:
 	pop	ar3
 	pop	ar2
 	ljmp	L002029?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:94: case 1: impedence = capacitance / 1000 / 1000 / 1000 * freq * 2 * M_PI; break;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:109: case 1: impedence = capacitance / 1000 / 1000 / 1000 * freq * 2 * M_PI; break;
 L002025?:
 	push	ar2
 	push	ar3
@@ -1216,7 +1359,7 @@ L002025?:
 	pop	ar3
 	pop	ar2
 	ljmp	L002029?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:95: case 2: impedence = capacitance / 1000 / 1000 * freq * 2 * M_PI; break;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:110: case 2: impedence = capacitance / 1000 / 1000 * freq * 2 * M_PI; break;
 L002026?:
 	push	ar2
 	push	ar3
@@ -1309,7 +1452,7 @@ L002026?:
 	pop	ar3
 	pop	ar2
 	ljmp	L002029?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:96: case 3: impedence = capacitance / 1000 * freq * 2 * M_PI; break;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:111: case 3: impedence = capacitance / 1000 * freq * 2 * M_PI; break;
 L002027?:
 	push	ar2
 	push	ar3
@@ -1382,16 +1525,16 @@ L002027?:
 	pop	ar2
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:97: default: impedence = 1;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:112: default: impedence = 1;
 	sjmp	L002029?
 L002028?:
 	mov	_main_impedence_1_59,#0x00
 	mov	(_main_impedence_1_59 + 1),#0x00
 	mov	(_main_impedence_1_59 + 2),#0x80
 	mov	(_main_impedence_1_59 + 3),#0x3F
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:98: }
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:113: }
 L002029?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:99: impedence = -1.0 / impedence;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:114: impedence = -1.0 / impedence;
 	push	ar2
 	push	ar3
 	push	_main_impedence_1_59
@@ -1411,10 +1554,10 @@ L002029?:
 	mov	sp,a
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:101: if (BTN_2) sprintf(string_buffer, "|| Z=%.2f%c-90%c%c", abs(impedence), 0xDA, 0xDF, 0xF4);
-	jnb	_P2_3,L002092?
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:116: if (BTN_2) sprintf(string_buffer, "|| Z=%.2f%c-90%c%c", abs(impedence), 0xDA, 0xDF, 0xF4);
+	jnb	_P2_3,L002105?
 	ljmp	L002031?
-L002092?:
+L002105?:
 	push	ar2
 	push	ar3
 	clr	a
@@ -1434,20 +1577,20 @@ L002092?:
 	pop	ar3
 	pop	ar2
 	mov	a,r4
-	jz	L002047?
+	jz	L002052?
 	mov	r4,_main_impedence_1_59
 	mov	r5,(_main_impedence_1_59 + 1)
 	mov	r6,(_main_impedence_1_59 + 2)
 	mov	a,(_main_impedence_1_59 + 3)
 	cpl	acc.7
 	mov	r7,a
-	sjmp	L002048?
-L002047?:
+	sjmp	L002053?
+L002052?:
 	mov	r4,_main_impedence_1_59
 	mov	r5,(_main_impedence_1_59 + 1)
 	mov	r6,(_main_impedence_1_59 + 2)
 	mov	r7,(_main_impedence_1_59 + 3)
-L002048?:
+L002053?:
 	push	ar2
 	push	ar3
 	mov	a,#0xF4
@@ -1486,7 +1629,7 @@ L002048?:
 	pop	ar2
 	ljmp	L002041?
 L002031?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:102: else sprintf(string_buffer, "|| Z=%.2fj%c", impedence, 0xF4);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:117: else sprintf(string_buffer, "|| Z=%.2fj%c", impedence, 0xF4);
 	push	ar2
 	push	ar3
 	mov	a,#0xF4
@@ -1517,11 +1660,11 @@ L002031?:
 	pop	ar2
 	ljmp	L002041?
 L002040?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:103: } else if (BTN_1) {
-	jnb	_P2_5,L002094?
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:118: } else if (BTN_1) {
+	jnb	_P2_5,L002107?
 	ljmp	L002037?
-L002094?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:105: LCD_print("Frequency:", 1, 1);
+L002107?:
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:120: LCD_print("Frequency:", 1, 1);
 	mov	_LCD_print_PARM_2,#0x01
 	setb	_LCD_print_PARM_3
 	mov	dptr,#__str_5
@@ -1531,7 +1674,7 @@ L002094?:
 	lcall	_LCD_print
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:106: if (BTN_2) sprintf(string_buffer, "W=%.2f rad/s", freq * 2 * M_PI);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:121: if (BTN_2) sprintf(string_buffer, "W=%.2f rad/s", freq * 2 * M_PI);
 	jb	_P2_3,L002034?
 	mov	dpl,_main_freq_1_59
 	mov	dph,(_main_freq_1_59 + 1)
@@ -1583,7 +1726,7 @@ L002094?:
 	pop	ar2
 	ljmp	L002041?
 L002034?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:107: else sprintf(string_buffer, "f=%luHz", freq);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:122: else sprintf(string_buffer, "f=%luHz", freq);
 	push	ar2
 	push	ar3
 	push	_main_freq_1_59
@@ -1610,7 +1753,7 @@ L002034?:
 	pop	ar2
 	sjmp	L002041?
 L002037?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:109: LCD_print("[] Capacitance:", 1, 1);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:124: LCD_print("[] Capacitance:", 1, 1);
 	mov	_LCD_print_PARM_2,#0x01
 	setb	_LCD_print_PARM_3
 	mov	dptr,#__str_8
@@ -1620,7 +1763,7 @@ L002037?:
 	push	ar0
 	lcall	_LCD_print
 	pop	ar0
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:110: sprintf(string_buffer, "|| C=%.4f%cF", capacitance, unit_prefix[unit_prefix_select]);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:125: sprintf(string_buffer, "|| C=%.4f%cF", capacitance, unit_prefix[unit_prefix_select]);
 	mov	a,@r0
 	mov	r4,a
 	rlc	a
@@ -1651,7 +1794,7 @@ L002037?:
 	pop	ar3
 	pop	ar2
 L002041?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:113: LCD_print(string_buffer, 2, 1);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:128: LCD_print(string_buffer, 2, 1);
 	mov	_LCD_print_PARM_2,#0x02
 	setb	_LCD_print_PARM_3
 	mov	dptr,#_main_string_buffer_1_59
@@ -1666,78 +1809,78 @@ L002041?:
 ;Allocation info for local variables in function 'PORT_init'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:118: void PORT_init(void) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:133: void PORT_init(void) {
 ;	-----------------------------------------
 ;	 function PORT_init
 ;	-----------------------------------------
 _PORT_init:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:120: P0MDOUT |= 0x10;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:135: P0MDOUT |= 0x10;
 	orl	_P0MDOUT,#0x10
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:123: XBR0 = 0b_0000_0001;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:138: XBR0 = 0b_0000_0001;
 	mov	_XBR0,#0x01
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:126: XBR1 = 0b_0101_0000;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:141: XBR1 = 0b_0101_0000;
 	mov	_XBR1,#0x50
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:127: XBR2 = 0b_0000_0000;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:142: XBR2 = 0b_0000_0000;
 	mov	_XBR2,#0x00
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'SYSCLK_init'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:131: void SYSCLK_init(void) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:146: void SYSCLK_init(void) {
 ;	-----------------------------------------
 ;	 function SYSCLK_init
 ;	-----------------------------------------
 _SYSCLK_init:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:138: CLKSEL|=0b_0000_0011; // SYSCLK derived from the Internal High-Frequency Oscillator / 1.
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:153: CLKSEL|=0b_0000_0011; // SYSCLK derived from the Internal High-Frequency Oscillator / 1.
 	orl	_CLKSEL,#0x03
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:142: OSCICN |= 0x03;   // Configure internal oscillator for its maximum frequency
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:157: OSCICN |= 0x03;   // Configure internal oscillator for its maximum frequency
 	orl	_OSCICN,#0x03
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:143: RSTSRC  = 0x04;   // Enable missing clock detector
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:158: RSTSRC  = 0x04;   // Enable missing clock detector
 	mov	_RSTSRC,#0x04
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'UART0_init'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:147: void UART0_init(void) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:162: void UART0_init(void) {
 ;	-----------------------------------------
 ;	 function UART0_init
 ;	-----------------------------------------
 _UART0_init:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:148: SCON0 = 0x10;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:163: SCON0 = 0x10;
 	mov	_SCON0,#0x10
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:150: TH1    = 0x10000-((SYSCLK/BAUDRATE)/2L);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:165: TH1    = 0x10000-((SYSCLK/BAUDRATE)/2L);
 	mov	_TH1,#0x30
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:151: CKCON &= ~0x0B;                  // T1M = 1; SCA1:0 = xx
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:166: CKCON &= ~0x0B;                  // T1M = 1; SCA1:0 = xx
 	anl	_CKCON,#0xF4
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:152: CKCON |= 0x08;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:167: CKCON |= 0x08;
 	orl	_CKCON,#0x08
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:165: TL1   = TH1;      // Init Timer1
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:180: TL1   = TH1;      // Init Timer1
 	mov	_TL1,_TH1
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:166: TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit autoreload
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:181: TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit autoreload
 	anl	_TMOD,#0x0F
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:167: TMOD |= 0x20;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:182: TMOD |= 0x20;
 	orl	_TMOD,#0x20
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:168: TR1   = 1; // START Timer1
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:183: TR1   = 1; // START Timer1
 	setb	_TR1
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:169: TI    = 1;  // Indicate TX0 ready
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:184: TI    = 1;  // Indicate TX0 ready
 	setb	_TI
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'TIMER0_init'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:173: void TIMER0_init(void) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:188: void TIMER0_init(void) {
 ;	-----------------------------------------
 ;	 function TIMER0_init
 ;	-----------------------------------------
 _TIMER0_init:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:174: TMOD &= 0b_1111_0000; // Set the bits of Timer/Counter 0 to zero
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:189: TMOD &= 0b_1111_0000; // Set the bits of Timer/Counter 0 to zero
 	anl	_TMOD,#0xF0
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:175: TMOD |= 0b_0000_0101; // Timer/Counter 0 used as a 16-bit counter
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:190: TMOD |= 0b_0000_0101; // Timer/Counter 0 used as a 16-bit counter
 	orl	_TMOD,#0x05
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:176: TR0   = 0; // Stop Timer/Counter 0
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:191: TR0   = 0; // Stop Timer/Counter 0
 	clr	_TR0
 	ret
 ;------------------------------------------------------------
@@ -1746,48 +1889,48 @@ _TIMER0_init:
 ;us                        Allocated to registers r2 
 ;i                         Allocated to registers r3 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:180: void delayUs(unsigned char us) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:195: void delayUs(unsigned char us) {
 ;	-----------------------------------------
 ;	 function delayUs
 ;	-----------------------------------------
 _delayUs:
 	mov	r2,dpl
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:185: CKCON |= 0b_0100_0000;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:200: CKCON |= 0b_0100_0000;
 	orl	_CKCON,#0x40
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:188: TMR3RL = (-(SYSCLK)/1000000L);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:203: TMR3RL = (-(SYSCLK)/1000000L);
 	mov	_TMR3RL,#0xD0
 	mov	(_TMR3RL >> 8),#0xFF
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:191: TMR3 = TMR3RL;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:206: TMR3 = TMR3RL;
 	mov	_TMR3,_TMR3RL
 	mov	(_TMR3 >> 8),(_TMR3RL >> 8)
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:194: TMR3CN = 0x04;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:209: TMR3CN = 0x04;
 	mov	_TMR3CN,#0x04
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:195: for (i = 0; i < us; i++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:210: for (i = 0; i < us; i++) {
 	mov	r3,#0x00
 L007006?:
 	clr	c
 	mov	a,r3
 	subb	a,r2
 	jnc	L007009?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:196: while (!(TMR3CN & 0x80));
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:211: while (!(TMR3CN & 0x80));
 L007001?:
 	mov	a,_TMR3CN
 	jnb	acc.7,L007001?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:197: TMR3CN &= ~(0x80);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:212: TMR3CN &= ~(0x80);
 	anl	_TMR3CN,#0x7F
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:200: if (TF0 == 1) {
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:201: TF0 = 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:215: if (TF0 == 1) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:216: TF0 = 0;
 	jbc	_TF0,L007019?
 	sjmp	L007008?
 L007019?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:202: overflow_count++;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:217: overflow_count++;
 	inc	_overflow_count
 L007008?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:195: for (i = 0; i < us; i++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:210: for (i = 0; i < us; i++) {
 	inc	r3
 	sjmp	L007006?
 L007009?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:205: TMR3CN = 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:220: TMR3CN = 0;
 	mov	_TMR3CN,#0x00
 	ret
 ;------------------------------------------------------------
@@ -1796,36 +1939,36 @@ L007009?:
 ;ms                        Allocated to registers r2 r3 
 ;j                         Allocated to registers r2 r3 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:209: void delay(unsigned int ms) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:224: void delay(unsigned int ms) {
 ;	-----------------------------------------
 ;	 function delay
 ;	-----------------------------------------
 _delay:
 	mov	r2,dpl
 	mov	r3,dph
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:211: for (j = ms; j != 0; j--) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:226: for (j = ms; j != 0; j--) {
 L008001?:
 	cjne	r2,#0x00,L008010?
 	cjne	r3,#0x00,L008010?
 	ret
 L008010?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:212: delayUs(249);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:227: delayUs(249);
 	mov	dpl,#0xF9
 	push	ar2
 	push	ar3
 	lcall	_delayUs
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:213: delayUs(249);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:228: delayUs(249);
 	mov	dpl,#0xF9
 	lcall	_delayUs
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:214: delayUs(249);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:229: delayUs(249);
 	mov	dpl,#0xF9
 	lcall	_delayUs
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:215: delayUs(250);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:230: delayUs(250);
 	mov	dpl,#0xFA
 	lcall	_delayUs
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:211: for (j = ms; j != 0; j--) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:226: for (j = ms; j != 0; j--) {
 	dec	r2
 	cjne	r2,#0xff,L008011?
 	dec	r3
@@ -1835,17 +1978,17 @@ L008011?:
 ;Allocation info for local variables in function 'LCD_pulse'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:220: void LCD_pulse(void) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:235: void LCD_pulse(void) {
 ;	-----------------------------------------
 ;	 function LCD_pulse
 ;	-----------------------------------------
 _LCD_pulse:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:221: LCD_E = 1;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:236: LCD_E = 1;
 	setb	_P2_0
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:222: delayUs(40);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:237: delayUs(40);
 	mov	dpl,#0x28
 	lcall	_delayUs
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:223: LCD_E = 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:238: LCD_E = 0;
 	clr	_P2_0
 	ret
 ;------------------------------------------------------------
@@ -1853,64 +1996,64 @@ _LCD_pulse:
 ;------------------------------------------------------------
 ;x                         Allocated to registers r2 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:227: void LCD_byte(unsigned char x) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:242: void LCD_byte(unsigned char x) {
 ;	-----------------------------------------
 ;	 function LCD_byte
 ;	-----------------------------------------
 _LCD_byte:
 	mov	r2,dpl
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:229: ACC    = x;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:244: ACC    = x;
 	mov	_ACC,r2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:230: LCD_D7 = ACC_7;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:245: LCD_D7 = ACC_7;
 	mov	c,_ACC_7
 	mov	_P1_0,c
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:231: LCD_D6 = ACC_6;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:246: LCD_D6 = ACC_6;
 	mov	c,_ACC_6
 	mov	_P1_1,c
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:232: LCD_D5 = ACC_5;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:247: LCD_D5 = ACC_5;
 	mov	c,_ACC_5
 	mov	_P1_2,c
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:233: LCD_D4 = ACC_4;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:248: LCD_D4 = ACC_4;
 	mov	c,_ACC_4
 	mov	_P1_3,c
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:234: LCD_pulse();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:249: LCD_pulse();
 	push	ar2
 	lcall	_LCD_pulse
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:235: delayUs(40);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:250: delayUs(40);
 	mov	dpl,#0x28
 	lcall	_delayUs
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:236: ACC    = x;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:251: ACC    = x;
 	mov	_ACC,r2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:237: LCD_D7 = ACC_3;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:252: LCD_D7 = ACC_3;
 	mov	c,_ACC_3
 	mov	_P1_0,c
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:238: LCD_D6 = ACC_2;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:253: LCD_D6 = ACC_2;
 	mov	c,_ACC_2
 	mov	_P1_1,c
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:239: LCD_D5 = ACC_1;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:254: LCD_D5 = ACC_1;
 	mov	c,_ACC_1
 	mov	_P1_2,c
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:240: LCD_D4 = ACC_0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:255: LCD_D4 = ACC_0;
 	mov	c,_ACC_0
 	mov	_P1_3,c
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:241: LCD_pulse();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:256: LCD_pulse();
 	ljmp	_LCD_pulse
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LCD_write'
 ;------------------------------------------------------------
 ;x                         Allocated to registers 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:245: void LCD_write(unsigned char x) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:260: void LCD_write(unsigned char x) {
 ;	-----------------------------------------
 ;	 function LCD_write
 ;	-----------------------------------------
 _LCD_write:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:246: LCD_RS = 1;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:261: LCD_RS = 1;
 	setb	_P2_2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:247: LCD_byte(x);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:262: LCD_byte(x);
 	lcall	_LCD_byte
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:248: delay(2);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:263: delay(2);
 	mov	dptr,#0x0002
 	ljmp	_delay
 ;------------------------------------------------------------
@@ -1918,57 +2061,57 @@ _LCD_write:
 ;------------------------------------------------------------
 ;x                         Allocated to registers 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:252: void LCD_cmd(unsigned char x) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:267: void LCD_cmd(unsigned char x) {
 ;	-----------------------------------------
 ;	 function LCD_cmd
 ;	-----------------------------------------
 _LCD_cmd:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:253: LCD_RS = 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:268: LCD_RS = 0;
 	clr	_P2_2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:254: LCD_byte(x);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:269: LCD_byte(x);
 	lcall	_LCD_byte
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:255: delay(5);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:270: delay(5);
 	mov	dptr,#0x0005
 	ljmp	_delay
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LCD_init'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:259: void LCD_init(void) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:274: void LCD_init(void) {
 ;	-----------------------------------------
 ;	 function LCD_init
 ;	-----------------------------------------
 _LCD_init:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:260: LCD_E = 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:275: LCD_E = 0;
 	clr	_P2_0
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:261: LCD_RW = 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:276: LCD_RW = 0;
 	clr	_P2_1
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:262: LCD_A  = 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:277: LCD_A  = 0;
 	clr	_P0_7
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:263: LCD_K  = 1;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:278: LCD_K  = 1;
 	setb	_P0_6
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:264: delay(20);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:279: delay(20);
 	mov	dptr,#0x0014
 	lcall	_delay
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:267: LCD_cmd(0x33);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:282: LCD_cmd(0x33);
 	mov	dpl,#0x33
 	lcall	_LCD_cmd
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:268: LCD_cmd(0x33);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:283: LCD_cmd(0x33);
 	mov	dpl,#0x33
 	lcall	_LCD_cmd
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:269: LCD_cmd(0x32);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:284: LCD_cmd(0x32);
 	mov	dpl,#0x32
 	lcall	_LCD_cmd
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:272: LCD_cmd(0x28);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:287: LCD_cmd(0x28);
 	mov	dpl,#0x28
 	lcall	_LCD_cmd
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:273: LCD_cmd(0x0c);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:288: LCD_cmd(0x0c);
 	mov	dpl,#0x0C
 	lcall	_LCD_cmd
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:274: LCD_cmd(0x01);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:289: LCD_cmd(0x01);
 	mov	dpl,#0x01
 	lcall	_LCD_cmd
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:275: delay(20);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:290: delay(20);
 	mov	dptr,#0x0014
 	ljmp	_delay
 ;------------------------------------------------------------
@@ -1978,7 +2121,7 @@ _LCD_init:
 ;string                    Allocated to registers r2 r3 r4 
 ;j                         Allocated to registers r5 r6 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:279: void LCD_print(char *string, unsigned char line, bit fillLine) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:294: void LCD_print(char *string, unsigned char line, bit fillLine) {
 ;	-----------------------------------------
 ;	 function LCD_print
 ;	-----------------------------------------
@@ -1986,7 +2129,7 @@ _LCD_print:
 	mov	r2,dpl
 	mov	r3,dph
 	mov	r4,b
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:281: LCD_cmd(line == 2 ? 0xc0: 0x80);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:296: LCD_cmd(line == 2 ? 0xc0: 0x80);
 	mov	a,#0x02
 	cjne	a,_LCD_print_PARM_2,L014012?
 	mov	r5,#0xC0
@@ -1999,13 +2142,13 @@ L014013?:
 	push	ar3
 	push	ar4
 	lcall	_LCD_cmd
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:282: delay(3);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:297: delay(3);
 	mov	dptr,#0x0003
 	lcall	_delay
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:289: while (string[j] != 0) LCD_write(string[j++]);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:304: while (string[j] != 0) LCD_write(string[j++]);
 	mov	r5,#0x00
 	mov	r6,#0x00
 L014001?:
@@ -2052,7 +2195,7 @@ L014024?:
 	pop	ar2
 	sjmp	L014001?
 L014003?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:290: if (fillLine) for (; j < CHARS_PER_LINE; j++) LCD_write(' ');
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 4\lab4.c:305: if (fillLine) for (; j < CHARS_PER_LINE; j++) LCD_write(' ');
 	jnb	_LCD_print_PARM_3,L014010?
 	mov	ar2,r5
 	mov	ar3,r6

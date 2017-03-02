@@ -7,7 +7,9 @@
 #include "lab4.h"
 
 unsigned char overflow_count;
-
+double bin[3];
+double bin_sum;
+int bin_index = 0;
 
 void main(void) {
     unsigned long freq;
@@ -21,6 +23,10 @@ void main(void) {
     double unit_prefix_mult;
 
     double impedence;
+
+    // moving average
+    int x;
+    double freq_ave;
 
     // technicall start
     PCA0MD &= ~0x40;
@@ -59,8 +65,17 @@ void main(void) {
         else if (freq < 30)     sample_time = 500;
         else                    sample_time = 300;
 
+        // compute average of last 5 records
+        bin[bin_index] = freq_prime;
+        bin_index = bin_index == 2 ? 0 : bin_index + 1;
+        bin_sum = 0;
+        for (x = 0; x < 3; x++) {
+            bin_sum += bin[bin_index];
+        }
+        freq_ave = bin_sum / 3;
+
         // compute capacitance 295.32 = 1.44 / (RA + 2RB) * 1E6 (or other unit prefix)
-        capacitance = 295.3200 / freq_prime;
+        capacitance = 295.3200 / freq_ave;
 
         // select appropriate prefix
         switch (unit_prefix_select) {
