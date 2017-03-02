@@ -36,132 +36,70 @@ void main(void) {
         TF0 = 0;
         TR0 = 1;
         delay(1000);
-        printf("%d\t", overflow_count);
 
         // stop timer
         TR0 = 0;
 
         // compute frequency
-        freq = overflow_count * 0x10000L + TH0 * 0x1000L + TL0;
+        freq = overflow_count * 0x10000L + TH0 * 0x100L + TL0;
 
         // compute capacitance
-        capacitance = 0.0002953200 / freq;
-		printf("%ld\t", freq);
-        printf("%f\n", capacitance);
+        capacitance = 295.3200 / freq;
+        printf("f=%luHz\t", freq);
+        printf("%fuF\n", capacitance);
     }
 }
 
+/*
 // init function
-char _c51_external_startup(void) {
-    PCA0MD &= (~0x40) ;    // DISABLE WDT: clear Watchdog Enable bit
-    VDM0CN  = 0x80; // enable VDD monitor
-    RSTSRC  = 0x02|0x04; // Enable reset on missing clock detector and VDD
+// char _c51_external_startup(void) {
+//     PCA0MD &= (~0x40) ;    // DISABLE WDT: clear Watchdog Enable bit
+//     VDM0CN  = 0x80; // enable VDD monitor
+//     RSTSRC  = 0x02|0x04; // Enable reset on missing clock detector and VDD
+//
+//     // CLKSEL&=0b_1111_1000; // Not needed because CLKSEL==0 after reset
+//     #if (SYSCLK == 12000000L)
+//         //CLKSEL|=0b_0000_0000;  // SYSCLK derived from the Internal High-Frequency Oscillator / 4
+//     #elif (SYSCLK == 24000000L)
+//         CLKSEL|=0b_0000_0010; // SYSCLK derived from the Internal High-Frequency Oscillator / 2.
+//     #elif (SYSCLK == 48000000L)
+//         CLKSEL|=0b_0000_0011; // SYSCLK derived from the Internal High-Frequency Oscillator / 1.
+//     #else
+//         #error SYSCLK must be either 12000000L, 24000000L, or 48000000L
+//     #endif
+//     OSCICN  |= 0x03; // Configure internal oscillator for its maximum frequency
+//     P0MDOUT |= 0x10; // Enable Uart TX as push-pull output
+//     P1MDOUT |= 0b_0000_1111; // LCD's D4 to D7 are connected to P1.3 to P1.0
+//     P2MDOUT |= 0b_0000_0111; // P2.2 is LCD's RS, P2.1 is LCD's RW, P2.0 is LCD's E
+//     XBR0     = 0x01; // Enable UART on P0.4(TX) and P0.5(RX)
+//     XBR1     = 0x40; // Enable crossbar and weak pull-ups
+//
+//     #if (SYSCLK/BAUDRATE/2L/256L < 1)
+//         TH1    = 0x10000-((SYSCLK/BAUDRATE)/2L);
+//         CKCON &= ~0x0B;                  // T1M = 1; SCA1:0 = xx
+//         CKCON |= 0x08;
+//     #elif (SYSCLK/BAUDRATE/2L/256L < 4)
+//         TH1    = 0x10000-(SYSCLK/BAUDRATE/2L/4L);
+//         CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 01
+//         CKCON |= 0x01;
+//     #elif (SYSCLK/BAUDRATE/2L/256L < 12)
+//         TH1    = 0x10000-(SYSCLK/BAUDRATE/2L/12L);
+//         CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 00
+//     #else
+//         TH1    = 0x10000-(SYSCLK/BAUDRATE/2/48);
+//         CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 10
+//         CKCON |= 0x02;
+//     #endif
+//
+//     TL1   = TH1;     // Init timer 1
+//     TMOD &= 0x0f;  // TMOD: timer 1 in 8-bit autoreload
+//     TMOD |= 0x20;
+//     TR1   = 1;       // Start timer1
+//     SCON  = 0x52;
+//     return 0;
+// }
+*/
 
-    // CLKSEL&=0b_1111_1000; // Not needed because CLKSEL==0 after reset
-    #if (SYSCLK == 12000000L)
-        //CLKSEL|=0b_0000_0000;  // SYSCLK derived from the Internal High-Frequency Oscillator / 4
-    #elif (SYSCLK == 24000000L)
-        CLKSEL|=0b_0000_0010; // SYSCLK derived from the Internal High-Frequency Oscillator / 2.
-    #elif (SYSCLK == 48000000L)
-        CLKSEL|=0b_0000_0011; // SYSCLK derived from the Internal High-Frequency Oscillator / 1.
-    #else
-        #error SYSCLK must be either 12000000L, 24000000L, or 48000000L
-    #endif
-    OSCICN  |= 0x03; // Configure internal oscillator for its maximum frequency
-    P0MDOUT |= 0x10; // Enable Uart TX as push-pull output
-    P1MDOUT |= 0b_0000_1111; // LCD's D4 to D7 are connected to P1.3 to P1.0
-    P2MDOUT |= 0b_0000_0111; // P2.2 is LCD's RS, P2.1 is LCD's RW, P2.0 is LCD's E
-    XBR0     = 0x01; // Enable UART on P0.4(TX) and P0.5(RX)
-    XBR1     = 0x40; // Enable crossbar and weak pull-ups
-
-    #if (SYSCLK/BAUDRATE/2L/256L < 1)
-        TH1    = 0x10000-((SYSCLK/BAUDRATE)/2L);
-        CKCON &= ~0x0B;                  // T1M = 1; SCA1:0 = xx
-        CKCON |= 0x08;
-    #elif (SYSCLK/BAUDRATE/2L/256L < 4)
-        TH1    = 0x10000-(SYSCLK/BAUDRATE/2L/4L);
-        CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 01
-        CKCON |= 0x01;
-    #elif (SYSCLK/BAUDRATE/2L/256L < 12)
-        TH1    = 0x10000-(SYSCLK/BAUDRATE/2L/12L);
-        CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 00
-    #else
-        TH1    = 0x10000-(SYSCLK/BAUDRATE/2/48);
-        CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 10
-        CKCON |= 0x02;
-    #endif
-
-    TL1   = TH1;     // Init timer 1
-    TMOD &= 0x0f;  // TMOD: timer 1 in 8-bit autoreload
-    TMOD |= 0x20;
-    TR1   = 1;       // Start timer1
-    SCON  = 0x52;
-    return 0;
-}
-
-// using timer3 to delay <us> micro-seconds
-void delayUs(unsigned char us) {
-    // // microsecond counter
-    // unsigned char i;
-    //
-    // // input for timer 3 is selected as SYSCLK by setting T3ML (bit 6) of CKCON
-    // CKCON |= 0x40;
-    //
-    // // set overflow / reload value for timer3
-    // TMR3RL = (-(SYSCLK)/1000000L);
-    //
-    // // Initialize timer3 for first overflow
-    // TMR3 = TMR3RL;
-    //
-    // // start timer 3, and wait for overflow
-    // TMR3CN = 0x04;
-    // for (i = 0; i < us; i++) {
-    //     while (!(TMR3CN & 0x80));
-    //     TMR3CN &= ~(0x80);
-    //
-    //     // Check overflow of Timer/Counter 0
-	// 	if (TF0 == 1) {
-	// 		TF0 = 0;
-	// 		overflow_count++;
-    //         printf("\a");
-	// 	}
-    // }
-    //
-    // // stop timer3 and clear overflow
-    // TMR3CN = 0;
-    unsigned char i;               // usec counter
-
-	// The input for Timer 3 is selected as SYSCLK by setting T3ML (bit 6) of CKCON:
-	CKCON |= 0b_0100_0000;
-
-	TMR3RL = (-(SYSCLK)/1000000L); // Set Timer3 to overflow in 1us.
-	TMR3   = TMR3RL;                 // Initialize Timer3 for first overflow
-
-	TMR3CN = 0x04;                 // Sart Timer3 and clear overflow flag
-	for (i = 0; i < us; i++) {      // Count <us> overflows
-		while (!(TMR3CN & 0x80));  // Wait for overflow
-		TMR3CN &= ~(0x80);         // Clear overflow indicator
-		// Check overflow of Timer/Counter 0
-		if (TF0==1) {
-			TF0=0;
-			overflow_count++;
-            printf("x");
-		}
-        printf("*");
-	}
-	TMR3CN = 0 ;
-}
-
-// delay microseconds
-void delay(unsigned int ms) {
-    unsigned int i;
-    for (i = 0; i < ms; i++) {
-        delayUs(249);
-        delayUs(249);
-        delayUs(249);
-        delayUs(250);
-    }
-}
 
 // port IO initialization
 void PORT_init(void) {
@@ -169,15 +107,16 @@ void PORT_init(void) {
     P0MDOUT |= 0x10;
 
     // enable UART on P0.4(TX) and P0.5(RX)
-    XBR0     = 0x01;
+    XBR0 = 0b_0000_0001;
 
     // Enable crossbar and weak pull-ups
-    XBR1     = 0x50;
-    XBR2     = 0x00;
+    XBR1 = 0b_0101_0000;
+    XBR2 = 0b_0000_0000;
 }
 
 // oscillator initialization
 void SYSCLK_init(void) {
+    // CLKSEL&=0b_1111_1000; // Not needed because CLKSEL==0 after reset
     #if (SYSCLK == 12000000L)
     	//CLKSEL|=0b_0000_0000;  // SYSCLK derived from the Internal High-Frequency Oscillator / 4
     #elif (SYSCLK == 24000000L)
@@ -196,35 +135,73 @@ void UART0_init(void) {
     SCON0 = 0x10;
 
 #if (SYSCLK/BAUDRATE/2L/256L < 1)
-	TH1    = 0x10000-((SYSCLK/BAUDRATE)/2L);
-	CKCON &= ~0x0B;                  // T1M = 1; SCA1:0 = xx
-	CKCON |= 0x08;
+    TH1    = 0x10000-((SYSCLK/BAUDRATE)/2L);
+    CKCON &= ~0x0B;                  // T1M = 1; SCA1:0 = xx
+    CKCON |= 0x08;
 #elif (SYSCLK/BAUDRATE/2L/256L < 4)
-	TH1    = 0x10000-(SYSCLK/BAUDRATE/2L/4L);
-	CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 01
-	CKCON |= 0x01;
+    TH1    = 0x10000-(SYSCLK/BAUDRATE/2L/4L);
+    CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 01
+    CKCON |= 0x01;
 #elif (SYSCLK/BAUDRATE/2L/256L < 12)
-	TH1    = 0x10000-(SYSCLK/BAUDRATE/2L/12L);
-	CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 00
+    TH1    = 0x10000-(SYSCLK/BAUDRATE/2L/12L);
+    CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 00
 #else
-	TH1    = 0x10000-(SYSCLK/BAUDRATE/2/48);
-	CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 10
-	CKCON |= 0x02;
+    TH1    = 0x10000-(SYSCLK/BAUDRATE/2/48);
+    CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 10
+    CKCON |= 0x02;
 #endif
-	TL1   = TH1;      // Init Timer1
-	TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit autoreload
-	TMOD |= 0x20;
-	TR1   = 1; // START Timer1
-	TI    = 1;  // Indicate TX0 ready
+    TL1   = TH1;      // Init Timer1
+    TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit autoreload
+    TMOD |= 0x20;
+    TR1   = 1; // START Timer1
+    TI    = 1;  // Indicate TX0 ready
 }
 
 // ubutuakuze timer 0
 void TIMER0_init(void) {
-    TMOD &= 0xF0;
+    TMOD &= 0b_1111_0000; // Set the bits of Timer/Counter 0 to zero
+    TMOD |= 0b_0000_0101; // Timer/Counter 0 used as a 16-bit counter
+    TR0   = 0; // Stop Timer/Counter 0
+}
 
-    // used as 16-bit counter
-    TMOD |= 0x05;
-    TR0   = 0;
+// using timer3 to delay <us> micro-seconds
+void delayUs(unsigned char us) {
+    // microsecond counter
+    unsigned char i;
+
+    // input for timer 3 is selected as SYSCLK by setting T3ML (bit 6) of CKCON
+    CKCON |= 0b_0100_0000;
+
+    // set overflow / reload value for timer3
+    TMR3RL = (-(SYSCLK)/1000000L);
+
+    // Initialize timer3 for first overflow
+    TMR3 = TMR3RL;
+
+    // start timer 3, and wait for overflow
+    TMR3CN = 0x04;
+    for (i = 0; i < us; i++) {
+        while (!(TMR3CN & 0x80));
+        TMR3CN &= ~(0x80);
+
+        // Check overflow of Timer/Counter 0
+        if (TF0 == 1) {
+            TF0 = 0;
+            overflow_count++;
+        }
+    }
+    TMR3CN = 0;
+}
+
+// delay microseconds
+void delay(unsigned int ms) {
+    unsigned int j;
+    for (j = ms; j != 0; j--) {
+        delayUs(249);
+        delayUs(249);
+        delayUs(249);
+        delayUs(250);
+    }
 }
 
 // pulse LCD clock

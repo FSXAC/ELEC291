@@ -1,7 +1,7 @@
 // preprocessor constants
 // timing
-#define SYSCLK    48000000L // SYSCLK frequency in Hz
-#define BAUDRATE    115200L // Baud rate of UART in bps
+#define SYSCLK      48000000L  // SYSCLK frequency in Hz
+#define BAUDRATE      115200L  // Baud rate of UART in bps
 
 // pin assignments
 #define LCD_RS P2_2
@@ -17,12 +17,12 @@
 
 // function prototypes
 char _c51_external_startup(void);
-void delayUs(unsigned char us);
-void delay(unsigned int ms);
 void PORT_init(void);
 void SYSCLK_init(void);
 void UART0_init(void);
 void TIMER0_init(void);
+void delayUs(unsigned char us);
+void delay(unsigned int ms);
 
 void LCD_pulse(void);
 void LCD_byte(unsigned char x);
