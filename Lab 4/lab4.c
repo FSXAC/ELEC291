@@ -148,7 +148,7 @@ void TIMER0_init(void) {
 
     // used as 16-bit counter
     TMOD |= 0x05;
-    TR    = 0;
+    TR0   = 0;
 }
 
 // pulse LCD clock
