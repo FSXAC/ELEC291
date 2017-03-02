@@ -3,10 +3,11 @@
 // libraries
 #include <C8051F38x.h>
 #include <stdio.h>
-
+#include <Math.h>
 #include "lab4.h"
 
 unsigned char overflow_count;
+
 
 void main(void) {
     unsigned long freq;
@@ -19,8 +20,7 @@ void main(void) {
     int unit_prefix_select = 2;
     double unit_prefix_mult;
 
-    // flags
-    unsigned char isComplex = 0;
+    double impedence;
 
     // technicall start
     PCA0MD &= ~0x40;
@@ -39,11 +39,6 @@ void main(void) {
 
     // print to terminal
     while (1) {
-        // button control
-        if (P2_7) {
-            isComplex = isComplex ? 0 : 1;
-        }
-
         // reset clock
         TL0 = 0;
         TH0 = 0;
@@ -91,13 +86,31 @@ void main(void) {
             unit_prefix_select++;
         }
 
-        // output capacitance to LCD
-        sprintf(string_buffer, "C=%.4f %cF %d", capacitance, unit_prefix[unit_prefix_select], isComplex);
-        LCD_print(string_buffer, 2, 1);
-
         // output capacitance via SPI
         printf("f=%luHz\t", freq);
         printf("%f%cF\n", capacitance, unit_prefix[unit_prefix_select]);
+
+        // output capacitance to LCD
+        if (BTN_0) {
+            switch (unit_prefix_select) {
+                case 0: impedence = capacitance / 1000 / 1000 / 1000 / 1000 * freq * 2 * M_PI; break;
+                case 1: impedence = capacitance / 1000 / 1000 / 1000 * freq * 2 * M_PI; break;
+                case 2: impedence = capacitance / 1000 / 1000 * freq * 2 * M_PI; break;
+                case 3: impedence = capacitance / 1000 * freq * 2 * M_PI; break;
+                default: impedence = 1;
+            }
+            impedence = -1.0 / impedence;
+
+            if (BTN_2) {
+                sprintf(string_buffer, "Z=%.2f%c-90%c%c", abs(impedence), 0xDA, 0xDF, 0xF4);
+            } else {
+                sprintf(string_buffer, "Z=%.2fj%c", impedence, 0xF4);
+            }
+        } else {
+            sprintf(string_buffer, "C=%.4f%cF", capacitance, unit_prefix[unit_prefix_select]);
+        }
+        LCD_print(string_buffer, 2, 1);
+
 
     }
 }
