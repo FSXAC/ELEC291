@@ -32,9 +32,6 @@ void main(void) {
     TIMER0_init();
     LCD_init();
 
-    // print to LCD
-    LCD_print("Capacitance:", 1, 1);
-
     sample_time = 100;
 
     // print to terminal
@@ -87,10 +84,11 @@ void main(void) {
         }
 
         // output capacitance via SPI
-        printf("$%lu,%f%c\n", freq, capacitance, unit_prefix[unit_prefix_select]);
+        printf("$%lu,%f%cF\n", freq, capacitance, unit_prefix[unit_prefix_select]);
 
         // output capacitance to LCD
         if (BTN_0) {
+            LCD_print("[] Impedence:", 1, 1);
             switch (unit_prefix_select) {
                 case 0: impedence = capacitance / 1000 / 1000 / 1000 / 1000 * freq * 2 * M_PI; break;
                 case 1: impedence = capacitance / 1000 / 1000 / 1000 * freq * 2 * M_PI; break;
@@ -101,12 +99,13 @@ void main(void) {
             impedence = -1.0 / impedence;
 
             if (BTN_2) {
-                sprintf(string_buffer, "Z=%.2f%c-90%c%c", abs(impedence), 0xDA, 0xDF, 0xF4);
+                sprintf(string_buffer, "|| Z=%.2f%c-90%c%c", abs(impedence), 0xDA, 0xDF, 0xF4);
             } else {
-                sprintf(string_buffer, "Z=%.2fj%c", impedence, 0xF4);
+                sprintf(string_buffer, "|| Z=%.2fj%c", impedence, 0xF4);
             }
         } else {
-            sprintf(string_buffer, "C=%.4f%cF", capacitance, unit_prefix[unit_prefix_select]);
+            LCD_print("[] Capacitance:", 1, 1);
+            sprintf(string_buffer, "|| C=%.4f%cF", capacitance, unit_prefix[unit_prefix_select]);
         }
         LCD_print(string_buffer, 2, 1);
     }
