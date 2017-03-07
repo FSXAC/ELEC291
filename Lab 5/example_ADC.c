@@ -6,8 +6,12 @@
 #include <stdlib.h>
 #include <c8051f38x.h>
 
+// system constants
 #define SYSCLK 24000000L
 #define BAUDRATE 115200L
+
+// measured value of VDD in volts
+#define VDD 3.325
 
 char _c51_external_startup (void) {
     PCA0MD &= (~0x40);    // DISABLE WDT: clear Watchdog Enable bit
@@ -91,6 +95,44 @@ void delayUs(unsigned char us) {
 void delay(unsigned int ms) {
 	unsigned int j;
 	unsigned char k;
-	for(j = 0; j < ms; j++)
-		for (k = 0; k < 4; k++) Timer3us(250);
+	for (j = 0; j < ms; j++)
+		for (k = 0; k < 4; k++) delayUs(250);
+}
+
+void main(void) {
+    unsigned int val;
+    printf("\x1b[2J");
+    printf(
+        "ADC Example Program\n"
+        "File:     %s\n"
+        "Compiled: %s, %s\n"
+        "===================",
+        __FILE__, __DATE__, __TIME__
+    );
+
+    // Activate multiplexer by starting conversion, discard current value
+    AD0BUSY = 1;
+
+    // while busy, stall
+    while (AD0BUSY);
+
+    while (1) {
+        // for debugging
+        P0_0 = 1;
+
+        // start ADC 0 conversion to measure voltage at pin P2.0
+        AD0BUSY = 1;
+
+        // wait for conversion
+        while (AD0BUSY);
+
+        // finished
+        P0_0 = 0;
+
+        // read value 0-1023 from ADC0
+        val = ADC0L + (ADC0H * 0x100);
+
+        printf("Voltage (P2.0): %5.3fV\n", (val*VDD)/1023.0);
+        delay(100);
+    }
 }
