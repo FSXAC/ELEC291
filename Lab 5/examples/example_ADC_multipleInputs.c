@@ -18,8 +18,9 @@
 #define ANALOG_1 LQFP32_MUX_P2_1
 #define ANALOG_2 LQFP32_MUX_P2_2
 #define ANALOG_3 LQFP32_MUX_P2_3
+#define NUM_OF_INPUTS 4
 
-char _c51_external_startup (void) {
+char _c51_external_startup(void) {
     PCA0MD &= (~0x40) ;    // DISABLE WDT: clear Watchdog Enable bit
     VDM0CN  = 0x80; // enable VDD monitor
     RSTSRC  = 0x02|0x04; // Enable reset on missing clock detector and VDD
@@ -157,14 +158,14 @@ void main(void) {
         __FILE__, __DATE__, __TIME__
     );
 
+    // initialize ADC
+    initializeADC();
+
     // Initialize the pins for analog input
     initializePin(2, 0); // Configure P2.0 as analog input
     initializePin(2, 1); // Configure P2.1 as analog input
     initializePin(2, 2); // Configure P2.2 as analog input
     initializePin(2, 3); // Configure P2.3 as analog input
-
-    // initialize ADC
-    initializeADC();
 
     // constantly check for voltages
     printf("\x1b[s");

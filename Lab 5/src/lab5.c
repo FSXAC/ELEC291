@@ -5,21 +5,43 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <c8051f38x.h>
+#include "lab5.h"
 
-// system constants
-#define SYSCLK 24000000L
-#define BAUDRATE 115200L
+void main(void) {
+    volatile float voltages[4];
 
-// measured value of VDD in volts
-#define VDD 4.6 //3.325
+    printf("\x1b[2J");
+    printf(
+        "ADC Example Program - Input from any pins\n"
+        "File:     %s\n"
+        "Compiled: %s, %s\n"
+        "===================\n",
+        __FILE__, __DATE__, __TIME__
+    );
 
-// analog input pins
-#define ANALOG_0 LQFP32_MUX_P2_0
-#define ANALOG_1 LQFP32_MUX_P2_1
-#define ANALOG_2 LQFP32_MUX_P2_2
-#define ANALOG_3 LQFP32_MUX_P2_3
+    // initialize ADC
+    initializeADC();
 
-char _c51_external_startup (void) {
+    // Initialize the pins for analog input
+    initializePin(2, 0); // Configure P2.0 as analog input
+    initializePin(2, 1); // Configure P2.1 as analog input
+    initializePin(2, 2); // Configure P2.2 as analog input
+    initializePin(2, 3); // Configure P2.3 as analog input
+
+    // constantly check for voltages
+    printf("\x1b[s");
+    while (1) {
+        voltages[0] = getVoltageAtPin(ANALOG_0);
+        voltages[1] = getVoltageAtPin(ANALOG_1);
+        voltages[2] = getVoltageAtPin(ANALOG_2);
+        voltages[3] = getVoltageAtPin(ANALOG_3);
+        printf("\x1b[u");
+        printf("V0=%5.3f, V1=%5.3f, V2=%5.3f, V3=%5.3f\n", voltages[0], voltages[1], voltages[2], voltages[3]);
+        delay(100);
+    }
+}
+
+char _c51_external_startup(void) {
     PCA0MD &= (~0x40) ;    // DISABLE WDT: clear Watchdog Enable bit
     VDM0CN  = 0x80; // enable VDD monitor
     RSTSRC  = 0x02|0x04; // Enable reset on missing clock detector and VDD
@@ -143,38 +165,4 @@ unsigned int getADCAtPin(unsigned char pin) {
 
 float getVoltageAtPin(unsigned char pin) {
     return ((getADCAtPin(pin) * VDD / 1024.0));
-}
-
-void main(void) {
-    volatile float voltages[4];
-
-    printf("\x1b[2J");
-    printf(
-        "ADC Example Program - Input from any pins\n"
-        "File:     %s\n"
-        "Compiled: %s, %s\n"
-        "===================\n",
-        __FILE__, __DATE__, __TIME__
-    );
-
-    // Initialize the pins for analog input
-    initializePin(2, 0); // Configure P2.0 as analog input
-    initializePin(2, 1); // Configure P2.1 as analog input
-    initializePin(2, 2); // Configure P2.2 as analog input
-    initializePin(2, 3); // Configure P2.3 as analog input
-
-    // initialize ADC
-    initializeADC();
-
-    // constantly check for voltages
-    printf("\x1b[s");
-    while (1) {
-        voltages[0] = getVoltageAtPin(ANALOG_0);
-        voltages[1] = getVoltageAtPin(ANALOG_1);
-        voltages[2] = getVoltageAtPin(ANALOG_2);
-        voltages[3] = getVoltageAtPin(ANALOG_3);
-        printf("\x1b[u");
-        printf("V0=%5.3f, V1=%5.3f, V2=%5.3f, V3=%5.3f\n", voltages[0], voltages[1], voltages[2], voltages[3]);
-        delay(100);
-    }
 }
