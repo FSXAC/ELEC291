@@ -90,7 +90,6 @@ void delayUs(unsigned char us) {
 // delays <ms> microseconds
 void delay(unsigned int ms) {
     unsigned int j;
-    unsigned char k;
     for (j = 0; j < ms; j++) {
         delayUs(249);
         delayUs(249);
