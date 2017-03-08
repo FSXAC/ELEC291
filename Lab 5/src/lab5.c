@@ -11,8 +11,7 @@ void main(void) {
     volatile float voltages[4];
 
     printf("\x1b[2J");
-    printf(
-        "ADC Example Program - Input from any pins\n"
+    printf("ADC Example Program - Input from any pins\n"
         "File:     %s\n"
         "Compiled: %s, %s\n"
         "===================\n",

@@ -33,3 +33,6 @@ unsigned int getADCAtPin(unsigned char pin);
 
 /* get voltage from ADC value */
 float getVoltageAtPin(unsigned char pin);
+
+/* ===[MAX7219 CONTROL]=== */
+void MAX_spi(int address, unsigned char opcode, unsigned char data);
