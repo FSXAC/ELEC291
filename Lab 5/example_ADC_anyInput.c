@@ -13,6 +13,12 @@
 // measured value of VDD in volts
 #define VDD 3.325
 
+// analog input pins
+#define ANALOG_0 LQFP32_MUX_P2_0
+#define ANALOG_1 LQFP32_MUX_P2_1
+#define ANALOG_2 LQFP32_MUX_P2_2
+#define ANALOG_3 LQFP32_MUX_P2_3
+
 char _c51_external_startup (void)
 {
     PCA0MD &= (~0x40) ;    // DISABLE WDT: clear Watchdog Enable bit
@@ -50,7 +56,7 @@ char _c51_external_startup (void)
     	CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 10
     	CKCON |=  0x02;
     #endif
-    
+
     TL1   = TH1;      // Init Timer1
     TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit autoreload
     TMOD |= 0x20;
@@ -85,19 +91,23 @@ void delayUs(unsigned char us) {
 void delay(unsigned int ms) {
     unsigned int j;
     unsigned char k;
-    for (j = 0; j < ms; j++)
-        for (k = 0; k < 4; k++) delayUs(250);
+    for (j = 0; j < ms; j++) {
+        delayUs(249);
+        delayUs(249);
+        delayUs(249);
+        delayUs(250);
+    }
 }
 
 // Init ADC
-void ADC_init(void) {
+void initializeADC(void) {
     ADC0CF = 0xF8; // SAR clock = 31, Right-justified result
     ADC0CN = 0b_1000_0000; // AD0EN=1, AD0TM=0
     REF0CN = 0b_0000_1000; // Select VDD as the voltage reference
 }
 
 // Initialize ADC pins
-void ADC_initPin(unsigned char port, unsigned char pin) {
+void initializePin(unsigned char port, unsigned char pin) {
     unsigned char mask;
     mask = 1 << pin;
     switch (port) {
@@ -121,40 +131,52 @@ void ADC_initPin(unsigned char port, unsigned char pin) {
     }
 }
 
+unsigned int getADCAtPin(unsigned char pin) {
+    AMX0P = pin;             // Select positive input from pin
+	AMX0N = LQFP32_MUX_GND;  // GND is negative input (Single-ended Mode)
+	// Dummy conversion first to select new pin
+	AD0BUSY = 1;
+	while (AD0BUSY); // Wait for dummy conversion to finish
+	// Convert voltage at the pin
+	AD0BUSY = 1;
+	while (AD0BUSY); // Wait for conversion to complete
+	return (ADC0L+(ADC0H*0x100));
+}
+
+float getVoltageAtPin(unsigned char pin) {
+    return ((getADCAtPin(pin) * VDD / 1024.0));
+}
+
 void main(void) {
-    unsigned int val;
+    volatile float voltages[4];
+
     printf("\x1b[2J");
     printf(
-        "ADC Example Program\n"
+        "ADC Example Program - Input from any pins\n"
         "File:     %s\n"
         "Compiled: %s, %s\n"
         "===================",
         __FILE__, __DATE__, __TIME__
     );
 
-    // Activate multiplexer by starting conversion, discard current value
-    AD0BUSY = 1;
+    // Initialize the pins for analog input
+    initializePin(2, 0); // Configure P2.0 as analog input
+	initializePin(2, 1); // Configure P2.1 as analog input
+	initializePin(2, 2); // Configure P2.2 as analog input
+	initializePin(2, 3); // Configure P2.3 as analog input
 
-    // while busy, stall
-    while (AD0BUSY);
+    // initialize ADC
+    initializeADC();
 
+    // constantly check for voltages
     while (1) {
-        // for debugging
-        P0_0 = 1;
-
-        // start ADC 0 conversion to measure voltage at pin P2.0
-        AD0BUSY = 1;
-
-        // wait for conversion
-        while (AD0BUSY);
-
-        // finished
-        P0_0 = 0;
-
-        // read value 0-1023 from ADC0
-        val = ADC0L + (ADC0H * 0x100);
-
-        printf("Voltage (P2.0): %5.3fV\n", (val*VDD)/1023.0);
-        delay(100);
+        V[0]=Volts_at_Pin(LQFP32_MUX_P2_0);
+		V[1]=Volts_at_Pin(LQFP32_MUX_P2_1);
+		V[2]=Volts_at_Pin(LQFP32_MUX_P2_2);
+		V[3]=Volts_at_Pin(LQFP32_MUX_P2_3);
+        printf("\x1b[s");
+		printf("V0=%5.3f, V1=%5.3f, V2=%5.3f, V3=%5.3f", V[0], V[1], V[2], V[3]);
+        printf("\x1b[u");
+		delay(100);
     }
 }
