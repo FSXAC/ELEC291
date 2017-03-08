@@ -165,3 +165,67 @@ unsigned int getADCAtPin(unsigned char pin) {
 float getVoltageAtPin(unsigned char pin) {
     return ((getADCAtPin(pin) * VDD / 1024.0));
 }
+
+// ===[STUFF FOR MAX7219 HERE]===
+void LED_pulse(void) {
+    LED_CLK = HIGH;
+    delayUs(20);
+    LED_CLK = LOW;
+}
+
+/* send one byte */
+void LED_spi(unsigned char data) {
+    unsigned char j, temp;
+    for (j = 1; j <= 8; j++) {
+        temp = data & 0x80;
+        LED_DATA = (temp == 0x80) ? HIGH : LOW;
+        LED_pulse();
+        data = data << 1;
+    }
+}
+
+/* clear all MAX7219s */
+void LED_clear(void) {
+    unsigned char j;
+    for (j = 1; j <= 8; j++) {
+        LED_spi(j);
+        LED_spi(0x00);
+        LED_pulse();
+    }
+}
+
+/* initialize the LED */
+void LED_init(void) {
+    LED_CLK = LOW;
+
+    // set decode mode
+    LED_spi(0x09);
+    LED_spi(0xFF);
+    LED_pulse();
+
+    // set intensity (0-F)
+    LED_spi(0x0A);
+    LED_spi(0x0D);
+    LED_pulse();
+
+    // set scan limit (8 digits)
+    LED_spi(0x0b);
+    LED_spi(0x07);
+    LED_pulse();
+
+    // clear MAX7219
+    LED_clear();
+
+    // set for normal operation
+    LED_spi(0x0C);
+    LED_spi(0x01);
+    LED_pulse();
+}
+
+/* write to MAX7219 */
+void LED_write(char address, char data) {
+    if ((address < 1) || (address > 8)) return;
+    LED_spi(address);
+    LED_spi(data);
+    LED_pulse();
+}

@@ -2,6 +2,10 @@
 #define SYSCLK 24000000L
 #define BAUDRATE 115200L
 
+// make programmer's life easier preprocessors
+#define HIGH 1
+#define LOW 0
+
 // measured value of VDD in volts
 #define VDD 4.6 //3.325
 
@@ -35,4 +39,21 @@ unsigned int getADCAtPin(unsigned char pin);
 float getVoltageAtPin(unsigned char pin);
 
 /* ===[MAX7219 CONTROL]=== */
-void MAX_spi(int address, unsigned char opcode, unsigned char data);
+#define LED_CS P0_2
+#define LED_DATA P0_3
+#define LED_CLK P0_4
+
+/* Toggles the SPI clock */
+void LED_pulse(void);
+
+/* send one byte */
+void LED_spi(unsigned char data);
+
+/* clear all MAX7219s */
+void LED_clear(void);
+
+/* initialize the LED */
+void LED_init(void);
+
+/* write to MAX7219 */
+void LED_write(char address, char data);
