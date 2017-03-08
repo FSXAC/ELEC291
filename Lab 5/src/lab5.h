@@ -39,11 +39,11 @@ unsigned int getADCAtPin(unsigned char pin);
 float getVoltageAtPin(unsigned char pin);
 
 /* ===[MAX7219 CONTROL]=== */
-#define LED_CS P0_2
-#define LED_DATA P0_3
-#define LED_CLK P0_4
+#define LED_CS P2_7
+#define LED_DATA P2_6
+#define LED_CLK P2_5
 
-/* Toggles the SPI clock */
+/* Toggles CS */
 void LED_pulse(void);
 
 /* send one byte */
@@ -57,3 +57,6 @@ void LED_init(void);
 
 /* write to MAX7219 */
 void LED_write(char address, char data);
+
+/* test LED matrix */
+void LED_test(void);

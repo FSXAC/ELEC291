@@ -8,10 +8,11 @@
 #include "lab5.h"
 
 void main(void) {
-    volatile float voltages[4];
+    // volatile float voltages[4];
 
     printf("\x1b[2J");
-    printf("ADC Example Program - Input from any pins\n"
+    printf("Lab 5 - Phasor Detector\n"
+        "Author:   Muchen He (44638154)\n"
         "File:     %s\n"
         "Compiled: %s, %s\n"
         "===================\n",
@@ -19,24 +20,37 @@ void main(void) {
     );
 
     // initialize ADC
-    initializeADC();
+    // initializeADC();
 
-    // Initialize the pins for analog input
-    initializePin(2, 0); // Configure P2.0 as analog input
-    initializePin(2, 1); // Configure P2.1 as analog input
-    initializePin(2, 2); // Configure P2.2 as analog input
-    initializePin(2, 3); // Configure P2.3 as analog input
+    // // Initialize the pins for analog input
+    // initializePin(2, 0); // Configure P2.0 as analog input
+    // initializePin(2, 1); // Configure P2.1 as analog input
+    // initializePin(2, 2); // Configure P2.2 as analog input
+    // initializePin(2, 3); // Configure P2.3 as analog input
+    //
+    // // constantly check for voltages
+    // printf("\x1b[s");
+    // while (1) {
+    //     voltages[0] = getVoltageAtPin(ANALOG_0);
+    //     voltages[1] = getVoltageAtPin(ANALOG_1);
+    //     voltages[2] = getVoltageAtPin(ANALOG_2);
+    //     voltages[3] = getVoltageAtPin(ANALOG_3);
+    //     printf("\x1b[u");
+    //     printf("V0=%5.3f, V1=%5.3f, V2=%5.3f, V3=%5.3f\n", voltages[0], voltages[1], voltages[2], voltages[3]);
+    //     delay(100);
+    // }
 
-    // constantly check for voltages
-    printf("\x1b[s");
+    // play around with LED matrix
+    // LED_init();
+    // LED_write(1, 0x55);
+    // LED_pulse();
+    // LED_write(2, 0x00);
+    // LED_pulse();
     while (1) {
-        voltages[0] = getVoltageAtPin(ANALOG_0);
-        voltages[1] = getVoltageAtPin(ANALOG_1);
-        voltages[2] = getVoltageAtPin(ANALOG_2);
-        voltages[3] = getVoltageAtPin(ANALOG_3);
-        printf("\x1b[u");
-        printf("V0=%5.3f, V1=%5.3f, V2=%5.3f, V3=%5.3f\n", voltages[0], voltages[1], voltages[2], voltages[3]);
-        delay(100);
+        LED_CLK = HIGH;
+        delay(2000);
+        LED_CLK = LOW;
+        delay(2000);
     }
 }
 
@@ -167,21 +181,27 @@ float getVoltageAtPin(unsigned char pin) {
 }
 
 // ===[STUFF FOR MAX7219 HERE]===
-void LED_pulse(void) {
-    LED_CLK = HIGH;
-    delayUs(20);
-    LED_CLK = LOW;
-}
-
 /* send one byte */
-void LED_spi(unsigned char data) {
+void LED_spi(unsigned char value) {
     unsigned char j, temp;
     for (j = 1; j <= 8; j++) {
-        temp = data & 0x80;
+        temp = value & 0x80;
         LED_DATA = (temp == 0x80) ? HIGH : LOW;
-        LED_pulse();
-        data = data << 1;
+
+        // toggle clock
+        LED_CLK = HIGH;
+        delayUs(20);
+        LED_CLK = LOW;
+
+        // shift bit one over
+        value = value << 1;
     }
+}
+
+void LED_pulse(void) {
+    LED_CS = HIGH;
+    delay(1);
+    LED_CS = LOW;
 }
 
 /* clear all MAX7219s */
@@ -191,41 +211,60 @@ void LED_clear(void) {
         LED_spi(j);
         LED_spi(0x00);
         LED_pulse();
+        printf("%x ", j);
     }
+    printf("\n");
 }
 
 /* initialize the LED */
 void LED_init(void) {
-    LED_CLK = LOW;
+    LED_CS = LOW;
 
-    // set decode mode
+    // set decode mode (no-decode)
     LED_spi(0x09);
-    LED_spi(0xFF);
+    // LED_spi(0xFF);
+    LED_spi(0x00);
     LED_pulse();
+    printf("decoder set\n");
 
     // set intensity (0-F)
     LED_spi(0x0A);
     LED_spi(0x0D);
     LED_pulse();
+    printf("intensity set\n");
 
     // set scan limit (8 digits)
     LED_spi(0x0b);
     LED_spi(0x07);
     LED_pulse();
+    printf("scan limit set\n");
 
     // clear MAX7219
+    printf("clearing: ");
     LED_clear();
 
     // set for normal operation
     LED_spi(0x0C);
     LED_spi(0x01);
     LED_pulse();
+    printf("normal operation set\n");
 }
 
 /* write to MAX7219 */
-void LED_write(char address, char data) {
+void LED_write(char address, char value) {
     if ((address < 1) || (address > 8)) return;
     LED_spi(address);
-    LED_spi(data);
+    LED_spi(value);
+    LED_pulse();
+}
+
+/* turn on ALL LEDs for testing */
+void LED_test(void) {
+    LED_spi(0x0F);
+    LED_spi(0x01);
+    LED_pulse();
+    delay(1000);
+    LED_spi(0x0F);
+    LED_spi(0x00);
     LED_pulse();
 }
