@@ -133,14 +133,14 @@ void initializePin(unsigned char port, unsigned char pin) {
 
 unsigned int getADCAtPin(unsigned char pin) {
     AMX0P = pin;             // Select positive input from pin
-	AMX0N = LQFP32_MUX_GND;  // GND is negative input (Single-ended Mode)
-	// Dummy conversion first to select new pin
-	AD0BUSY = 1;
-	while (AD0BUSY); // Wait for dummy conversion to finish
-	// Convert voltage at the pin
-	AD0BUSY = 1;
-	while (AD0BUSY); // Wait for conversion to complete
-	return (ADC0L+(ADC0H*0x100));
+    AMX0N = LQFP32_MUX_GND;  // GND is negative input (Single-ended Mode)
+    // Dummy conversion first to select new pin
+    AD0BUSY = 1;
+    while (AD0BUSY); // Wait for dummy conversion to finish
+    // Convert voltage at the pin
+    AD0BUSY = 1;
+    while (AD0BUSY); // Wait for conversion to complete
+    return (ADC0L+(ADC0H*0x100));
 }
 
 float getVoltageAtPin(unsigned char pin) {
@@ -161,22 +161,22 @@ void main(void) {
 
     // Initialize the pins for analog input
     initializePin(2, 0); // Configure P2.0 as analog input
-	initializePin(2, 1); // Configure P2.1 as analog input
-	initializePin(2, 2); // Configure P2.2 as analog input
-	initializePin(2, 3); // Configure P2.3 as analog input
+    initializePin(2, 1); // Configure P2.1 as analog input
+    initializePin(2, 2); // Configure P2.2 as analog input
+    initializePin(2, 3); // Configure P2.3 as analog input
 
     // initialize ADC
     initializeADC();
 
     // constantly check for voltages
     while (1) {
-        V[0]=Volts_at_Pin(LQFP32_MUX_P2_0);
-		V[1]=Volts_at_Pin(LQFP32_MUX_P2_1);
-		V[2]=Volts_at_Pin(LQFP32_MUX_P2_2);
-		V[3]=Volts_at_Pin(LQFP32_MUX_P2_3);
+        voltages[0] = getVoltageAtPin(LQFP32_MUX_P2_0);
+        voltages[1] = getVoltageAtPin(LQFP32_MUX_P2_1);
+        voltages[2] = getVoltageAtPin(LQFP32_MUX_P2_2);
+        voltages[3] = getVoltageAtPin(LQFP32_MUX_P2_3);
         printf("\x1b[s");
-		printf("V0=%5.3f, V1=%5.3f, V2=%5.3f, V3=%5.3f", V[0], V[1], V[2], V[3]);
+        printf("V0=%5.3f, V1=%5.3f, V2=%5.3f, V3=%5.3f", voltages[0], voltages[1], voltages[2], voltages[3]);
         printf("\x1b[u");
-		delay(100);
+        delay(100);
     }
 }
