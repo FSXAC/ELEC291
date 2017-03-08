@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1069 (Apr 23 2015) (MSVC)
-; This file was generated Tue Mar 07 21:55:13 2017
+; This file was generated Tue Mar 07 21:59:05 2017
 ;--------------------------------------------------------
 $name example_ADC_anyInput
 $optc51 --model-small
@@ -519,7 +519,6 @@ L003007?:
 ;------------------------------------------------------------
 ;ms                        Allocated to registers r2 r3 
 ;j                         Allocated to registers r4 r5 
-;k                         Allocated with name '_delay_k_1_48'
 ;------------------------------------------------------------
 ;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:91: void delay(unsigned int ms) {
 ;	-----------------------------------------
@@ -528,7 +527,7 @@ L003007?:
 _delay:
 	mov	r2,dpl
 	mov	r3,dph
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:94: for (j = 0; j < ms; j++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:93: for (j = 0; j < ms; j++) {
 	mov	r4,#0x00
 	mov	r5,#0x00
 L004001?:
@@ -538,27 +537,27 @@ L004001?:
 	mov	a,r5
 	subb	a,r3
 	jnc	L004005?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:95: delayUs(249);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:94: delayUs(249);
 	mov	dpl,#0xF9
 	push	ar2
 	push	ar3
 	push	ar4
 	push	ar5
 	lcall	_delayUs
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:95: delayUs(249);
+	mov	dpl,#0xF9
+	lcall	_delayUs
 ;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:96: delayUs(249);
 	mov	dpl,#0xF9
 	lcall	_delayUs
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:97: delayUs(249);
-	mov	dpl,#0xF9
-	lcall	_delayUs
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:98: delayUs(250);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:97: delayUs(250);
 	mov	dpl,#0xFA
 	lcall	_delayUs
 	pop	ar5
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:94: for (j = 0; j < ms; j++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:93: for (j = 0; j < ms; j++) {
 	inc	r4
 	cjne	r4,#0x00,L004001?
 	inc	r5
@@ -569,16 +568,16 @@ L004005?:
 ;Allocation info for local variables in function 'initializeADC'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:103: void initializeADC(void) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:102: void initializeADC(void) {
 ;	-----------------------------------------
 ;	 function initializeADC
 ;	-----------------------------------------
 _initializeADC:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:104: ADC0CF = 0xF8; // SAR clock = 31, Right-justified result
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:103: ADC0CF = 0xF8; // SAR clock = 31, Right-justified result
 	mov	_ADC0CF,#0xF8
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:105: ADC0CN = 0b_1000_0000; // AD0EN=1, AD0TM=0
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:104: ADC0CN = 0b_1000_0000; // AD0EN=1, AD0TM=0
 	mov	_ADC0CN,#0x80
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:106: REF0CN = 0b_0000_1000; // Select VDD as the voltage reference
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:105: REF0CN = 0b_0000_1000; // Select VDD as the voltage reference
 	mov	_REF0CN,#0x08
 	ret
 ;------------------------------------------------------------
@@ -588,13 +587,13 @@ _initializeADC:
 ;port                      Allocated to registers r2 
 ;mask                      Allocated to registers r3 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:110: void initializePin(unsigned char port, unsigned char pin) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:109: void initializePin(unsigned char port, unsigned char pin) {
 ;	-----------------------------------------
 ;	 function initializePin
 ;	-----------------------------------------
 _initializePin:
 	mov	r2,dpl
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:112: mask = 1 << pin;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:111: mask = 1 << pin;
 	mov	b,_initializePin_PARM_2
 	inc	b
 	mov	a,#0x01
@@ -604,7 +603,7 @@ L006010?:
 L006012?:
 	djnz	b,L006010?
 	mov	r3,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:113: switch (port) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:112: switch (port) {
 	mov	a,r2
 	add	a,#0xff - 0x03
 	jc	L006007?
@@ -618,50 +617,50 @@ L006014?:
 	ljmp	L006002?
 	ljmp	L006003?
 	ljmp	L006004?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:114: case 0:
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:113: case 0:
 L006001?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:115: P0MDIN &= (~mask);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:114: P0MDIN &= (~mask);
 	mov	a,r3
 	cpl	a
 	anl	_P0MDIN,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:116: P0SKIP |= mask;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:115: P0SKIP |= mask;
 	mov	a,r3
 	orl	_P0SKIP,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:117: break;
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:118: case 1:
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:116: break;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:117: case 1:
 	ret
 L006002?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:119: P1MDIN &= (~mask);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:118: P1MDIN &= (~mask);
 	mov	a,r3
 	cpl	a
 	anl	_P1MDIN,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:120: P1SKIP |= mask;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:119: P1SKIP |= mask;
 	mov	a,r3
 	orl	_P1SKIP,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:121: break;
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:122: case 2:
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:120: break;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:121: case 2:
 	ret
 L006003?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:123: P2MDIN &= (~mask);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:122: P2MDIN &= (~mask);
 	mov	a,r3
 	cpl	a
 	anl	_P2MDIN,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:124: P2SKIP |= mask;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:123: P2SKIP |= mask;
 	mov	a,r3
 	orl	_P2SKIP,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:125: break;
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:126: case 3:
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:124: break;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:125: case 3:
 	ret
 L006004?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:127: P3MDIN &= (~mask);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:126: P3MDIN &= (~mask);
 	mov	a,r3
 	cpl	a
 	mov	r2,a
 	anl	_P3MDIN,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:128: P3SKIP |= mask;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:127: P3SKIP |= mask;
 	mov	a,r3
 	orl	_P3SKIP,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:131: }
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:130: }
 L006007?:
 	ret
 ;------------------------------------------------------------
@@ -669,25 +668,25 @@ L006007?:
 ;------------------------------------------------------------
 ;pin                       Allocated to registers 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:134: unsigned int getADCAtPin(unsigned char pin) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:133: unsigned int getADCAtPin(unsigned char pin) {
 ;	-----------------------------------------
 ;	 function getADCAtPin
 ;	-----------------------------------------
 _getADCAtPin:
 	mov	_AMX0P,dpl
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:136: AMX0N = LQFP32_MUX_GND;  // GND is negative input (Single-ended Mode)
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:135: AMX0N = LQFP32_MUX_GND;  // GND is negative input (Single-ended Mode)
 	mov	_AMX0N,#0x1F
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:138: AD0BUSY = 1;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:137: AD0BUSY = 1;
 	setb	_AD0BUSY
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:139: while (AD0BUSY); // Wait for dummy conversion to finish
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:138: while (AD0BUSY); // Wait for dummy conversion to finish
 L007001?:
 	jb	_AD0BUSY,L007001?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:141: AD0BUSY = 1;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:140: AD0BUSY = 1;
 	setb	_AD0BUSY
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:142: while (AD0BUSY); // Wait for conversion to complete
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:141: while (AD0BUSY); // Wait for conversion to complete
 L007004?:
 	jb	_AD0BUSY,L007004?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:143: return (ADC0L+(ADC0H*0x100));
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:142: return (ADC0L+(ADC0H*0x100));
 	mov	r2,_ADC0L
 	mov	r3,#0x00
 	mov	r5,_ADC0H
@@ -704,12 +703,12 @@ L007004?:
 ;------------------------------------------------------------
 ;pin                       Allocated to registers r2 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:146: float getVoltageAtPin(unsigned char pin) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:145: float getVoltageAtPin(unsigned char pin) {
 ;	-----------------------------------------
 ;	 function getVoltageAtPin
 ;	-----------------------------------------
 _getVoltageAtPin:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:147: return ((getADCAtPin(pin) * VDD / 1024.0));
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:146: return ((getADCAtPin(pin) * VDD / 1024.0));
 	lcall	_getADCAtPin
 	lcall	___uint2fs
 	mov	r2,dpl
@@ -720,8 +719,8 @@ _getVoltageAtPin:
 	push	ar3
 	push	ar4
 	push	ar5
-	mov	dptr,#0xCCCD
-	mov	b,#0x54
+	mov	dptr,#0x3333
+	mov	b,#0x93
 	mov	a,#0x40
 	lcall	___fsmul
 	mov	r2,dpl
@@ -760,12 +759,12 @@ _getVoltageAtPin:
 ;------------------------------------------------------------
 ;voltages                  Allocated with name '_main_voltages_1_60'
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:150: void main(void) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:149: void main(void) {
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:153: printf("\x1b[2J");
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:152: printf("\x1b[2J");
 	mov	a,#__str_0
 	push	acc
 	mov	a,#(__str_0 >> 8)
@@ -776,9 +775,9 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:160: );
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:159: __FILE__, __DATE__, __TIME__
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:158: "===================",
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:159: );
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:158: __FILE__, __DATE__, __TIME__
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:157: "===================\n",
 	mov	a,#__str_4
 	push	acc
 	mov	a,#(__str_4 >> 8)
@@ -807,24 +806,35 @@ _main:
 	mov	a,sp
 	add	a,#0xf4
 	mov	sp,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:163: initializePin(2, 0); // Configure P2.0 as analog input
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:162: initializePin(2, 0); // Configure P2.0 as analog input
 	mov	_initializePin_PARM_2,#0x00
 	mov	dpl,#0x02
 	lcall	_initializePin
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:164: initializePin(2, 1); // Configure P2.1 as analog input
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:163: initializePin(2, 1); // Configure P2.1 as analog input
 	mov	_initializePin_PARM_2,#0x01
 	mov	dpl,#0x02
 	lcall	_initializePin
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:165: initializePin(2, 2); // Configure P2.2 as analog input
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:164: initializePin(2, 2); // Configure P2.2 as analog input
 	mov	_initializePin_PARM_2,#0x02
 	mov	dpl,#0x02
 	lcall	_initializePin
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:166: initializePin(2, 3); // Configure P2.3 as analog input
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:165: initializePin(2, 3); // Configure P2.3 as analog input
 	mov	_initializePin_PARM_2,#0x03
 	mov	dpl,#0x02
 	lcall	_initializePin
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:169: initializeADC();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:168: initializeADC();
 	lcall	_initializeADC
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:171: printf("\x1b[s");
+	mov	a,#__str_5
+	push	acc
+	mov	a,#(__str_5 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	dec	sp
+	dec	sp
+	dec	sp
 ;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:172: while (1) {
 L009002?:
 ;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:173: voltages[0] = getVoltageAtPin(LQFP32_MUX_P2_0);
@@ -871,10 +881,10 @@ L009002?:
 	mov	((_main_voltages_1_60 + 0x000c) + 1),r3
 	mov	((_main_voltages_1_60 + 0x000c) + 2),r4
 	mov	((_main_voltages_1_60 + 0x000c) + 3),r5
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:177: printf("\x1b[s");
-	mov	a,#__str_5
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:177: printf("\x1b[u");
+	mov	a,#__str_6
 	push	acc
-	mov	a,#(__str_5 >> 8)
+	mov	a,#(__str_6 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -882,7 +892,7 @@ L009002?:
 	dec	sp
 	dec	sp
 	dec	sp
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:178: printf("V0=%5.3f, V1=%5.3f, V2=%5.3f, V3=%5.3f", voltages[0], voltages[1], voltages[2], voltages[3]);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:178: printf("V0=%5.3f, V1=%5.3f, V2=%5.3f, V3=%5.3f\n", voltages[0], voltages[1], voltages[2], voltages[3]);
 	push	(_main_voltages_1_60 + 0x000c)
 	push	((_main_voltages_1_60 + 0x000c) + 1)
 	push	((_main_voltages_1_60 + 0x000c) + 2)
@@ -899,17 +909,6 @@ L009002?:
 	push	(_main_voltages_1_60 + 1)
 	push	(_main_voltages_1_60 + 2)
 	push	(_main_voltages_1_60 + 3)
-	mov	a,#__str_6
-	push	acc
-	mov	a,#(__str_6 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	mov	a,sp
-	add	a,#0xed
-	mov	sp,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:179: printf("\x1b[u");
 	mov	a,#__str_7
 	push	acc
 	mov	a,#(__str_7 >> 8)
@@ -917,10 +916,10 @@ L009002?:
 	mov	a,#0x80
 	push	acc
 	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:180: delay(100);
+	mov	a,sp
+	add	a,#0xed
+	mov	sp,a
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\example_ADC_anyInput.c:179: delay(100);
 	mov	dptr,#0x0064
 	lcall	_delay
 	ljmp	L009002?
@@ -942,6 +941,7 @@ __str_1:
 	db 'led: %s, %s'
 	db 0x0A
 	db '==================='
+	db 0x0A
 	db 0x00
 __str_2:
 	db 'F:'
@@ -963,18 +963,19 @@ __str_3:
 	db 'Mar  7 2017'
 	db 0x00
 __str_4:
-	db '21:55:13'
+	db '21:59:05'
 	db 0x00
 __str_5:
 	db 0x1B
 	db '[s'
 	db 0x00
 __str_6:
-	db 'V0=%5.3f, V1=%5.3f, V2=%5.3f, V3=%5.3f'
-	db 0x00
-__str_7:
 	db 0x1B
 	db '[u'
+	db 0x00
+__str_7:
+	db 'V0=%5.3f, V1=%5.3f, V2=%5.3f, V3=%5.3f'
+	db 0x0A
 	db 0x00
 
 	CSEG

@@ -11,7 +11,7 @@
 #define BAUDRATE 115200L
 
 // measured value of VDD in volts
-#define VDD 3.325
+#define VDD 4.6 //3.325
 
 // analog input pins
 #define ANALOG_0 LQFP32_MUX_P2_0
@@ -154,7 +154,7 @@ void main(void) {
         "ADC Example Program - Input from any pins\n"
         "File:     %s\n"
         "Compiled: %s, %s\n"
-        "===================",
+        "===================\n",
         __FILE__, __DATE__, __TIME__
     );
 
@@ -168,14 +168,14 @@ void main(void) {
     initializeADC();
 
     // constantly check for voltages
+    printf("\x1b[s");
     while (1) {
         voltages[0] = getVoltageAtPin(LQFP32_MUX_P2_0);
         voltages[1] = getVoltageAtPin(LQFP32_MUX_P2_1);
         voltages[2] = getVoltageAtPin(LQFP32_MUX_P2_2);
         voltages[3] = getVoltageAtPin(LQFP32_MUX_P2_3);
-        printf("\x1b[s");
-        printf("V0=%5.3f, V1=%5.3f, V2=%5.3f, V3=%5.3f", voltages[0], voltages[1], voltages[2], voltages[3]);
         printf("\x1b[u");
+        printf("V0=%5.3f, V1=%5.3f, V2=%5.3f, V3=%5.3f\n", voltages[0], voltages[1], voltages[2], voltages[3]);
         delay(100);
     }
 }

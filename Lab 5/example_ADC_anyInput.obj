@@ -15,7 +15,7 @@ R_GSINIT,code,0000,NO
 R_BSEG,bit,0000,NO
 R_XSEG,xdata,0000,NO
 BIT_BANK,data,0000,OV
-R_CONST,code,00EA,NO
+R_CONST,code,00EC,NO
 rbank0,data,0000,OV
 R_PSEG,xdata,0000,NO
 R_DINIT,code,0000,NO
@@ -47,13 +47,13 @@ L007001?,R_CSEG,00FA,0000
 _main_voltages_1_60,R_DSEG,0000,0010
 __str_0,R_CONST,0000,0000
 __str_1,R_CONST,0005,0000
-__str_2,R_CONST,0061,0000
-__str_3,R_CONST,00A6,0000
-__str_4,R_CONST,00B2,0000
-__str_5,R_CONST,00BB,0000
-__str_6,R_CONST,00BF,0000
-__str_7,R_CONST,00E6,0000
-L009002?,R_CSEG,01E1,0000
+__str_2,R_CONST,0062,0000
+__str_3,R_CONST,00A7,0000
+__str_4,R_CONST,00B3,0000
+__str_5,R_CONST,00BC,0000
+__str_6,R_CONST,00C0,0000
+__str_7,R_CONST,00C4,0000
+L009002?,R_CSEG,01F6,0000
 </LOCALS>
 
 <PUBLICS>
@@ -250,8 +250,8 @@ C0 02
 C0 03
 C0 04
 C0 05
-90 CC CD
-75 F0 54
+90 33 33
+75 F0 93
 74 40
 12 addr16(___fsmul;)  
 AA 82
@@ -336,6 +336,16 @@ F5 81
 75 82 02
 12 addr16(_initializePin;)  
 12 addr16(_initializeADC;)  
+74 data8(__str_5;)
+C0 E0
+74 data8(__str_5;0x0008;>>;)
+C0 E0
+74 80
+C0 E0
+12 addr16(_printf;)  
+15 81
+15 81
+15 81
 75 82 08
 12 addr16(_getVoltageAtPin;)  
 AA 82
@@ -376,9 +386,9 @@ FD
 8B data8(_main_voltages_1_60;0x000C;+;0x0001;+;)
 8C data8(_main_voltages_1_60;0x000C;+;0x0002;+;)
 8D data8(_main_voltages_1_60;0x000C;+;0x0003;+;)
-74 data8(__str_5;)
+74 data8(__str_6;)
 C0 E0
-74 data8(__str_5;0x0008;>>;)
+74 data8(__str_6;0x0008;>>;)
 C0 E0
 74 80
 C0 E0
@@ -402,16 +412,6 @@ C0 data8(_main_voltages_1_60;)
 C0 data8(_main_voltages_1_60;0x0001;+;)
 C0 data8(_main_voltages_1_60;0x0002;+;)
 C0 data8(_main_voltages_1_60;0x0003;+;)
-74 data8(__str_6;)
-C0 E0
-74 data8(__str_6;0x0008;>>;)
-C0 E0
-74 80
-C0 E0
-12 addr16(_printf;)  
-E5 81
-24 ED
-F5 81
 74 data8(__str_7;)
 C0 E0
 74 data8(__str_7;0x0008;>>;)
@@ -419,9 +419,9 @@ C0 E0
 74 80
 C0 E0
 12 addr16(_printf;)  
-15 81
-15 81
-15 81
+E5 81
+24 ED
+F5 81
 90 00 64
 12 addr16(_delay;)  
 02 addr16(L009002?;)  
@@ -448,6 +448,7 @@ C0 E0
 0A
 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D
 3D 3D 
+0A
 00
 46 3A 
 5C
@@ -466,17 +467,18 @@ C0 E0
 00
 4D 61 72 20 20 37 20 32 30 31 37 
 00
-32 31 3A 35 35 3A 31 33 
+32 31 3A 35 39 3A 30 35 
 00
 1B
 5B 73 
 00
+1B
+5B 75 
+00
 56 30 3D 25 35 2E 33 66 2C 20 56 31 3D 25 35 2E 33
 66 2C 20 56 32 3D 25 35 2E 33 66 2C 20 56 33 3D
 25 35 2E 33 66 
-00
-1B
-5B 75 
+0A
 00
 </CODE>
 
