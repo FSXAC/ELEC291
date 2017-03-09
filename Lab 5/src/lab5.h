@@ -37,6 +37,9 @@ unsigned int getADCAtPin(unsigned char pin);
 /* get voltage from ADC value */
 float getVoltageAtPin(unsigned char pin);
 
+/* get period of signal based on comparitor zero cross input */
+double getHalfPeriod(void);
+
 /* ===[MAX7219 CONTROL]=== */
 #define LED_CS P2_7
 #define LED_DATA P2_6

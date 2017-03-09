@@ -10,6 +10,8 @@
 void main(void) {
     float voltage_reference = 0, voltage_reference_max = 0;
     float voltage_undertest = 0, voltage_undertest_max = 0;
+    double period, halfPeriod;
+    float frequency;
 
     printf("\x1b[2J");
     printf("Lab 5 - Phasor Detector\n"
@@ -32,26 +34,30 @@ void main(void) {
     while (1) {
         printf("\x1b[u");
 
+        // take period measurements
+        halfPeriod = getHalfPeriod();
+        printf("Period = %lfus", 2 * halfPeriod * 1000000L);
+
         // take measurements (only measure when signal is positive)
         if (DIGITAL_0) {
             voltage_reference = getVoltageAtPin(ANALOG_0);
             if (voltage_reference_max < voltage_reference) voltage_reference_max = voltage_reference;
         }
 
-        if (DIGITAL_1) {
-        	voltage_undertest = getVoltageAtPin(ANALOG_1);
-        	if (voltage_undertest_max < voltage_undertest) voltage_undertest_max = voltage_undertest;
-        }
+        // if (DIGITAL_1) {
+        // 	voltage_undertest = getVoltageAtPin(ANALOG_1);
+        // 	if (voltage_undertest_max < voltage_undertest) voltage_undertest_max = voltage_undertest;
+        // }
 
         // output to PC
         printf("\nREFERNECE (P1.3):\n");
         printf("Voltage = %5.3fV\n", voltage_reference);
         printf("Peak V  = %5.3fV\n", voltage_reference_max);
 
-        printf("\nUNDER TEST (P1.4):\n");
-        printf("Voltage = %5.3fV\n", voltage_undertest);
-        printf("Peak V  = %5.3fV\n", voltage_undertest_max);
-        delay(50);
+        // printf("\nUNDER TEST (P1.4):\n");
+        // printf("Voltage = %5.3fV\n", voltage_undertest);
+        // printf("Peak V  = %5.3fV\n", voltage_undertest_max);
+        // delay(50);
     }
 }
 
@@ -181,6 +187,37 @@ unsigned int getADCAtPin(unsigned char pin) {
 
 float getVoltageAtPin(unsigned char pin) {
     return ((getADCAtPin(pin) * VDD / 1024.0));
+}
+
+double getHalfPeriod(void) {
+    double halfPeriod;
+    unsigned char overflow_count = 0;
+
+    // initalize timer 0
+    TR0 = 0;
+    TMOD &= 0xF0;
+    TMOD |= 0x01;
+    TH0 = 0;
+    TL0 = 0;
+    TF0 = 0;
+
+    // go to start of signal
+    while (DIGITAL_0);
+    while (!DIGITAL_0);
+
+    // measure 1/2 period
+    TR0 = 1;
+    while (DIGITAL_0) {
+        if (TF0) {
+            TF0 = 0;
+            overflow_count++;
+        }
+    }
+
+    // stop and do some calculations
+    TR0 = 0;
+    halfPeriod = (overflow_count*65536.0+TH0*256.0+TL0)*(12.0/SYSCLK);
+    return halfPeriod;
 }
 
 // ===[STUFF FOR MAX7219 HERE]===
