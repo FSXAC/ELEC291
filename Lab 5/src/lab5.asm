@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1069 (Apr 23 2015) (MSVC)
-; This file was generated Thu Mar 09 00:27:11 2017
+; This file was generated Thu Mar 09 10:02:06 2017
 ;--------------------------------------------------------
 $name lab5
 $optc51 --model-small
@@ -398,8 +398,6 @@ _main_sloc0_1_0:
 	ds 4
 _main_sloc1_1_0:
 	ds 4
-_main_sloc2_1_0:
-	ds 4
 _getPeriodDiff_period_1_92:
 	ds 4
 _getPeriodDiff_sloc0_1_0:
@@ -482,7 +480,6 @@ _LCD_print_PARM_3:
 ;cycle                     Allocated with name '_main_cycle_1_58'
 ;sloc0                     Allocated with name '_main_sloc0_1_0'
 ;sloc1                     Allocated with name '_main_sloc1_1_0'
-;sloc2                     Allocated with name '_main_sloc2_1_0'
 ;------------------------------------------------------------
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:13: void main(void) {
 ;	-----------------------------------------
@@ -501,11 +498,11 @@ _main:
 	mov	(_main_voltage_reference_max_1_58 + 3),#0x00
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:15: float voltage_undertest = 0, voltage_undertest_max = 0;
 	mov	_main_voltage_undertest_1_58,#0x00
+	mov	(_main_voltage_undertest_1_58 + 1),#0x00
+	mov	(_main_voltage_undertest_1_58 + 2),#0x00
+	mov	(_main_voltage_undertest_1_58 + 3),#0x00
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:19: int cycle = 0;
 	clr	a
-	mov	(_main_voltage_undertest_1_58 + 1),a
-	mov	(_main_voltage_undertest_1_58 + 2),a
-	mov	(_main_voltage_undertest_1_58 + 3),a
 	mov	_main_voltage_undertest_max_1_58,a
 	mov	(_main_voltage_undertest_max_1_58 + 1),a
 	mov	(_main_voltage_undertest_max_1_58 + 2),a
@@ -996,14 +993,6 @@ L002051?:
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	pop	ar7
-	pop	ar6
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-	push	ar6
-	push	ar7
 	push	ar2
 	push	ar3
 	push	ar4
@@ -1129,10 +1118,6 @@ L002051?:
 	mov	sp,a
 	pop	ar7
 	pop	ar6
-	pop	ar5
-	pop	ar4
-	pop	ar3
-	pop	ar2
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:98: if (BUTTON0) {
 	jnb	_P2_5,L002102?
 	ljmp	L002035?
@@ -1173,10 +1158,10 @@ L002103?:
 	mov	b,a
 	mov	a,#0x40
 	lcall	___fsmul
-	mov	_main_sloc2_1_0,dpl
-	mov	(_main_sloc2_1_0 + 1),dph
-	mov	(_main_sloc2_1_0 + 2),b
-	mov	(_main_sloc2_1_0 + 3),a
+	mov	r0,dpl
+	mov	r1,dph
+	mov	r2,b
+	mov	r3,a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
@@ -1184,10 +1169,10 @@ L002103?:
 	push	(_main_sloc1_1_0 + 1)
 	push	(_main_sloc1_1_0 + 2)
 	push	(_main_sloc1_1_0 + 3)
-	push	_main_sloc2_1_0
-	push	(_main_sloc2_1_0 + 1)
-	push	(_main_sloc2_1_0 + 2)
-	push	(_main_sloc2_1_0 + 3)
+	push	ar0
+	push	ar1
+	push	ar2
+	push	ar3
 	mov	a,#__str_20
 	push	acc
 	mov	a,#(__str_20 >> 8)
@@ -1225,10 +1210,10 @@ L002104?:
 	mov	b,#0xB4
 	mov	a,#0xC3
 	lcall	___fsmul
-	mov	_main_sloc2_1_0,dpl
-	mov	(_main_sloc2_1_0 + 1),dph
-	mov	(_main_sloc2_1_0 + 2),b
-	mov	(_main_sloc2_1_0 + 3),a
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
@@ -1236,15 +1221,15 @@ L002104?:
 	push	(_main_sloc0_1_0 + 1)
 	push	(_main_sloc0_1_0 + 2)
 	push	(_main_sloc0_1_0 + 3)
-	mov	dpl,_main_sloc2_1_0
-	mov	dph,(_main_sloc2_1_0 + 1)
-	mov	b,(_main_sloc2_1_0 + 2)
-	mov	a,(_main_sloc2_1_0 + 3)
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
+	mov	a,r5
 	lcall	___fsdiv
-	mov	_main_sloc2_1_0,dpl
-	mov	(_main_sloc2_1_0 + 1),dph
-	mov	(_main_sloc2_1_0 + 2),b
-	mov	(_main_sloc2_1_0 + 3),a
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
@@ -1252,10 +1237,10 @@ L002104?:
 	push	acc
 	clr	a
 	push	acc
-	push	_main_sloc2_1_0
-	push	(_main_sloc2_1_0 + 1)
-	push	(_main_sloc2_1_0 + 2)
-	push	(_main_sloc2_1_0 + 3)
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
 	mov	a,#0xDA
 	push	acc
 	clr	a
@@ -1302,22 +1287,25 @@ L002020?:
 	mov	b,(_main_frequency_1_58 + 2)
 	mov	a,(_main_frequency_1_58 + 3)
 	lcall	___fsgt
-	mov	r0,dpl
+	mov	r2,dpl
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	mov	a,r0
+	mov	a,r2
 	jz	L002052?
-	mov	_main_sloc2_1_0,#__str_25
-	mov	(_main_sloc2_1_0 + 1),#(__str_25 >> 8)
+	mov	r3,#__str_25
+	mov	r4,#(__str_25 >> 8)
 	sjmp	L002053?
 L002052?:
-	mov	_main_sloc2_1_0,#__str_26
-	mov	(_main_sloc2_1_0 + 1),#(__str_26 >> 8)
+	mov	r3,#__str_26
+	mov	r4,#(__str_26 >> 8)
 L002053?:
-	mov	(_main_sloc2_1_0 + 2),#0x80
-	mov	a,r0
+	mov	r5,#0x80
+	mov	a,r2
 	jz	L002054?
+	push	ar3
+	push	ar4
+	push	ar5
 	clr	a
 	push	acc
 	push	acc
@@ -1337,6 +1325,9 @@ L002053?:
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
+	pop	ar5
+	pop	ar4
+	pop	ar3
 	sjmp	L002055?
 L002054?:
 	mov	_main_sloc1_1_0,_main_frequency_1_58
@@ -1344,9 +1335,9 @@ L002054?:
 	mov	(_main_sloc1_1_0 + 2),(_main_frequency_1_58 + 2)
 	mov	(_main_sloc1_1_0 + 3),(_main_frequency_1_58 + 3)
 L002055?:
-	push	_main_sloc2_1_0
-	push	(_main_sloc2_1_0 + 1)
-	push	(_main_sloc2_1_0 + 2)
+	push	ar3
+	push	ar4
+	push	ar5
 	push	_main_sloc1_1_0
 	push	(_main_sloc1_1_0 + 1)
 	push	(_main_sloc1_1_0 + 2)
@@ -1378,17 +1369,9 @@ L002107?:
 	setb	_LCD_print_PARM_3
 	mov	dptr,#__str_27
 	mov	b,#0x80
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
 	push	ar7
 	lcall	_LCD_print
 	pop	ar7
-	pop	ar5
-	pop	ar4
-	pop	ar3
-	pop	ar2
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:118: if (BUTTON2) {
 	jnb	_P2_7,L002108?
 	ljmp	L002026?
@@ -1396,18 +1379,19 @@ L002108?:
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:120: sprintf(strBuffer, "%2f%s", (periodDiff > 8000) ? periodDiff / 1000.0 : periodDiff, (periodDiff > 8000) ? "ms" : "us");
 	mov	a,r7
 	jz	L002056?
-	mov	r0,#__str_9
-	mov	r1,#(__str_9 >> 8)
+	mov	r2,#__str_9
+	mov	r3,#(__str_9 >> 8)
 	sjmp	L002057?
 L002056?:
-	mov	r0,#__str_10
-	mov	r1,#(__str_10 >> 8)
+	mov	r2,#__str_10
+	mov	r3,#(__str_10 >> 8)
 L002057?:
-	mov	_main_sloc2_1_0,r0
-	mov	(_main_sloc2_1_0 + 1),r1
-	mov	(_main_sloc2_1_0 + 2),#0x80
+	mov	r4,#0x80
 	mov	a,r7
 	jz	L002058?
+	push	ar2
+	push	ar3
+	push	ar4
 	clr	a
 	push	acc
 	push	acc
@@ -1420,27 +1404,30 @@ L002057?:
 	mov	b,(_main_periodDiff_1_58 + 2)
 	mov	a,(_main_periodDiff_1_58 + 3)
 	lcall	___fsdiv
-	mov	_main_sloc1_1_0,dpl
-	mov	(_main_sloc1_1_0 + 1),dph
-	mov	(_main_sloc1_1_0 + 2),b
-	mov	(_main_sloc1_1_0 + 3),a
+	mov	r5,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
+	pop	ar4
+	pop	ar3
+	pop	ar2
 	sjmp	L002059?
 L002058?:
-	mov	_main_sloc1_1_0,_main_periodDiff_1_58
-	mov	(_main_sloc1_1_0 + 1),(_main_periodDiff_1_58 + 1)
-	mov	(_main_sloc1_1_0 + 2),(_main_periodDiff_1_58 + 2)
-	mov	(_main_sloc1_1_0 + 3),(_main_periodDiff_1_58 + 3)
+	mov	r5,_main_periodDiff_1_58
+	mov	r7,(_main_periodDiff_1_58 + 1)
+	mov	r0,(_main_periodDiff_1_58 + 2)
+	mov	r1,(_main_periodDiff_1_58 + 3)
 L002059?:
-	push	_main_sloc2_1_0
-	push	(_main_sloc2_1_0 + 1)
-	push	(_main_sloc2_1_0 + 2)
-	push	_main_sloc1_1_0
-	push	(_main_sloc1_1_0 + 1)
-	push	(_main_sloc1_1_0 + 2)
-	push	(_main_sloc1_1_0 + 3)
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	push	ar7
+	push	ar0
+	push	ar1
 	mov	a,#__str_28
 	push	acc
 	mov	a,#(__str_28 >> 8)
@@ -1459,7 +1446,38 @@ L002059?:
 	mov	sp,a
 	ljmp	L002036?
 L002026?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:123: sprintf(strBuffer, "%c%+.2f%c", 0xDA, 360.0 * periodDiff / (2.0 * halfPeriod), 0xDF);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:123: sprintf(strBuffer, "%c%+.2f%c", 0xDA, -360.0 * periodDiff / (2.0 * halfPeriod), 0xDF);
+	push	_main_periodDiff_1_58
+	push	(_main_periodDiff_1_58 + 1)
+	push	(_main_periodDiff_1_58 + 2)
+	push	(_main_periodDiff_1_58 + 3)
+	mov	dptr,#0x0000
+	mov	b,#0xB4
+	mov	a,#0xC3
+	lcall	___fsmul
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	push	_main_sloc0_1_0
+	push	(_main_sloc0_1_0 + 1)
+	push	(_main_sloc0_1_0 + 2)
+	push	(_main_sloc0_1_0 + 3)
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
+	mov	a,r5
+	lcall	___fsdiv
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
 	mov	a,#0xDF
 	push	acc
 	clr	a
@@ -1650,12 +1668,12 @@ L002114?:
 L002115?:
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:140: voltage_reference_max = 0;
 	mov	_main_voltage_reference_max_1_58,#0x00
+	mov	(_main_voltage_reference_max_1_58 + 1),#0x00
+	mov	(_main_voltage_reference_max_1_58 + 2),#0x00
+	mov	(_main_voltage_reference_max_1_58 + 3),#0x00
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:141: voltage_undertest_max = 0;
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:142: cycle = 0;
 	clr	a
-	mov	(_main_voltage_reference_max_1_58 + 1),a
-	mov	(_main_voltage_reference_max_1_58 + 2),a
-	mov	(_main_voltage_reference_max_1_58 + 3),a
 	mov	_main_voltage_undertest_max_1_58,a
 	mov	(_main_voltage_undertest_max_1_58 + 1),a
 	mov	(_main_voltage_undertest_max_1_58 + 2),a
@@ -2783,7 +2801,7 @@ __str_3:
 	db 'Mar  9 2017'
 	db 0x00
 __str_4:
-	db '00:27:09'
+	db '10:02:05'
 	db 0x00
 __str_5:
 	db 0x1B
