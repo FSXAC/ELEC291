@@ -28,6 +28,9 @@ void main(void) {
     // initialize ADC
     initializeADC();
 
+    // intialize LCD
+    LCD_init();
+
     // Initialize the pins for analog input
     initializePin(1, 4); // Configure P2.3 as analog input
     initializePin(1, 5); // Configure P2.4 as analog input
@@ -296,6 +299,76 @@ float getPeriodDiff(float period) {
     }
 
 }
+
+// pulse LCD clock
+void LCD_pulse(void) {
+    LCD_E = 1;
+    delayUs(40);
+    LCD_E = 0;
+}
+
+// send byte to LCD
+void LCD_byte(unsigned char x) {
+    // put x in the accumulator
+    ACC    = x;
+    LCD_D7 = ACC_7;
+    LCD_D6 = ACC_6;
+    LCD_D5 = ACC_5;
+    LCD_D4 = ACC_4;
+    LCD_pulse();
+    delayUs(40);
+    ACC    = x;
+    LCD_D7 = ACC_3;
+    LCD_D6 = ACC_2;
+    LCD_D5 = ACC_1;
+    LCD_D4 = ACC_0;
+    LCD_pulse();
+}
+
+// write data to LCD
+void LCD_write(unsigned char x) {
+    LCD_RS = 1;
+    LCD_byte(x);
+    delay(2);
+}
+
+// send command to LCD
+void LCD_cmd(unsigned char x) {
+    LCD_RS = 0;
+    LCD_byte(x);
+    delay(5);
+}
+
+// initialize the LCD in 4 bit mode
+void LCD_init(void) {
+    LCD_E = 0;
+    LCD_RW = 0;
+    LCD_A  = 0;
+    LCD_K  = 1;
+    delay(20);
+
+    // First make sure the LCD is in 8-bit mode and then change to 4-bit mode
+    LCD_cmd(0x33);
+    LCD_cmd(0x33);
+    LCD_cmd(0x32);
+
+    // Configure the LCD
+    LCD_cmd(0x28);
+    LCD_cmd(0x0c);
+    LCD_cmd(0x01);
+    delay(20);
+}
+
+// prints a string to LCD
+void LCD_print(char *string, unsigned char line, bit fillLine) {
+    int j = 0;
+    LCD_cmd(line == 2 ? 0xc0: 0x80);
+    delay(3);
+
+    while (string[j] != 0) LCD_write(string[j++]);
+    if (fillLine) for (; j < CHARS_PER_LINE; j++) LCD_write(' ');
+}
+
 
 // ===[STUFF FOR MAX7219 HERE]===
 // /* send one byte */
