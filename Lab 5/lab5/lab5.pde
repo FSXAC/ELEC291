@@ -53,12 +53,13 @@ void draw() {
     text("Freq=" + str(1000000/(2*halfPeriod)) + "Hz", 50, 110);
     text("Period=" + str(2*halfPeriod) + "us", 50, 130);
 
-    fill(255, 255, 0);
-    text("REFERENCE:", 50, 50);
-    text("Vpp=" + str(2*vRef) +"V", 50, 70);
-    text("Vmax=" + str(vRef) + "V", 50, 90);
-    text("Freq=" + str(1000000/(2*halfPeriod)) + "Hz", 50, 110);
-    text("Period=" + str(2*halfPeriod) + "us", 50, 130);
+    fill(0, 255, 255);
+    text("UNDER-TEST:", 350, 50);
+    text("Vpp=" + str(2*vTest) +"V", 350, 70);
+    text("Vmax=" + str(vTest) + "V", 350, 90);
+    text("Freq=" + str(1000000/(2*halfPeriod)) + "Hz", 350, 110);
+    text("Period=" + str(2*halfPeriod) + "us", 350, 130);
+    text("Phase=" + String.format("%.2f", -360.0 * periodDiff / (2.0 * halfPeriod)) +"deg", 350, 150);
 
     stroke(255, 255, 0);
     drawSin(vRef, 100/halfPeriod, 0);
@@ -76,7 +77,6 @@ void drawSin(float amp, float freq, float phase) {
         strokeWeight(2);
         line(i+width/2-1, y_prev, i+width/2, y);
     }
-    for (int i = -width/2; i < width/2; i+= freq*0.036) {
 }
 
 void drawGrid() {
