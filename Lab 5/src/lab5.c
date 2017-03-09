@@ -8,7 +8,8 @@
 #include "lab5.h"
 
 void main(void) {
-    // volatile float voltages[4];
+    float voltage_reference = 0, voltage_reference_max = 0;
+    float voltage_undertest = 0, voltage_undertest_max = 0;
 
     printf("\x1b[2J");
     printf("Lab 5 - Phasor Detector\n"
@@ -20,37 +21,37 @@ void main(void) {
     );
 
     // initialize ADC
-    // initializeADC();
+    initializeADC();
 
-    // // Initialize the pins for analog input
-    // initializePin(2, 0); // Configure P2.0 as analog input
-    // initializePin(2, 1); // Configure P2.1 as analog input
-    // initializePin(2, 2); // Configure P2.2 as analog input
-    // initializePin(2, 3); // Configure P2.3 as analog input
-    //
-    // // constantly check for voltages
-    // printf("\x1b[s");
-    // while (1) {
-    //     voltages[0] = getVoltageAtPin(ANALOG_0);
-    //     voltages[1] = getVoltageAtPin(ANALOG_1);
-    //     voltages[2] = getVoltageAtPin(ANALOG_2);
-    //     voltages[3] = getVoltageAtPin(ANALOG_3);
-    //     printf("\x1b[u");
-    //     printf("V0=%5.3f, V1=%5.3f, V2=%5.3f, V3=%5.3f\n", voltages[0], voltages[1], voltages[2], voltages[3]);
-    //     delay(100);
-    // }
+    // Initialize the pins for analog input
+    initializePin(1, 4); // Configure P2.3 as analog input
+    initializePin(1, 5); // Configure P2.4 as analog input
 
-    // play around with LED matrix
-    // LED_init();
-    // LED_write(1, 0x55);
-    // LED_pulse();
-    // LED_write(2, 0x00);
-    // LED_pulse();
+    // constantly check for voltages
+    printf("\x1b[s");
     while (1) {
-        LED_CLK = HIGH;
-        delay(2000);
-        LED_CLK = LOW;
-        delay(2000);
+        printf("\x1b[u");
+
+        // take measurements (only measure when signal is positive)
+        if (DIGITAL_0) {
+            voltage_reference = getVoltageAtPin(ANALOG_0);
+            if (voltage_reference_max < voltage_reference) voltage_reference_max = voltage_reference;
+        }
+
+        if (DIGITAL_1) {
+        	voltage_undertest = getVoltageAtPin(ANALOG_1);
+        	if (voltage_undertest_max < voltage_undertest) voltage_undertest_max = voltage_undertest;
+        }
+
+        // output to PC
+        printf("\nREFERNECE (P1.3):\n");
+        printf("Voltage = %5.3fV\n", voltage_reference);
+        printf("Peak V  = %5.3fV\n", voltage_reference_max);
+
+        printf("\nUNDER TEST (P1.4):\n");
+        printf("Voltage = %5.3fV\n", voltage_undertest);
+        printf("Peak V  = %5.3fV\n", voltage_undertest_max);
+        delay(50);
     }
 }
 
@@ -168,11 +169,13 @@ unsigned int getADCAtPin(unsigned char pin) {
     AMX0P = pin;             // Select positive input from pin
     AMX0N = LQFP32_MUX_GND;  // GND is negative input (Single-ended Mode)
     // Dummy conversion first to select new pin
+    P0_0 = 1;
     AD0BUSY = 1;
     while (AD0BUSY); // Wait for dummy conversion to finish
     // Convert voltage at the pin
     AD0BUSY = 1;
     while (AD0BUSY); // Wait for conversion to complete
+    P0_0 = 0;
     return (ADC0L+(ADC0H*0x100));
 }
 

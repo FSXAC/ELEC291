@@ -1,10 +1,11 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1069 (Apr 23 2015) (MSVC)
-; This file was generated Wed Mar 08 14:02:39 2017
+; This file was generated Wed Mar 08 18:27:45 2017
 ;--------------------------------------------------------
 $name lab5
 $optc51 --model-small
+$printf_float
 	R_DSEG    segment data
 	R_CSEG    segment code
 	R_BSEG    segment bit
@@ -370,6 +371,12 @@ _SPIEN          BIT 0xf8
 ; internal ram data
 ;--------------------------------------------------------
 	rseg R_DSEG
+_main_voltage_reference_max_1_56:
+	ds 4
+_main_voltage_undertest_1_56:
+	ds 4
+_main_voltage_undertest_max_1_56:
+	ds 4
 _LED_write_PARM_2:
 	ds 1
 ;--------------------------------------------------------
@@ -434,14 +441,40 @@ _initializePin_PARM_2:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
+;voltage_reference         Allocated to registers r2 r3 r4 r5 
+;voltage_reference_max     Allocated with name '_main_voltage_reference_max_1_56'
+;voltage_undertest         Allocated with name '_main_voltage_undertest_1_56'
+;voltage_undertest_max     Allocated with name '_main_voltage_undertest_max_1_56'
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:10: void main(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:10: void main(void) {
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
 	using	0
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:13: printf("\x1b[2J");
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:11: float voltage_reference = 0, voltage_reference_max = 0;
+	mov	r2,#0x00
+	mov	r3,#0x00
+	mov	r4,#0x00
+	mov	r5,#0x00
+	mov	_main_voltage_reference_max_1_56,#0x00
+	mov	(_main_voltage_reference_max_1_56 + 1),#0x00
+	mov	(_main_voltage_reference_max_1_56 + 2),#0x00
+	mov	(_main_voltage_reference_max_1_56 + 3),#0x00
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:12: float voltage_undertest = 0, voltage_undertest_max = 0;
+	mov	_main_voltage_undertest_1_56,#0x00
+	mov	(_main_voltage_undertest_1_56 + 1),#0x00
+	mov	(_main_voltage_undertest_1_56 + 2),#0x00
+	mov	(_main_voltage_undertest_1_56 + 3),#0x00
+	mov	_main_voltage_undertest_max_1_56,#0x00
+	mov	(_main_voltage_undertest_max_1_56 + 1),#0x00
+	mov	(_main_voltage_undertest_max_1_56 + 2),#0x00
+	mov	(_main_voltage_undertest_max_1_56 + 3),#0x00
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:14: printf("\x1b[2J");
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
 	mov	a,#__str_0
 	push	acc
 	mov	a,#(__str_0 >> 8)
@@ -452,9 +485,9 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:20: );
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:19: __FILE__, __DATE__, __TIME__
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:18: "===================\n",
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:21: );
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:20: __FILE__, __DATE__, __TIME__
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:19: "===================\n",
 	mov	a,#__str_4
 	push	acc
 	mov	a,#(__str_4 >> 8)
@@ -483,63 +516,274 @@ _main:
 	mov	a,sp
 	add	a,#0xf4
 	mov	sp,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:49: while (1) {
-L002002?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:50: LED_CLK = HIGH;
-	setb	_P2_5
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:51: delay(2000);
-	mov	dptr,#0x07D0
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:24: initializeADC();
+	lcall	_initializeADC
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:27: initializePin(1, 4); // Configure P2.3 as analog input
+	mov	_initializePin_PARM_2,#0x04
+	mov	dpl,#0x01
+	lcall	_initializePin
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:28: initializePin(1, 5); // Configure P2.4 as analog input
+	mov	_initializePin_PARM_2,#0x05
+	mov	dpl,#0x01
+	lcall	_initializePin
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:31: printf("\x1b[s");
+	mov	a,#__str_5
+	push	acc
+	mov	a,#(__str_5 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	dec	sp
+	dec	sp
+	dec	sp
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:32: while (1) {
+L002010?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:33: printf("\x1b[u");
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	mov	a,#__str_6
+	push	acc
+	mov	a,#(__str_6 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	dec	sp
+	dec	sp
+	dec	sp
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:36: if (DIGITAL_0) {
+	jnb	_P2_4,L002004?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:37: voltage_reference = getVoltageAtPin(ANALOG_0);
+	mov	dpl,#0x04
+	lcall	_getVoltageAtPin
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:38: if (voltage_reference_max < voltage_reference) voltage_reference_max = voltage_reference;
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	mov	dpl,_main_voltage_reference_max_1_56
+	mov	dph,(_main_voltage_reference_max_1_56 + 1)
+	mov	b,(_main_voltage_reference_max_1_56 + 2)
+	mov	a,(_main_voltage_reference_max_1_56 + 3)
+	lcall	___fslt
+	mov	r6,dpl
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	a,r6
+	jz	L002004?
+	mov	_main_voltage_reference_max_1_56,r2
+	mov	(_main_voltage_reference_max_1_56 + 1),r3
+	mov	(_main_voltage_reference_max_1_56 + 2),r4
+	mov	(_main_voltage_reference_max_1_56 + 3),r5
+L002004?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:41: if (DIGITAL_1) {
+	jnb	_P2_3,L002008?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:42: voltage_undertest = getVoltageAtPin(ANALOG_1);
+	mov	dpl,#0x05
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	lcall	_getVoltageAtPin
+	mov	_main_voltage_undertest_1_56,dpl
+	mov	(_main_voltage_undertest_1_56 + 1),dph
+	mov	(_main_voltage_undertest_1_56 + 2),b
+	mov	(_main_voltage_undertest_1_56 + 3),a
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:43: if (voltage_undertest_max < voltage_undertest) voltage_undertest_max = voltage_undertest;
+	push	_main_voltage_undertest_1_56
+	push	(_main_voltage_undertest_1_56 + 1)
+	push	(_main_voltage_undertest_1_56 + 2)
+	push	(_main_voltage_undertest_1_56 + 3)
+	mov	dpl,_main_voltage_undertest_max_1_56
+	mov	dph,(_main_voltage_undertest_max_1_56 + 1)
+	mov	b,(_main_voltage_undertest_max_1_56 + 2)
+	mov	a,(_main_voltage_undertest_max_1_56 + 3)
+	lcall	___fslt
+	mov	r6,dpl
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	a,r6
+	jz	L002008?
+	mov	_main_voltage_undertest_max_1_56,_main_voltage_undertest_1_56
+	mov	(_main_voltage_undertest_max_1_56 + 1),(_main_voltage_undertest_1_56 + 1)
+	mov	(_main_voltage_undertest_max_1_56 + 2),(_main_voltage_undertest_1_56 + 2)
+	mov	(_main_voltage_undertest_max_1_56 + 3),(_main_voltage_undertest_1_56 + 3)
+L002008?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:47: printf("\nREFERNECE (P1.3):\n");
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	mov	a,#__str_7
+	push	acc
+	mov	a,#(__str_7 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	dec	sp
+	dec	sp
+	dec	sp
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:48: printf("Voltage = %5.3fV\n", voltage_reference);
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	mov	a,#__str_8
+	push	acc
+	mov	a,#(__str_8 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	mov	a,sp
+	add	a,#0xf9
+	mov	sp,a
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:49: printf("Peak V  = %5.3fV\n", voltage_reference_max);
+	push	_main_voltage_reference_max_1_56
+	push	(_main_voltage_reference_max_1_56 + 1)
+	push	(_main_voltage_reference_max_1_56 + 2)
+	push	(_main_voltage_reference_max_1_56 + 3)
+	mov	a,#__str_9
+	push	acc
+	mov	a,#(__str_9 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	mov	a,sp
+	add	a,#0xf9
+	mov	sp,a
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:51: printf("\nUNDER TEST (P1.4):\n");
+	mov	a,#__str_10
+	push	acc
+	mov	a,#(__str_10 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	dec	sp
+	dec	sp
+	dec	sp
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:52: printf("Voltage = %5.3fV\n", voltage_undertest);
+	push	_main_voltage_undertest_1_56
+	push	(_main_voltage_undertest_1_56 + 1)
+	push	(_main_voltage_undertest_1_56 + 2)
+	push	(_main_voltage_undertest_1_56 + 3)
+	mov	a,#__str_8
+	push	acc
+	mov	a,#(__str_8 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	mov	a,sp
+	add	a,#0xf9
+	mov	sp,a
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:53: printf("Peak V  = %5.3fV\n", voltage_undertest_max);
+	push	_main_voltage_undertest_max_1_56
+	push	(_main_voltage_undertest_max_1_56 + 1)
+	push	(_main_voltage_undertest_max_1_56 + 2)
+	push	(_main_voltage_undertest_max_1_56 + 3)
+	mov	a,#__str_9
+	push	acc
+	mov	a,#(__str_9 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	mov	a,sp
+	add	a,#0xf9
+	mov	sp,a
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:54: delay(50);
+	mov	dptr,#0x0032
 	lcall	_delay
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:52: LED_CLK = LOW;
-	clr	_P2_5
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:53: delay(2000);
-	mov	dptr,#0x07D0
-	lcall	_delay
-	sjmp	L002002?
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	ljmp	L002010?
 ;------------------------------------------------------------
 ;Allocation info for local variables in function '_c51_external_startup'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:57: char _c51_external_startup(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:58: char _c51_external_startup(void) {
 ;	-----------------------------------------
 ;	 function _c51_external_startup
 ;	-----------------------------------------
 __c51_external_startup:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:58: PCA0MD &= (~0x40) ;    // DISABLE WDT: clear Watchdog Enable bit
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:59: PCA0MD &= (~0x40) ;    // DISABLE WDT: clear Watchdog Enable bit
 	anl	_PCA0MD,#0xBF
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:59: VDM0CN  = 0x80; // enable VDD monitor
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:60: VDM0CN  = 0x80; // enable VDD monitor
 	mov	_VDM0CN,#0x80
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:60: RSTSRC  = 0x02|0x04; // Enable reset on missing clock detector and VDD
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:61: RSTSRC  = 0x02|0x04; // Enable reset on missing clock detector and VDD
 	mov	_RSTSRC,#0x06
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:66: CLKSEL|=0b_0000_0010; // SYSCLK derived from the Internal High-Frequency Oscillator / 2.
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:67: CLKSEL|=0b_0000_0010; // SYSCLK derived from the Internal High-Frequency Oscillator / 2.
 	orl	_CLKSEL,#0x02
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:73: OSCICN |= 0x03; // Configure internal oscillator for its maximum frequency
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:74: OSCICN |= 0x03; // Configure internal oscillator for its maximum frequency
 	orl	_OSCICN,#0x03
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:76: SCON0 = 0x10;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:77: SCON0 = 0x10;
 	mov	_SCON0,#0x10
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:78: TH1 = 0x10000-((SYSCLK/BAUDRATE)/2L);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:79: TH1 = 0x10000-((SYSCLK/BAUDRATE)/2L);
 	mov	_TH1,#0x98
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:79: CKCON &= ~0x0B;                  // T1M = 1; SCA1:0 = xx
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:80: CKCON &= ~0x0B;                  // T1M = 1; SCA1:0 = xx
 	anl	_CKCON,#0xF4
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:80: CKCON |=  0x08;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:81: CKCON |=  0x08;
 	orl	_CKCON,#0x08
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:94: TL1   = TH1;      // Init Timer1
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:95: TL1   = TH1;      // Init Timer1
 	mov	_TL1,_TH1
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:95: TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit autoreload
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:96: TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit autoreload
 	anl	_TMOD,#0x0F
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:96: TMOD |= 0x20;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:97: TMOD |= 0x20;
 	orl	_TMOD,#0x20
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:97: TR1   = 1; // START Timer1
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:98: TR1   = 1; // START Timer1
 	setb	_TR1
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:98: TI    = 1;  // Indicate TX0 ready
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:99: TI    = 1;  // Indicate TX0 ready
 	setb	_TI
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:101: P0MDOUT |= 0x01;  // set P0.0 and P0.4 as push-pull outputs
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:102: P0MDOUT |= 0x01;  // set P0.0 and P0.4 as push-pull outputs
 	orl	_P0MDOUT,#0x01
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:102: XBR0 = 0x01;      // Enable UART0 on P0.4(TX0) and P0.5(RX0)
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:103: XBR0 = 0x01;      // Enable UART0 on P0.4(TX0) and P0.5(RX0)
 	mov	_XBR0,#0x01
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:103: XBR1 = 0x40;      // enable crossbar
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:104: XBR1 = 0x40;      // enable crossbar
 	mov	_XBR1,#0x40
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:105: return 0;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:106: return 0;
 	mov	dpl,#0x00
 	ret
 ;------------------------------------------------------------
@@ -548,40 +792,40 @@ __c51_external_startup:
 ;us                        Allocated to registers r2 
 ;i                         Allocated to registers r3 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:109: void delayUs(unsigned char us) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:110: void delayUs(unsigned char us) {
 ;	-----------------------------------------
 ;	 function delayUs
 ;	-----------------------------------------
 _delayUs:
 	mov	r2,dpl
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:111: CKCON  |= 0b_0100_0000;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:112: CKCON  |= 0b_0100_0000;
 	orl	_CKCON,#0x40
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:112: TMR3RL  = (-(SYSCLK)/1000000L);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:113: TMR3RL  = (-(SYSCLK)/1000000L);
 	mov	_TMR3RL,#0xE8
 	mov	(_TMR3RL >> 8),#0xFF
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:113: TMR3    = TMR3RL;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:114: TMR3    = TMR3RL;
 	mov	_TMR3,_TMR3RL
 	mov	(_TMR3 >> 8),(_TMR3RL >> 8)
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:114: TMR3CN  = 0x04;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:115: TMR3CN  = 0x04;
 	mov	_TMR3CN,#0x04
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:117: for (i = 0; i < us; i++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:118: for (i = 0; i < us; i++) {
 	mov	r3,#0x00
 L004004?:
 	clr	c
 	mov	a,r3
 	subb	a,r2
 	jnc	L004007?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:118: while (!(TMR3CN & 0x80));
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:119: while (!(TMR3CN & 0x80));
 L004001?:
 	mov	a,_TMR3CN
 	jnb	acc.7,L004001?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:119: TMR3CN &= ~(0x80);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:120: TMR3CN &= ~(0x80);
 	anl	_TMR3CN,#0x7F
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:117: for (i = 0; i < us; i++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:118: for (i = 0; i < us; i++) {
 	inc	r3
 	sjmp	L004004?
 L004007?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:121: TMR3CN = 0;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:122: TMR3CN = 0;
 	mov	_TMR3CN,#0x00
 	ret
 ;------------------------------------------------------------
@@ -590,14 +834,14 @@ L004007?:
 ;ms                        Allocated to registers r2 r3 
 ;j                         Allocated to registers r4 r5 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:125: void delay(unsigned int ms) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:126: void delay(unsigned int ms) {
 ;	-----------------------------------------
 ;	 function delay
 ;	-----------------------------------------
 _delay:
 	mov	r2,dpl
 	mov	r3,dph
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:127: for (j = 0; j < ms; j++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:128: for (j = 0; j < ms; j++) {
 	mov	r4,#0x00
 	mov	r5,#0x00
 L005001?:
@@ -607,27 +851,27 @@ L005001?:
 	mov	a,r5
 	subb	a,r3
 	jnc	L005005?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:128: delayUs(249);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:129: delayUs(249);
 	mov	dpl,#0xF9
 	push	ar2
 	push	ar3
 	push	ar4
 	push	ar5
 	lcall	_delayUs
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:129: delayUs(249);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:130: delayUs(249);
 	mov	dpl,#0xF9
 	lcall	_delayUs
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:130: delayUs(249);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:131: delayUs(249);
 	mov	dpl,#0xF9
 	lcall	_delayUs
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:131: delayUs(250);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:132: delayUs(250);
 	mov	dpl,#0xFA
 	lcall	_delayUs
 	pop	ar5
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:127: for (j = 0; j < ms; j++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:128: for (j = 0; j < ms; j++) {
 	inc	r4
 	cjne	r4,#0x00,L005001?
 	inc	r5
@@ -638,16 +882,16 @@ L005005?:
 ;Allocation info for local variables in function 'initializeADC'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:136: void initializeADC(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:137: void initializeADC(void) {
 ;	-----------------------------------------
 ;	 function initializeADC
 ;	-----------------------------------------
 _initializeADC:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:137: ADC0CF = 0xF8; // SAR clock = 31, Right-justified result
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:138: ADC0CF = 0xF8; // SAR clock = 31, Right-justified result
 	mov	_ADC0CF,#0xF8
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:138: ADC0CN = 0b_1000_0000; // AD0EN=1, AD0TM=0
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:139: ADC0CN = 0b_1000_0000; // AD0EN=1, AD0TM=0
 	mov	_ADC0CN,#0x80
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:139: REF0CN = 0b_0000_1000; // Select VDD as the voltage reference
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:140: REF0CN = 0b_0000_1000; // Select VDD as the voltage reference
 	mov	_REF0CN,#0x08
 	ret
 ;------------------------------------------------------------
@@ -657,13 +901,13 @@ _initializeADC:
 ;port                      Allocated to registers r2 
 ;mask                      Allocated to registers r3 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:143: void initializePin(unsigned char port, unsigned char pin) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:144: void initializePin(unsigned char port, unsigned char pin) {
 ;	-----------------------------------------
 ;	 function initializePin
 ;	-----------------------------------------
 _initializePin:
 	mov	r2,dpl
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:145: mask = 1 << pin;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:146: mask = 1 << pin;
 	mov	b,_initializePin_PARM_2
 	inc	b
 	mov	a,#0x01
@@ -673,7 +917,7 @@ L007010?:
 L007012?:
 	djnz	b,L007010?
 	mov	r3,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:146: switch (port) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:147: switch (port) {
 	mov	a,r2
 	add	a,#0xff - 0x03
 	jc	L007007?
@@ -687,50 +931,50 @@ L007014?:
 	ljmp	L007002?
 	ljmp	L007003?
 	ljmp	L007004?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:147: case 0:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:148: case 0:
 L007001?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:148: P0MDIN &= (~mask);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:149: P0MDIN &= (~mask);
 	mov	a,r3
 	cpl	a
 	anl	_P0MDIN,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:149: P0SKIP |= mask;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:150: P0SKIP |= mask;
 	mov	a,r3
 	orl	_P0SKIP,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:150: break;
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:151: case 1:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:151: break;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:152: case 1:
 	ret
 L007002?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:152: P1MDIN &= (~mask);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:153: P1MDIN &= (~mask);
 	mov	a,r3
 	cpl	a
 	anl	_P1MDIN,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:153: P1SKIP |= mask;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:154: P1SKIP |= mask;
 	mov	a,r3
 	orl	_P1SKIP,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:154: break;
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:155: case 2:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:155: break;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:156: case 2:
 	ret
 L007003?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:156: P2MDIN &= (~mask);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:157: P2MDIN &= (~mask);
 	mov	a,r3
 	cpl	a
 	anl	_P2MDIN,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:157: P2SKIP |= mask;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:158: P2SKIP |= mask;
 	mov	a,r3
 	orl	_P2SKIP,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:158: break;
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:159: case 3:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:159: break;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:160: case 3:
 	ret
 L007004?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:160: P3MDIN &= (~mask);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:161: P3MDIN &= (~mask);
 	mov	a,r3
 	cpl	a
 	mov	r2,a
 	anl	_P3MDIN,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:161: P3SKIP |= mask;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:162: P3SKIP |= mask;
 	mov	a,r3
 	orl	_P3SKIP,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:164: }
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:165: }
 L007007?:
 	ret
 ;------------------------------------------------------------
@@ -738,25 +982,29 @@ L007007?:
 ;------------------------------------------------------------
 ;pin                       Allocated to registers 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:167: unsigned int getADCAtPin(unsigned char pin) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:168: unsigned int getADCAtPin(unsigned char pin) {
 ;	-----------------------------------------
 ;	 function getADCAtPin
 ;	-----------------------------------------
 _getADCAtPin:
 	mov	_AMX0P,dpl
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:169: AMX0N = LQFP32_MUX_GND;  // GND is negative input (Single-ended Mode)
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:170: AMX0N = LQFP32_MUX_GND;  // GND is negative input (Single-ended Mode)
 	mov	_AMX0N,#0x1F
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:171: AD0BUSY = 1;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:172: P0_0 = 1;
+	setb	_P0_0
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:173: AD0BUSY = 1;
 	setb	_AD0BUSY
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:172: while (AD0BUSY); // Wait for dummy conversion to finish
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:174: while (AD0BUSY); // Wait for dummy conversion to finish
 L008001?:
 	jb	_AD0BUSY,L008001?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:174: AD0BUSY = 1;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:176: AD0BUSY = 1;
 	setb	_AD0BUSY
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:175: while (AD0BUSY); // Wait for conversion to complete
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:177: while (AD0BUSY); // Wait for conversion to complete
 L008004?:
 	jb	_AD0BUSY,L008004?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:176: return (ADC0L+(ADC0H*0x100));
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:178: P0_0 = 0;
+	clr	_P0_0
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:179: return (ADC0L+(ADC0H*0x100));
 	mov	r2,_ADC0L
 	mov	r3,#0x00
 	mov	r5,_ADC0H
@@ -773,12 +1021,12 @@ L008004?:
 ;------------------------------------------------------------
 ;pin                       Allocated to registers 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:179: float getVoltageAtPin(unsigned char pin) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:182: float getVoltageAtPin(unsigned char pin) {
 ;	-----------------------------------------
 ;	 function getVoltageAtPin
 ;	-----------------------------------------
 _getVoltageAtPin:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:180: return ((getADCAtPin(pin) * VDD / 1024.0));
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:183: return ((getADCAtPin(pin) * VDD / 1024.0));
 	lcall	_getADCAtPin
 	lcall	___uint2fs
 	mov	r2,dpl
@@ -789,8 +1037,8 @@ _getVoltageAtPin:
 	push	ar3
 	push	ar4
 	push	ar5
-	mov	dptr,#0x3333
-	mov	b,#0x93
+	mov	dptr,#0x51EC
+	mov	b,#0x58
 	mov	a,#0x40
 	lcall	___fsmul
 	mov	r2,dpl
@@ -831,23 +1079,23 @@ _getVoltageAtPin:
 ;j                         Allocated to registers r3 
 ;temp                      Allocated to registers r4 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:185: void LED_spi(unsigned char value) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:188: void LED_spi(unsigned char value) {
 ;	-----------------------------------------
 ;	 function LED_spi
 ;	-----------------------------------------
 _LED_spi:
 	mov	r2,dpl
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:187: for (j = 1; j <= 8; j++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:190: for (j = 1; j <= 8; j++) {
 	mov	r3,#0x01
 L010001?:
 	mov	a,r3
 	add	a,#0xff - 0x08
 	jc	L010005?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:188: temp = value & 0x80;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:191: temp = value & 0x80;
 	mov	a,#0x80
 	anl	a,r2
 	mov	r4,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:189: LED_DATA = (temp == 0x80) ? HIGH : LOW;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:192: LED_DATA = (temp == 0x80) ? HIGH : LOW;
 	cjne	r4,#0x80,L010011?
 	setb	c
 	sjmp	L010012?
@@ -855,22 +1103,22 @@ L010011?:
 	clr	c
 L010012?:
 	mov	_P2_6,c
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:192: LED_CLK = HIGH;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:195: LED_CLK = HIGH;
 	setb	_P2_5
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:193: delayUs(20);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:196: delayUs(20);
 	mov	dpl,#0x14
 	push	ar2
 	push	ar3
 	lcall	_delayUs
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:194: LED_CLK = LOW;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:197: LED_CLK = LOW;
 	clr	_P2_5
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:197: value = value << 1;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:200: value = value << 1;
 	mov	a,r2
 	add	a,r2
 	mov	r2,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:187: for (j = 1; j <= 8; j++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:190: for (j = 1; j <= 8; j++) {
 	inc	r3
 	sjmp	L010001?
 L010005?:
@@ -879,17 +1127,17 @@ L010005?:
 ;Allocation info for local variables in function 'LED_pulse'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:201: void LED_pulse(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:204: void LED_pulse(void) {
 ;	-----------------------------------------
 ;	 function LED_pulse
 ;	-----------------------------------------
 _LED_pulse:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:202: LED_CS = HIGH;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:205: LED_CS = HIGH;
 	setb	_P2_7
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:203: delay(1);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:206: delay(1);
 	mov	dptr,#0x0001
 	lcall	_delay
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:204: LED_CS = LOW;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:207: LED_CS = LOW;
 	clr	_P2_7
 	ret
 ;------------------------------------------------------------
@@ -897,36 +1145,36 @@ _LED_pulse:
 ;------------------------------------------------------------
 ;j                         Allocated to registers r2 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:208: void LED_clear(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:211: void LED_clear(void) {
 ;	-----------------------------------------
 ;	 function LED_clear
 ;	-----------------------------------------
 _LED_clear:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:210: for (j = 1; j <= 8; j++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:213: for (j = 1; j <= 8; j++) {
 	mov	r2,#0x01
 L012001?:
 	mov	a,r2
 	add	a,#0xff - 0x08
 	jc	L012004?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:211: LED_spi(j);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:214: LED_spi(j);
 	mov	dpl,r2
 	push	ar2
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:212: LED_spi(0x00);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:215: LED_spi(0x00);
 	mov	dpl,#0x00
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:213: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:216: LED_pulse();
 	lcall	_LED_pulse
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:214: printf("%x ", j);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:217: printf("%x ", j);
 	mov	ar3,r2
 	mov	r4,#0x00
 	push	ar2
 	push	ar3
 	push	ar4
-	mov	a,#__str_5
+	mov	a,#__str_11
 	push	acc
-	mov	a,#(__str_5 >> 8)
+	mov	a,#(__str_11 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -935,14 +1183,14 @@ L012001?:
 	add	a,#0xfb
 	mov	sp,a
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:210: for (j = 1; j <= 8; j++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:213: for (j = 1; j <= 8; j++) {
 	inc	r2
 	sjmp	L012001?
 L012004?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:216: printf("\n");
-	mov	a,#__str_6
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:219: printf("\n");
+	mov	a,#__str_12
 	push	acc
-	mov	a,#(__str_6 >> 8)
+	mov	a,#(__str_12 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -955,25 +1203,25 @@ L012004?:
 ;Allocation info for local variables in function 'LED_init'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:220: void LED_init(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:223: void LED_init(void) {
 ;	-----------------------------------------
 ;	 function LED_init
 ;	-----------------------------------------
 _LED_init:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:221: LED_CS = LOW;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:224: LED_CS = LOW;
 	clr	_P2_7
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:224: LED_spi(0x09);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:227: LED_spi(0x09);
 	mov	dpl,#0x09
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:226: LED_spi(0x00);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:229: LED_spi(0x00);
 	mov	dpl,#0x00
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:227: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:230: LED_pulse();
 	lcall	_LED_pulse
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:228: printf("decoder set\n");
-	mov	a,#__str_7
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:231: printf("decoder set\n");
+	mov	a,#__str_13
 	push	acc
-	mov	a,#(__str_7 >> 8)
+	mov	a,#(__str_13 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -981,18 +1229,18 @@ _LED_init:
 	dec	sp
 	dec	sp
 	dec	sp
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:231: LED_spi(0x0A);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:234: LED_spi(0x0A);
 	mov	dpl,#0x0A
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:232: LED_spi(0x0D);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:235: LED_spi(0x0D);
 	mov	dpl,#0x0D
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:233: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:236: LED_pulse();
 	lcall	_LED_pulse
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:234: printf("intensity set\n");
-	mov	a,#__str_8
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:237: printf("intensity set\n");
+	mov	a,#__str_14
 	push	acc
-	mov	a,#(__str_8 >> 8)
+	mov	a,#(__str_14 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -1000,29 +1248,18 @@ _LED_init:
 	dec	sp
 	dec	sp
 	dec	sp
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:237: LED_spi(0x0b);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:240: LED_spi(0x0b);
 	mov	dpl,#0x0B
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:238: LED_spi(0x07);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:241: LED_spi(0x07);
 	mov	dpl,#0x07
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:239: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:242: LED_pulse();
 	lcall	_LED_pulse
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:240: printf("scan limit set\n");
-	mov	a,#__str_9
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:243: printf("scan limit set\n");
+	mov	a,#__str_15
 	push	acc
-	mov	a,#(__str_9 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:243: printf("clearing: ");
-	mov	a,#__str_10
-	push	acc
-	mov	a,#(__str_10 >> 8)
+	mov	a,#(__str_15 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -1030,20 +1267,31 @@ _LED_init:
 	dec	sp
 	dec	sp
 	dec	sp
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:244: LED_clear();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:246: printf("clearing: ");
+	mov	a,#__str_16
+	push	acc
+	mov	a,#(__str_16 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	dec	sp
+	dec	sp
+	dec	sp
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:247: LED_clear();
 	lcall	_LED_clear
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:247: LED_spi(0x0C);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:250: LED_spi(0x0C);
 	mov	dpl,#0x0C
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:248: LED_spi(0x01);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:251: LED_spi(0x01);
 	mov	dpl,#0x01
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:249: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:252: LED_pulse();
 	lcall	_LED_pulse
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:250: printf("normal operation set\n");
-	mov	a,#__str_11
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:253: printf("normal operation set\n");
+	mov	a,#__str_17
 	push	acc
-	mov	a,#(__str_11 >> 8)
+	mov	a,#(__str_17 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -1058,13 +1306,13 @@ _LED_init:
 ;value                     Allocated with name '_LED_write_PARM_2'
 ;address                   Allocated to registers r2 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:254: void LED_write(char address, char value) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:257: void LED_write(char address, char value) {
 ;	-----------------------------------------
 ;	 function LED_write
 ;	-----------------------------------------
 _LED_write:
 	mov	r2,dpl
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:255: if ((address < 1) || (address > 8)) return;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:258: if ((address < 1) || (address > 8)) return;
 	clr	c
 	mov	a,r2
 	xrl	a,#0x80
@@ -1078,41 +1326,41 @@ _LED_write:
 L014001?:
 	ret
 L014002?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:256: LED_spi(address);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:259: LED_spi(address);
 	mov	dpl,r2
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:257: LED_spi(value);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:260: LED_spi(value);
 	mov	dpl,_LED_write_PARM_2
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:258: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:261: LED_pulse();
 	ljmp	_LED_pulse
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LED_test'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:262: void LED_test(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:265: void LED_test(void) {
 ;	-----------------------------------------
 ;	 function LED_test
 ;	-----------------------------------------
 _LED_test:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:263: LED_spi(0x0F);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:266: LED_spi(0x0F);
 	mov	dpl,#0x0F
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:264: LED_spi(0x01);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:267: LED_spi(0x01);
 	mov	dpl,#0x01
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:265: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:268: LED_pulse();
 	lcall	_LED_pulse
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:266: delay(1000);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:269: delay(1000);
 	mov	dptr,#0x03E8
 	lcall	_delay
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:267: LED_spi(0x0F);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:270: LED_spi(0x0F);
 	mov	dpl,#0x0F
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:268: LED_spi(0x00);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:271: LED_spi(0x00);
 	mov	dpl,#0x00
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:269: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 5\src\lab5.c:272: LED_pulse();
 	ljmp	_LED_pulse
 	rseg R_CSEG
 
@@ -1137,7 +1385,11 @@ __str_1:
 	db 0x0A
 	db 0x00
 __str_2:
-	db 'F:'
+	db 'C:'
+	db 0x5C
+	db 'Users'
+	db 0x5C
+	db 'mansu'
 	db 0x5C
 	db 'OneDrive'
 	db 0x5C
@@ -1149,7 +1401,8 @@ __str_2:
 	db 0x5C
 	db 'Lab 5'
 	db 0x5C
-	db 'src'
+	db 'sr'
+	db 'c'
 	db 0x5C
 	db 'lab5.c'
 	db 0x00
@@ -1157,30 +1410,56 @@ __str_3:
 	db 'Mar  8 2017'
 	db 0x00
 __str_4:
-	db '14:02:39'
+	db '18:27:44'
 	db 0x00
 __str_5:
-	db '%x '
+	db 0x1B
+	db '[s'
 	db 0x00
 __str_6:
-	db 0x0A
+	db 0x1B
+	db '[u'
 	db 0x00
 __str_7:
-	db 'decoder set'
+	db 0x0A
+	db 'REFERNECE (P1.3):'
 	db 0x0A
 	db 0x00
 __str_8:
-	db 'intensity set'
+	db 'Voltage = %5.3fV'
 	db 0x0A
 	db 0x00
 __str_9:
-	db 'scan limit set'
+	db 'Peak V  = %5.3fV'
 	db 0x0A
 	db 0x00
 __str_10:
-	db 'clearing: '
+	db 0x0A
+	db 'UNDER TEST (P1.4):'
+	db 0x0A
 	db 0x00
 __str_11:
+	db '%x '
+	db 0x00
+__str_12:
+	db 0x0A
+	db 0x00
+__str_13:
+	db 'decoder set'
+	db 0x0A
+	db 0x00
+__str_14:
+	db 'intensity set'
+	db 0x0A
+	db 0x00
+__str_15:
+	db 'scan limit set'
+	db 0x0A
+	db 0x00
+__str_16:
+	db 'clearing: '
+	db 0x00
+__str_17:
 	db 'normal operation set'
 	db 0x0A
 	db 0x00

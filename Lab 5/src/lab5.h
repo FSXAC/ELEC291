@@ -7,14 +7,13 @@
 #define LOW 0
 
 // measured value of VDD in volts
-#define VDD 4.6 //3.325
+#define VDD 3.38 //3.325
 
 // analog input pins
-#define ANALOG_0 LQFP32_MUX_P2_0
-#define ANALOG_1 LQFP32_MUX_P2_1
-#define ANALOG_2 LQFP32_MUX_P2_2
-#define ANALOG_3 LQFP32_MUX_P2_3
-#define NUM_OF_INPUTS 4
+#define ANALOG_0 LQFP32_MUX_P1_4 // REF
+#define ANALOG_1 LQFP32_MUX_P1_5 // TEST
+#define DIGITAL_0 P2_4 // REF zero cross
+#define DIGITAL_1 P2_3 // TEST zero cross
 
 // function prototypes
 /* C51 bullshit */
