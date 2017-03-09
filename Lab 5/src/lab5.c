@@ -8,14 +8,13 @@
 #include "lab5.h"
 
 #define MEASURE_TEST
+#define PROCESSING
 
 void main(void) {
     float voltage_reference = 0, voltage_reference_max = 0;
     float voltage_undertest = 0, voltage_undertest_max = 0;
     float period, halfPeriod = 0, halfPeriod_temp = 0, periodDiff;
     float frequency;
-
-    volatile int wow = 0;
 
     printf("\x1b[2J");
     printf("Lab 5 - Phasor Detector\n"
@@ -43,7 +42,8 @@ void main(void) {
         if (halfPeriod_temp < 5) continue;
         halfPeriod = halfPeriod_temp;
         printf("\nPeriod = %10.2f", 2.0 * ((halfPeriod > 4000) ? halfPeriod / 1000.0 : halfPeriod));
-        printf("%s\n", (halfPeriod > 5000) ? "ms" : "us");
+        printf("%s\n", (halfPeriod > 4000) ? "ms" : "us");
+        printf("Frequency = %10.2fHz\n", 1.0 * 500000L / halfPeriod);
 
         // take measurements (only measure when signal is positive)
         while (!DIGITAL_0);
@@ -63,13 +63,17 @@ void main(void) {
         }
 
         // measure the time between the two signals
-        periodDiff = getPeriodDiff();
+        periodDiff = getPeriodDiff(2.0 * halfPeriod);
 
-        // output to PC
-        printf("\nPhase = %.2fus", periodDiff * 1000000L);
+        // display phase
+        printf("\nPhase = %.2f", (periodDiff > 8000) ? periodDiff / 1000.0 : periodDiff);
+        printf("%s\n", (periodDiff > 8000) ? "ms" : "us");
+
+        // calculate and display phase in angles
+        printf("Phase = %.2fdeg", 360.0 * periodDiff / (2.0 * halfPeriod));
         #endif
 
-        printf("\nREFERENCE (P1.3):\n");
+        printf("\n===[REFERENCE (P1.3)]===\n");
         printf("Voltage = %5.3fV\n", voltage_reference);
         printf("Peak V  = %5.3fV\n", voltage_reference_max);
 
@@ -77,10 +81,13 @@ void main(void) {
         printf("\nUNDER TEST (P1.4):\n");
         printf("Voltage = %5.3fV\n", voltage_undertest);
         printf("Peak V  = %5.3fV\n", voltage_undertest_max);
+
+        #ifdef PROCESSING
+        printf("$%.2f,%.2f,%.3f,%.3f!", halfPeriod, periodDiff, voltage_reference_max, voltage_undertest_max);
+        #endif
         #endif
 
-        delay(500);
-        wow = (wow > 667) ? 0 : wow + 10;
+        delay(SAMPLE_DELAY);
     }
 }
 
@@ -242,7 +249,7 @@ float getHalfPeriod() {
     return halfPeriod;
 }
 
-float getPeriodDiff(void) {
+float getPeriodDiff(float period) {
     unsigned char overflow_count = 0;
 
     // initalize timer 0
@@ -268,7 +275,7 @@ float getPeriodDiff(void) {
             }
         }
         TR0 = 0;
-        return (overflow_count*65536.0+TH0*256.0+TL0)*(12.0/SYSCLK);
+        return (overflow_count*65536.0+TH0*256.0+TL0)*(12.0/SYSCLK)*1000000L;
     } else {
         // if the other signal is on when we start, we need to measure next time when it goes HIGH
         TR0 = 1;
@@ -285,7 +292,7 @@ float getPeriodDiff(void) {
             }
         }
         TR0 = 0;
-        return (overflow_count*65536.0+TH0*256.0+TL0)*(12.0/SYSCLK);
+        return (overflow_count*65536.0+TH0*256.0+TL0)*(12.0/SYSCLK)*1000000L - (period);
     }
 
 }
