@@ -10,8 +10,10 @@
 void main(void) {
     float voltage_reference = 0, voltage_reference_max = 0;
     float voltage_undertest = 0, voltage_undertest_max = 0;
-    double period, halfPeriod;
+    double period, halfPeriod, periodDiff;
     float frequency;
+
+    volatile int wow = 0;
 
     printf("\x1b[2J");
     printf("Lab 5 - Phasor Detector\n"
@@ -36,28 +38,45 @@ void main(void) {
 
         // take period measurements
         halfPeriod = getHalfPeriod();
-        printf("Period = %lfus", 2 * halfPeriod * 1000000L);
+        printf("\nPeriod = %.2fus\n", 2.0 * halfPeriod);
 
         // take measurements (only measure when signal is positive)
+        // printf("\nDelay: %d + %d us\n", (int) (halfPeriod * 500000L), wow);
         if (DIGITAL_0) {
+            while (DIGITAL_0);
+            while (!DIGITAL_0);
+            delayUs((int) halfPeriod * 1000000L);
             voltage_reference = getVoltageAtPin(ANALOG_0);
-            if (voltage_reference_max < voltage_reference) voltage_reference_max = voltage_reference;
+            if (voltage_reference_max < voltage_reference)
+            	voltage_reference_max = voltage_reference;
         }
 
-        // if (DIGITAL_1) {
-        // 	voltage_undertest = getVoltageAtPin(ANALOG_1);
-        // 	if (voltage_undertest_max < voltage_undertest) voltage_undertest_max = voltage_undertest;
-        // }
+        measure the voltage of other signal
+        if (DIGITAL_1) {
+            while (DIGITAL_1);
+            while (!DIGITAL_1);
+            delayUs((int) halfPeriod * 1000000L);
+        	voltage_undertest = getVoltageAtPin(ANALOG_1);
+        	if (voltage_undertest_max < voltage_undertest)
+                voltage_undertest_max = voltage_undertest;
+        }
+
+        // measure the time between the two signals
+        periodDiff = getPeriodDiff();
 
         // output to PC
-        printf("\nREFERNECE (P1.3):\n");
+        printf("\nPhase = %.2fus", periodDiff * 1000000L);
+
+        printf("\nREFERENCE (P1.3):\n");
         printf("Voltage = %5.3fV\n", voltage_reference);
         printf("Peak V  = %5.3fV\n", voltage_reference_max);
 
-        // printf("\nUNDER TEST (P1.4):\n");
-        // printf("Voltage = %5.3fV\n", voltage_undertest);
-        // printf("Peak V  = %5.3fV\n", voltage_undertest_max);
-        // delay(50);
+        printf("\nUNDER TEST (P1.4):\n");
+        printf("Voltage = %5.3fV\n", voltage_undertest);
+        printf("Peak V  = %5.3fV\n", voltage_undertest_max);
+
+        delay(500);
+        wow = (wow > 667) ? 0 : wow + 10;
     }
 }
 
@@ -175,13 +194,11 @@ unsigned int getADCAtPin(unsigned char pin) {
     AMX0P = pin;             // Select positive input from pin
     AMX0N = LQFP32_MUX_GND;  // GND is negative input (Single-ended Mode)
     // Dummy conversion first to select new pin
-    P0_0 = 1;
     AD0BUSY = 1;
     while (AD0BUSY); // Wait for dummy conversion to finish
     // Convert voltage at the pin
     AD0BUSY = 1;
     while (AD0BUSY); // Wait for conversion to complete
-    P0_0 = 0;
     return (ADC0L+(ADC0H*0x100));
 }
 
@@ -189,6 +206,7 @@ float getVoltageAtPin(unsigned char pin) {
     return ((getADCAtPin(pin) * VDD / 1024.0));
 }
 
+// returns half the period in microseconds
 double getHalfPeriod(void) {
     double halfPeriod;
     unsigned char overflow_count = 0;
@@ -216,95 +234,143 @@ double getHalfPeriod(void) {
 
     // stop and do some calculations
     TR0 = 0;
-    halfPeriod = (overflow_count*65536.0+TH0*256.0+TL0)*(12.0/SYSCLK);
+    halfPeriod = (overflow_count*65536.0+TH0*256.0+TL0)*(12.0/SYSCLK)*1000000L;
     return halfPeriod;
 }
 
+double getPeriodDiff(void) {
+    unsigned char overflow_count = 0;
+
+    // initalize timer 0
+    TR0 = 0;
+    TMOD &= 0xF0;
+    TMOD |= 0x01;
+    TH0 = 0;
+    TL0 = 0;
+    TF0 = 0;
+
+    // goto start of first square wave
+    while (DIGITAL_0);
+    while (!DIGITAL_0);
+
+    // measure until the start of second signal
+    if (!DIGITAL_1) {
+        // if the other signal is off when we start, just need to wait for the next rising edge
+        TR0 = 1;
+        while (!DIGITAL_1) {
+            if (TF0) {
+                TF0 = 0;
+                overflow_count++;
+            }
+        }
+        TR0 = 0;
+        return (overflow_count*65536.0+TH0*256.0+TL0)*(12.0/SYSCLK);
+    } else {
+        // if the other signal is on when we start, we need to measure next time when it goes HIGH
+        TR0 = 1;
+        while (DIGITAL_1) {
+            if (TF0) {
+                TF0 = 0;
+                overflow_count++;
+            }
+        }
+        while (!DIGITAL_1) {
+            if (TF0) {
+                TF0 = 0;
+                overflow_count++;
+            }
+        }
+        TR0 = 0;
+        return (overflow_count*65536.0+TH0*256.0+TL0)*(12.0/SYSCLK);
+    }
+
+}
+
 // ===[STUFF FOR MAX7219 HERE]===
-/* send one byte */
-void LED_spi(unsigned char value) {
-    unsigned char j, temp;
-    for (j = 1; j <= 8; j++) {
-        temp = value & 0x80;
-        LED_DATA = (temp == 0x80) ? HIGH : LOW;
-
-        // toggle clock
-        LED_CLK = HIGH;
-        delayUs(20);
-        LED_CLK = LOW;
-
-        // shift bit one over
-        value = value << 1;
-    }
-}
-
-void LED_pulse(void) {
-    LED_CS = HIGH;
-    delay(1);
-    LED_CS = LOW;
-}
-
-/* clear all MAX7219s */
-void LED_clear(void) {
-    unsigned char j;
-    for (j = 1; j <= 8; j++) {
-        LED_spi(j);
-        LED_spi(0x00);
-        LED_pulse();
-        printf("%x ", j);
-    }
-    printf("\n");
-}
-
-/* initialize the LED */
-void LED_init(void) {
-    LED_CS = LOW;
-
-    // set decode mode (no-decode)
-    LED_spi(0x09);
-    // LED_spi(0xFF);
-    LED_spi(0x00);
-    LED_pulse();
-    printf("decoder set\n");
-
-    // set intensity (0-F)
-    LED_spi(0x0A);
-    LED_spi(0x0D);
-    LED_pulse();
-    printf("intensity set\n");
-
-    // set scan limit (8 digits)
-    LED_spi(0x0b);
-    LED_spi(0x07);
-    LED_pulse();
-    printf("scan limit set\n");
-
-    // clear MAX7219
-    printf("clearing: ");
-    LED_clear();
-
-    // set for normal operation
-    LED_spi(0x0C);
-    LED_spi(0x01);
-    LED_pulse();
-    printf("normal operation set\n");
-}
-
-/* write to MAX7219 */
-void LED_write(char address, char value) {
-    if ((address < 1) || (address > 8)) return;
-    LED_spi(address);
-    LED_spi(value);
-    LED_pulse();
-}
-
-/* turn on ALL LEDs for testing */
-void LED_test(void) {
-    LED_spi(0x0F);
-    LED_spi(0x01);
-    LED_pulse();
-    delay(1000);
-    LED_spi(0x0F);
-    LED_spi(0x00);
-    LED_pulse();
-}
+// /* send one byte */
+// void LED_spi(unsigned char value) {
+//     unsigned char j, temp;
+//     for (j = 1; j <= 8; j++) {
+//         temp = value & 0x80;
+//         LED_DATA = (temp == 0x80) ? HIGH : LOW;
+//
+//         // toggle clock
+//         LED_CLK = HIGH;
+//         delayUs(20);
+//         LED_CLK = LOW;
+//
+//         // shift bit one over
+//         value = value << 1;
+//     }
+// }
+//
+// void LED_pulse(void) {
+//     LED_CS = HIGH;
+//     delay(1);
+//     LED_CS = LOW;
+// }
+//
+// /* clear all MAX7219s */
+// void LED_clear(void) {
+//     unsigned char j;
+//     for (j = 1; j <= 8; j++) {
+//         LED_spi(j);
+//         LED_spi(0x00);
+//         LED_pulse();
+//         printf("%x ", j);
+//     }
+//     printf("\n");
+// }
+//
+// /* initialize the LED */
+// void LED_init(void) {
+//     LED_CS = LOW;
+//
+//     // set decode mode (no-decode)
+//     LED_spi(0x09);
+//     // LED_spi(0xFF);
+//     LED_spi(0x00);
+//     LED_pulse();
+//     printf("decoder set\n");
+//
+//     // set intensity (0-F)
+//     LED_spi(0x0A);
+//     LED_spi(0x0D);
+//     LED_pulse();
+//     printf("intensity set\n");
+//
+//     // set scan limit (8 digits)
+//     LED_spi(0x0b);
+//     LED_spi(0x07);
+//     LED_pulse();
+//     printf("scan limit set\n");
+//
+//     // clear MAX7219
+//     printf("clearing: ");
+//     LED_clear();
+//
+//     // set for normal operation
+//     LED_spi(0x0C);
+//     LED_spi(0x01);
+//     LED_pulse();
+//     printf("normal operation set\n");
+// }
+//
+// /* write to MAX7219 */
+// void LED_write(char address, char value) {
+//     if ((address < 1) || (address > 8)) return;
+//     LED_spi(address);
+//     LED_spi(value);
+//     LED_pulse();
+// }
+//
+// /* turn on ALL LEDs for testing */
+// void LED_test(void) {
+//     LED_spi(0x0F);
+//     LED_spi(0x01);
+//     LED_pulse();
+//     delay(1000);
+//     LED_spi(0x0F);
+//     LED_spi(0x00);
+//     LED_pulse();
+// }

@@ -40,6 +40,9 @@ float getVoltageAtPin(unsigned char pin);
 /* get period of signal based on comparitor zero cross input */
 double getHalfPeriod(void);
 
+/* get phase difference of the two waves */
+double getPeriodDiff(void);
+
 /* ===[MAX7219 CONTROL]=== */
 #define LED_CS P2_7
 #define LED_DATA P2_6

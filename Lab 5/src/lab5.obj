@@ -15,53 +15,54 @@ R_GSINIT,code,0000,NO
 R_BSEG,bit,0000,NO
 R_XSEG,xdata,0000,NO
 BIT_BANK,data,0000,OV
-R_CONST,code,016B,NO
+R_CONST,code,011B,NO
 rbank0,data,0000,OV
 R_PSEG,xdata,0000,NO
 R_DINIT,code,0000,NO
-R_DSEG,data,0009,NO
+R_DSEG,data,000A,NO
 R_OSEG,data,0001,OV
 R_IXSEG,xdata,0000,NO
 R_ISEG,idata,0000,NO
 R_HOME,code,0000,NO
 R_XINIT,code,0000,NO
-R_CSEG,code,05CF,NO
+R_CSEG,code,0675,NO
 </SEGMENTS>
 
 <LOCALS>
-L002006?,R_CSEG,009C,0000
-L002004?,R_CSEG,0155,0000
-L015002?,R_CSEG,059D,0000
-L015001?,R_CSEG,059C,0000
-L010011?,R_CSEG,035C,0000
-L007014?,R_CSEG,028C,0000
-L007012?,R_CSEG,027C,0000
-L007010?,R_CSEG,027A,0000
-L004007?,R_CSEG,0222,0000
-L004004?,R_CSEG,0212,0000
-__str_10,R_CONST,0106,0000
-__str_11,R_CONST,0118,0000
-__str_12,R_CONST,011C,0000
-__str_13,R_CONST,011E,0000
-__str_14,R_CONST,012B,0000
-__str_15,R_CONST,013A,0000
-__str_16,R_CONST,014A,0000
-__str_17,R_CONST,0155,0000
-L004001?,R_CSEG,0217,0000
-L010024?,R_CSEG,0359,0000
-_main_halfPeriod_1_57,R_DSEG,0004,0004
-L011012?,R_CSEG,0463,0000
-L011011?,R_CSEG,0462,0000
-L005005?,R_CSEG,0264,0000
-L005001?,R_CSEG,022E,0000
-L010009?,R_CSEG,0351,0000
-L010004?,R_CSEG,034A,0000
-L007007?,R_CSEG,02B8,0000
-L010001?,R_CSEG,0347,0000
-L007004?,R_CSEG,02B0,0000
-L007003?,R_CSEG,02A8,0000
-L007002?,R_CSEG,02A0,0000
-L007001?,R_CSEG,0298,0000
+L002004?,R_CSEG,00E8,0000
+L002001?,R_CSEG,00E5,0000
+_main_wow_1_58,R_DSEG,0008,0002
+L010011?,R_CSEG,0357,0000
+L007014?,R_CSEG,028B,0000
+L007012?,R_CSEG,027B,0000
+L007010?,R_CSEG,0279,0000
+L004007?,R_CSEG,0221,0000
+L004004?,R_CSEG,0211,0000
+__str_10,R_CONST,0109,0000
+L004001?,R_CSEG,0216,0000
+L010024?,R_CSEG,0354,0000
+L011019?,R_CSEG,0577,0000
+_main_halfPeriod_1_58,R_DSEG,0004,0004
+L011014?,R_CSEG,056C,0000
+L011011?,R_CSEG,0475,0000
+L005005?,R_CSEG,0263,0000
+L005001?,R_CSEG,022D,0000
+L011023?,R_CSEG,0568,0000
+L011021?,R_CSEG,0582,0000
+L011038?,R_CSEG,0577,0000
+L011049?,R_CSEG,0574,0000
+L011047?,R_CSEG,0472,0000
+L011045?,R_CSEG,0466,0000
+L010009?,R_CSEG,034C,0000
+L010004?,R_CSEG,0345,0000
+L007007?,R_CSEG,02B7,0000
+L010001?,R_CSEG,0342,0000
+L007004?,R_CSEG,02AF,0000
+L007003?,R_CSEG,02A7,0000
+L007002?,R_CSEG,029F,0000
+L007001?,R_CSEG,0297,0000
+L011009?,R_CSEG,046A,0000
+L002015?,R_CSEG,01BF,0000
 __str_0,R_CONST,0000,0000
 __str_1,R_CONST,0005,0000
 __str_2,R_CONST,006F,0000
@@ -70,39 +71,36 @@ __str_4,R_CONST,00C0,0000
 __str_5,R_CONST,00C9,0000
 __str_6,R_CONST,00CD,0000
 __str_7,R_CONST,00D1,0000
-__str_8,R_CONST,00E0,0000
-__str_9,R_CONST,00F4,0000
-L011005?,R_CSEG,047D,0000
-L011001?,R_CSEG,0453,0000
-L008004?,R_CSEG,02C8,0000
-L008001?,R_CSEG,02C3,0000
-L013004?,R_CSEG,04C6,0000
-L013001?,R_CSEG,048B,0000
-_main_voltage_reference_max_1_57,R_DSEG,0000,0004
+__str_8,R_CONST,00E3,0000
+__str_9,R_CONST,00F7,0000
+L002014?,R_CSEG,01B6,0000
+L011004?,R_CSEG,045D,0000
+L002010?,R_CSEG,0085,0000
+L011001?,R_CSEG,045A,0000
+L008004?,R_CSEG,02C5,0000
+L008001?,R_CSEG,02C0,0000
+L011051?,R_CSEG,057F,0000
+_main_voltage_reference_max_1_58,R_DSEG,0000,0004
+L002008?,R_CSEG,014A,0000
 </LOCALS>
 
 <PUBLICS>
-_LED_pulse,R_CSEG,047E,0000
 _main,R_CSEG,0000,0000
-_getVoltageAtPin,R_CSEG,02DE,0000
-_LED_clear,R_CSEG,0489,0000
-_LED_write,R_CSEG,0587,0000
-__c51_external_startup,R_CSEG,01C7,0000
-_getHalfPeriod,R_CSEG,0337,0000
-_LED_write_PARM_2,R_DSEG,0008,0001
-_LED_init,R_CSEG,04DC,0000
-_delayUs,R_CSEG,01FC,0000
-_LED_spi,R_CSEG,044F,0000
-_getADCAtPin,R_CSEG,02B9,0000
-_delay,R_CSEG,0226,0000
-_LED_test,R_CSEG,05AB,0000
-_initializePin,R_CSEG,026F,0000
+_getVoltageAtPin,R_CSEG,02D9,0000
+__c51_external_startup,R_CSEG,01C6,0000
+_getHalfPeriod,R_CSEG,0332,0000
+_getPeriodDiff,R_CSEG,044A,0000
+_delayUs,R_CSEG,01FB,0000
+_getADCAtPin,R_CSEG,02B8,0000
+_delay,R_CSEG,0225,0000
+_initializePin,R_CSEG,026E,0000
 _initializePin_PARM_2,R_OSEG,0000,0001
-_initializeADC,R_CSEG,0265,0000
+_initializeADC,R_CSEG,0264,0000
 </PUBLICS>
 
 <EXTERNALS>
 ___uint2fs,any,0000,0000
+___fs2sint,any,0000,0000
 ___fslt,any,0000,0000
 ___fsmul,any,0000,0000
 ___uchar2fs,any,0000,0000
@@ -142,18 +140,13 @@ ___fsdiv,any,0000,0000
 </CODE>
 
 <CODE R_CSEG>
-7A 00
-7B 00
-7C 00
-7D 00
-75 data8(_main_voltage_reference_max_1_57;) 00
-75 data8(_main_voltage_reference_max_1_57;0x0001;+;) 00
-75 data8(_main_voltage_reference_max_1_57;0x0002;+;) 00
-75 data8(_main_voltage_reference_max_1_57;0x0003;+;) 00
-C0 02
-C0 03
-C0 04
-C0 05
+E4
+F5 data8(_main_voltage_reference_max_1_58;)
+F5 data8(_main_voltage_reference_max_1_58;0x0001;+;)
+F5 data8(_main_voltage_reference_max_1_58;0x0002;+;)
+F5 data8(_main_voltage_reference_max_1_58;0x0003;+;)
+F5 data8(_main_wow_1_58;)
+F5 data8(_main_wow_1_58;0x0001;+;)
 74 data8(__str_0;)
 C0 E0
 74 data8(__str_0;0x0008;>>;)
@@ -209,14 +202,6 @@ C0 E0
 15 81
 15 81
 15 81
-D0 05
-D0 04
-D0 03
-D0 02
-C0 02
-C0 03
-C0 04
-C0 05
 74 data8(__str_6;)
 C0 E0
 74 data8(__str_6;0x0008;>>;)
@@ -228,17 +213,18 @@ C0 E0
 15 81
 15 81
 12 addr16(_getHalfPeriod;)  
-85 82 data8(_main_halfPeriod_1_57;)
-85 83 data8(_main_halfPeriod_1_57;0x0001;+;)
-85 F0 data8(_main_halfPeriod_1_57;0x0002;+;)
-F5 data8(_main_halfPeriod_1_57;0x0003;+;)
-C0 data8(_main_halfPeriod_1_57;)
-C0 data8(_main_halfPeriod_1_57;0x0001;+;)
-C0 data8(_main_halfPeriod_1_57;0x0002;+;)
-C0 data8(_main_halfPeriod_1_57;0x0003;+;)
-90 24 00
-75 F0 F4
-74 49
+85 82 data8(_main_halfPeriod_1_58;)
+85 83 data8(_main_halfPeriod_1_58;0x0001;+;)
+85 F0 data8(_main_halfPeriod_1_58;0x0002;+;)
+F5 data8(_main_halfPeriod_1_58;0x0003;+;)
+C0 data8(_main_halfPeriod_1_58;)
+C0 data8(_main_halfPeriod_1_58;0x0001;+;)
+C0 data8(_main_halfPeriod_1_58;0x0002;+;)
+C0 data8(_main_halfPeriod_1_58;0x0003;+;)
+90 00 00
+E4
+F5 F0
+74 40
 12 addr16(___fsmul;)  
 AE 82
 AF 83
@@ -261,48 +247,56 @@ C0 E0
 E5 81
 24 F9
 F5 81
-D0 05
-D0 04
-D0 03
-D0 02
+20 A4 rel3(L002001?;)
 30 A4 rel3(L002004?;)
+85 data8(_main_halfPeriod_1_58;) 82
+85 data8(_main_halfPeriod_1_58;0x0001;+;) 83
+85 data8(_main_halfPeriod_1_58;0x0002;+;) F0
+E5 data8(_main_halfPeriod_1_58;0x0003;+;)
+12 addr16(___fs2sint;)  
+E5 82
+03
+03
+54 C0
+F5 82
+12 addr16(_delayUs;)  
 75 82 04
 12 addr16(_getVoltageAtPin;)  
-AA 82
-AB 83
-AC F0
-FD
-C0 02
-C0 03
-C0 04
-C0 05
-C0 02
-C0 03
-C0 04
-C0 05
-85 data8(_main_voltage_reference_max_1_57;) 82
-85 data8(_main_voltage_reference_max_1_57;0x0001;+;) 83
-85 data8(_main_voltage_reference_max_1_57;0x0002;+;) F0
-E5 data8(_main_voltage_reference_max_1_57;0x0003;+;)
-12 addr16(___fslt;)  
 AE 82
+AF 83
+A8 F0
+F9
+C0 06
+C0 07
+C0 00
+C0 01
+C0 06
+C0 07
+C0 00
+C0 01
+85 data8(_main_voltage_reference_max_1_58;) 82
+85 data8(_main_voltage_reference_max_1_58;0x0001;+;) 83
+85 data8(_main_voltage_reference_max_1_58;0x0002;+;) F0
+E5 data8(_main_voltage_reference_max_1_58;0x0003;+;)
+12 addr16(___fslt;)  
+AA 82
 E5 81
 24 FC
 F5 81
-D0 05
-D0 04
-D0 03
-D0 02
-EE
-60 rel2(L002004?;)
-8A data8(_main_voltage_reference_max_1_57;)
-8B data8(_main_voltage_reference_max_1_57;0x0001;+;)
-8C data8(_main_voltage_reference_max_1_57;0x0002;+;)
-8D data8(_main_voltage_reference_max_1_57;0x0003;+;)
-C0 02
-C0 03
-C0 04
-C0 05
+D0 01
+D0 00
+D0 07
+D0 06
+EA
+60 rel2(L002008?;)
+8E data8(_main_voltage_reference_max_1_58;)
+8F data8(_main_voltage_reference_max_1_58;0x0001;+;)
+88 data8(_main_voltage_reference_max_1_58;0x0002;+;)
+89 data8(_main_voltage_reference_max_1_58;0x0003;+;)
+C0 06
+C0 07
+C0 00
+C0 01
 74 data8(__str_8;)
 C0 E0
 74 data8(__str_8;0x0008;>>;)
@@ -313,18 +307,6 @@ C0 E0
 15 81
 15 81
 15 81
-D0 05
-D0 04
-D0 03
-D0 02
-C0 02
-C0 03
-C0 04
-C0 05
-C0 02
-C0 03
-C0 04
-C0 05
 74 data8(__str_9;)
 C0 E0
 74 data8(__str_9;0x0008;>>;)
@@ -335,10 +317,10 @@ C0 E0
 E5 81
 24 F9
 F5 81
-C0 data8(_main_voltage_reference_max_1_57;)
-C0 data8(_main_voltage_reference_max_1_57;0x0001;+;)
-C0 data8(_main_voltage_reference_max_1_57;0x0002;+;)
-C0 data8(_main_voltage_reference_max_1_57;0x0003;+;)
+C0 data8(_main_voltage_reference_max_1_58;)
+C0 data8(_main_voltage_reference_max_1_58;0x0001;+;)
+C0 data8(_main_voltage_reference_max_1_58;0x0002;+;)
+C0 data8(_main_voltage_reference_max_1_58;0x0003;+;)
 74 data8(__str_10;)
 C0 E0
 74 data8(__str_10;0x0008;>>;)
@@ -349,11 +331,28 @@ C0 E0
 E5 81
 24 F9
 F5 81
-D0 05
-D0 04
-D0 03
-D0 02
-02 addr16(L002006?;)  
+90 01 F4
+12 addr16(_delay;)  
+C3
+74 9B
+95 data8(_main_wow_1_58;)
+74 82
+85 data8(_main_wow_1_58;0x0001;+;) F0
+63 F0 80
+95 F0
+50 rel2(L002014?;)
+7A 00
+7B 00
+80 rel2(L002015?;)
+74 0A
+25 data8(_main_wow_1_58;)
+FA
+E4
+35 data8(_main_wow_1_58;0x0001;+;)
+FB
+8A data8(_main_wow_1_58;)
+8B data8(_main_wow_1_58;0x0001;+;)
+02 addr16(L002010?;)  
 53 D9 BF
 75 FF 80
 75 EF 06
@@ -474,12 +473,10 @@ EB
 22
 85 82 BB
 75 BA 1F
-D2 80
 D2 EC
 20 EC rel3(L008001?;)
 D2 EC
 20 EC rel3(L008004?;)
-C2 80
 AA BD
 7B 00
 AD BE
@@ -655,6 +652,144 @@ C0 02
 C0 03
 C0 04
 C0 05
+90 00 00
+E4
+F5 F0
+74 3F
+12 addr16(___fsmul;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+8A 82
+8B 83
+8C F0
+ED
+22
+C2 8C
+53 89 F0
+43 89 01
+75 8C 00
+75 8A 00
+C2 8D
+20 A4 rel3(L011001?;)
+30 A4 rel3(L011004?;)
+30 A3 rel3(L011045?;)
+02 addr16(L011023?;)  
+D2 8C
+7A 00
+20 A3 rel3(L011011?;)
+10 8D rel3(L011047?;)
+80 rel2(L011009?;)
+0A
+80 rel2(L011009?;)
+C2 8C
+8A 82
+12 addr16(___uchar2fs;)  
+AA 82
+AB 83
+AC F0
+FD
+C0 02
+C0 03
+C0 04
+C0 05
+90 00 00
+75 F0 80
+74 47
+12 addr16(___fsmul;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+85 8C 82
+C0 02
+C0 03
+C0 04
+C0 05
+12 addr16(___uchar2fs;)  
+AE 82
+AF 83
+A8 F0
+F9
+C0 06
+C0 07
+C0 00
+C0 01
+90 00 00
+75 F0 80
+74 43
+12 addr16(___fsmul;)  
+AE 82
+AF 83
+A8 F0
+F9
+E5 81
+24 FC
+F5 81
+D0 05
+D0 04
+D0 03
+D0 02
+C0 06
+C0 07
+C0 00
+C0 01
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fsadd;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+AE 8A
+7F 00
+8E 82
+8F 83
+C0 02
+C0 03
+C0 04
+C0 05
+12 addr16(___sint2fs;)  
+AE 82
+AF 83
+A8 F0
+F9
+D0 05
+D0 04
+D0 03
+D0 02
+C0 06
+C0 07
+C0 00
+C0 01
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fsadd;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+C0 02
+C0 03
+C0 04
+C0 05
 90 37 BD
 75 F0 06
 74 35
@@ -671,180 +806,138 @@ F5 81
 8C F0
 ED
 22
-AA 82
-7B 01
-EB
-24 F7
-40 rel2(L011005?;)
-74 80
-5A
-FC
-BC 80 rel3(L011011?;)
-D3
-80 rel2(L011012?;)
-C3
-92 A6
-D2 A5
-75 82 14
-C0 02
-C0 03
-12 addr16(_delayUs;)  
-D0 03
-D0 02
-C2 A5
-EA
-2A
-FA
-0B
-80 rel2(L011001?;)
-22
-D2 A7
-90 00 01
-12 addr16(_delay;)  
-C2 A7
-22
-7A 01
-EA
-24 F7
-40 rel2(L013004?;)
+D2 8C
+7A 00
+30 A3 rel3(L011038?;)
+10 8D rel3(L011049?;)
+80 rel2(L011014?;)
+0A
+80 rel2(L011014?;)
+20 A3 rel3(L011021?;)
+10 8D rel3(L011051?;)
+80 rel2(L011019?;)
+0A
+80 rel2(L011019?;)
+C2 8C
 8A 82
-C0 02
-12 addr16(_LED_spi;)  
-75 82 00
-12 addr16(_LED_spi;)  
-12 addr16(_LED_pulse;)  
-D0 02
-8A 03
-7C 00
+12 addr16(___uchar2fs;)  
+AA 82
+AB 83
+AC F0
+FD
 C0 02
 C0 03
 C0 04
-74 data8(__str_11;)
-C0 E0
-74 data8(__str_11;0x0008;>>;)
-C0 E0
-74 80
-C0 E0
-12 addr16(_printf;)  
-E5 81
-24 FB
-F5 81
-D0 02
-0A
-80 rel2(L013001?;)
-74 data8(__str_12;)
-C0 E0
-74 data8(__str_12;0x0008;>>;)
-C0 E0
-74 80
-C0 E0
-12 addr16(_printf;)  
-15 81
-15 81
-15 81
-22
-C2 A7
-75 82 09
-12 addr16(_LED_spi;)  
-75 82 00
-12 addr16(_LED_spi;)  
-12 addr16(_LED_pulse;)  
-74 data8(__str_13;)
-C0 E0
-74 data8(__str_13;0x0008;>>;)
-C0 E0
-74 80
-C0 E0
-12 addr16(_printf;)  
-15 81
-15 81
-15 81
-75 82 0A
-12 addr16(_LED_spi;)  
-75 82 0D
-12 addr16(_LED_spi;)  
-12 addr16(_LED_pulse;)  
-74 data8(__str_14;)
-C0 E0
-74 data8(__str_14;0x0008;>>;)
-C0 E0
-74 80
-C0 E0
-12 addr16(_printf;)  
-15 81
-15 81
-15 81
-75 82 0B
-12 addr16(_LED_spi;)  
-75 82 07
-12 addr16(_LED_spi;)  
-12 addr16(_LED_pulse;)  
-74 data8(__str_15;)
-C0 E0
-74 data8(__str_15;0x0008;>>;)
-C0 E0
-74 80
-C0 E0
-12 addr16(_printf;)  
-15 81
-15 81
-15 81
-74 data8(__str_16;)
-C0 E0
-74 data8(__str_16;0x0008;>>;)
-C0 E0
-74 80
-C0 E0
-12 addr16(_printf;)  
-15 81
-15 81
-15 81
-12 addr16(_LED_clear;)  
-75 82 0C
-12 addr16(_LED_spi;)  
-75 82 01
-12 addr16(_LED_spi;)  
-12 addr16(_LED_pulse;)  
-74 data8(__str_17;)
-C0 E0
-74 data8(__str_17;0x0008;>>;)
-C0 E0
-74 80
-C0 E0
-12 addr16(_printf;)  
-15 81
-15 81
-15 81
-22
+C0 05
+90 00 00
+75 F0 80
+74 47
+12 addr16(___fsmul;)  
 AA 82
-C3
-EA
-64 80
-94 81
-40 rel2(L015001?;)
-74 88
-8A F0
-63 F0 80
-95 F0
-50 rel2(L015002?;)
-22
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+85 8C 82
+C0 02
+C0 03
+C0 04
+C0 05
+12 addr16(___uchar2fs;)  
+AE 82
+AF 83
+A8 F0
+F9
+C0 06
+C0 07
+C0 00
+C0 01
+90 00 00
+75 F0 80
+74 43
+12 addr16(___fsmul;)  
+AE 82
+AF 83
+A8 F0
+F9
+E5 81
+24 FC
+F5 81
+D0 05
+D0 04
+D0 03
+D0 02
+C0 06
+C0 07
+C0 00
+C0 01
 8A 82
-12 addr16(_LED_spi;)  
-85 data8(_LED_write_PARM_2;) 82
-12 addr16(_LED_spi;)  
-02 addr16(_LED_pulse;)  
-75 82 0F
-12 addr16(_LED_spi;)  
-75 82 01
-12 addr16(_LED_spi;)  
-12 addr16(_LED_pulse;)  
-90 03 E8
-12 addr16(_delay;)  
-75 82 0F
-12 addr16(_LED_spi;)  
-75 82 00
-12 addr16(_LED_spi;)  
-02 addr16(_LED_pulse;)  
+8B 83
+8C F0
+ED
+12 addr16(___fsadd;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+AE 8A
+7F 00
+8E 82
+8F 83
+C0 02
+C0 03
+C0 04
+C0 05
+12 addr16(___sint2fs;)  
+AE 82
+AF 83
+A8 F0
+F9
+D0 05
+D0 04
+D0 03
+D0 02
+C0 06
+C0 07
+C0 00
+C0 01
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fsadd;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+C0 02
+C0 03
+C0 04
+C0 05
+90 37 BD
+75 F0 06
+74 35
+12 addr16(___fsmul;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+8A 82
+8B 83
+8C F0
+ED
+22
 </CODE>
 
 <CODE R_CSEG>
@@ -895,7 +988,7 @@ EA
 00
 4D 61 72 20 20 38 20 32 30 31 37 
 00
-31 39 3A 32 38 3A 34 31 
+32 31 3A 31 39 3A 34 36 
 00
 1B
 5B 73 
@@ -903,10 +996,12 @@ EA
 1B
 5B 75 
 00
-50 65 72 69 6F 64 20 3D 20 25 6C 66 75 73 
+0A
+50 65 72 69 6F 64 20 3D 20 25 2E 32 66 75 73 
+0A
 00
 0A
-52 45 46 45 52 4E 45 43 45 20 28 50 31 2E 33 29 3A
+52 45 46 45 52 45 4E 43 45 20 28 50 31 2E 33 29 3A
 
 0A
 00
@@ -914,25 +1009,6 @@ EA
 0A
 00
 50 65 61 6B 20 56 20 20 3D 20 25 35 2E 33 66 56 
-0A
-00
-25 78 20 
-00
-0A
-00
-64 65 63 6F 64 65 72 20 73 65 74 
-0A
-00
-69 6E 74 65 6E 73 69 74 79 20 73 65 74 
-0A
-00
-73 63 61 6E 20 6C 69 6D 69 74 20 73 65 74 
-0A
-00
-63 6C 65 61 72 69 6E 67 3A 20 
-00
-6E 6F 72 6D 61 6C 20 6F 70 65 72 61 74 69 6F 6E 20
-73 65 74 
 0A
 00
 </CODE>
