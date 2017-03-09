@@ -7,7 +7,7 @@
 #include <c8051f38x.h>
 #include "lab5.h"
 
-//#define MEASURE_TEST
+#define MEASURE_TEST
 #define PROCESSING
 
 void main(void) {
@@ -103,7 +103,9 @@ void main(void) {
             } else if (BUTTON2) {
                 // display frequency domain (101)
                 LCD_print("FREQ. DOMAIN:", 1, 1);
-                sprintf(strBuffer, "%3.f%c%.3f%cV", voltage_undertest_max, 0xDA, 360.0 * periodDiff / (2.0 * halfPeriod), 0xDF);
+                #ifdef MEASURE_TEST
+                sprintf(strBuffer, "%.3f%c%.3f%cV", voltage_undertest_max, 0xDA, -360.0 * periodDiff / (2.0 * halfPeriod), 0xDF);
+                #endif
             } else {
                 // display frequency (001)
                 LCD_print("FREQUENCY:", 1, 1);
@@ -115,10 +117,10 @@ void main(void) {
             #ifdef MEASURE_TEST
             if (BUTTON2) {
                 // display phase in seconds (110)
-                sprintf(strBuffer, "%2f%s", (periodDiff > 8000) ? periodDiff / 1000.0 : periodDiff), (periodDiff > 8000) ? "ms" : "us")
+                sprintf(strBuffer, "%2f%s", (periodDiff > 8000) ? periodDiff / 1000.0 : periodDiff, (periodDiff > 8000) ? "ms" : "us");
             } else {
                 // display phase in angle (010)
-                sprintf(strBuffer, "%c%+.2f%c", 0xDA, 360.0 * periodDiff / (2.0 * halfPeriod), 0xDF);
+                sprintf(strBuffer, "%c%+.2f%c", 0xDA, -360.0 * periodDiff / (2.0 * halfPeriod), 0xDF);
             }
             #endif
         } else if (BUTTON2) {
