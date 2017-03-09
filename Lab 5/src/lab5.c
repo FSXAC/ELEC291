@@ -7,10 +7,12 @@
 #include <c8051f38x.h>
 #include "lab5.h"
 
+#define MEASURE_TEST
+
 void main(void) {
     float voltage_reference = 0, voltage_reference_max = 0;
     float voltage_undertest = 0, voltage_undertest_max = 0;
-    double period, halfPeriod, periodDiff;
+    float period, halfPeriod = 0, halfPeriod_temp = 0, periodDiff;
     float frequency;
 
     volatile int wow = 0;
@@ -37,25 +39,24 @@ void main(void) {
         printf("\x1b[u");
 
         // take period measurements
-        halfPeriod = getHalfPeriod();
-        printf("\nPeriod = %.2fus\n", 2.0 * halfPeriod);
+        halfPeriod_temp = getHalfPeriod();
+        if (halfPeriod_temp < 5) continue;
+        halfPeriod = halfPeriod_temp;
+        printf("\nPeriod = %10.2f", 2.0 * ((halfPeriod > 4000) ? halfPeriod / 1000.0 : halfPeriod));
+        printf("%s\n", (halfPeriod > 5000) ? "ms" : "us");
 
         // take measurements (only measure when signal is positive)
-        // printf("\nDelay: %d + %d us\n", (int) (halfPeriod * 500000L), wow);
-        if (DIGITAL_0) {
-            while (DIGITAL_0);
-            while (!DIGITAL_0);
-            delayUs((int) halfPeriod * 1000000L);
+        while (!DIGITAL_0);
+        while (DIGITAL_0) {
             voltage_reference = getVoltageAtPin(ANALOG_0);
             if (voltage_reference_max < voltage_reference)
             	voltage_reference_max = voltage_reference;
         }
 
-        measure the voltage of other signal
-        if (DIGITAL_1) {
-            while (DIGITAL_1);
-            while (!DIGITAL_1);
-            delayUs((int) halfPeriod * 1000000L);
+        #ifdef MEASURE_TEST
+        // measure the voltage of other signal
+        while (!DIGITAL_1);
+        while (DIGITAL_1) {
         	voltage_undertest = getVoltageAtPin(ANALOG_1);
         	if (voltage_undertest_max < voltage_undertest)
                 voltage_undertest_max = voltage_undertest;
@@ -66,14 +67,17 @@ void main(void) {
 
         // output to PC
         printf("\nPhase = %.2fus", periodDiff * 1000000L);
+        #endif
 
         printf("\nREFERENCE (P1.3):\n");
         printf("Voltage = %5.3fV\n", voltage_reference);
         printf("Peak V  = %5.3fV\n", voltage_reference_max);
 
+        #ifdef MEASURE_TEST
         printf("\nUNDER TEST (P1.4):\n");
         printf("Voltage = %5.3fV\n", voltage_undertest);
         printf("Peak V  = %5.3fV\n", voltage_undertest_max);
+        #endif
 
         delay(500);
         wow = (wow > 667) ? 0 : wow + 10;
@@ -207,9 +211,9 @@ float getVoltageAtPin(unsigned char pin) {
 }
 
 // returns half the period in microseconds
-double getHalfPeriod(void) {
-    double halfPeriod;
-    unsigned char overflow_count = 0;
+float getHalfPeriod() {
+    float halfPeriod;
+    unsigned int overflow_count = 0;
 
     // initalize timer 0
     TR0 = 0;
@@ -238,7 +242,7 @@ double getHalfPeriod(void) {
     return halfPeriod;
 }
 
-double getPeriodDiff(void) {
+float getPeriodDiff(void) {
     unsigned char overflow_count = 0;
 
     // initalize timer 0
