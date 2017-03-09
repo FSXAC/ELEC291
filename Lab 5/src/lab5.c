@@ -7,14 +7,17 @@
 #include <c8051f38x.h>
 #include "lab5.h"
 
-#define MEASURE_TEST
+//#define MEASURE_TEST
 #define PROCESSING
 
 void main(void) {
     float voltage_reference = 0, voltage_reference_max = 0;
     float voltage_undertest = 0, voltage_undertest_max = 0;
-    float period, halfPeriod = 0, halfPeriod_temp = 0, periodDiff;
+    float halfPeriod = 0, halfPeriod_temp = 0, periodDiff;
     float frequency;
+    char strBuffer[17];
+    int cycle = 0;
+
 
     printf("\x1b[2J");
     printf("Lab 5 - Phasor Detector\n"
@@ -46,7 +49,8 @@ void main(void) {
         halfPeriod = halfPeriod_temp;
         printf("\nPeriod = %10.2f", 2.0 * ((halfPeriod > 4000) ? halfPeriod / 1000.0 : halfPeriod));
         printf("%s\n", (halfPeriod > 4000) ? "ms" : "us");
-        printf("Frequency = %10.2fHz\n", 1.0 * 500000L / halfPeriod);
+        frequency = 1.0 * 500000L / halfPeriod;
+        printf("Frequency = %10.2fHz\n", frequency);
 
         // take measurements (only measure when signal is positive)
         while (!DIGITAL_0);
@@ -81,7 +85,7 @@ void main(void) {
         printf("Peak V  = %5.3fV\n", voltage_reference_max);
 
         #ifdef MEASURE_TEST
-        printf("\nUNDER TEST (P1.4):\n");
+        printf("\n===[UNDER TEST (P1.4)]===\n");
         printf("Voltage = %5.3fV\n", voltage_undertest);
         printf("Peak V  = %5.3fV\n", voltage_undertest_max);
 
@@ -90,7 +94,51 @@ void main(void) {
         #endif
         #endif
 
+        // print to LCD
+        if (BUTTON0) {
+            if (BUTTON1) {
+                // display V-peak-peak (011)
+                LCD_print("V-PK-PK:", 1, 1);
+                sprintf(strBuffer, "%.3fV, %.3fV", voltage_reference_max*2, voltage_undertest_max*2);
+            } else if (BUTTON2) {
+                // display frequency domain (101)
+                LCD_print("FREQ. DOMAIN:", 1, 1);
+                sprintf(strBuffer, "%3.f%c%.3f%cV", voltage_undertest_max, 0xDA, 360.0 * periodDiff / (2.0 * halfPeriod), 0xDF);
+            } else {
+                // display frequency (001)
+                LCD_print("FREQUENCY:", 1, 1);
+                sprintf(strBuffer, "%.3f%s", (frequency > 5000) ? frequency / 1000 : frequency, (frequency > 5000) ? "kHz" : "Hz");
+            }
+        } else if (BUTTON1) {
+            // display phase difference
+            LCD_print("PHASE:", 1, 1);
+            #ifdef MEASURE_TEST
+            if (BUTTON2) {
+                // display phase in seconds (110)
+                sprintf(strBuffer, "%2f%s", (periodDiff > 8000) ? periodDiff / 1000.0 : periodDiff), (periodDiff > 8000) ? "ms" : "us")
+            } else {
+                // display phase in angle (010)
+                sprintf(strBuffer, "%c%+.2f%c", 0xDA, 360.0 * periodDiff / (2.0 * halfPeriod), 0xDF);
+            }
+            #endif
+        } else if (BUTTON2) {
+            // display period (100)
+            LCD_print("PERIOD:", 1, 1);
+            sprintf(strBuffer, "%.3f%s", 2.0 * ((halfPeriod > 4000) ? halfPeriod / 1000.0 : halfPeriod), (halfPeriod > 4000) ? "ms" : "us");
+        } else {
+            // display both peak voltage (000)
+            LCD_print("PEAK VOLTAGES:", 1, 1);
+            sprintf(strBuffer, "%.3fV, %.3fV", voltage_reference_max, voltage_undertest_max);
+        }
+        LCD_print(strBuffer, 2, 1);
+
         delay(SAMPLE_DELAY);
+
+        if (cycle++ > 1000 / SAMPLE_DELAY) {
+            voltage_reference_max = 0;
+            voltage_undertest_max = 0;
+            cycle = 0;
+        }
     }
 }
 

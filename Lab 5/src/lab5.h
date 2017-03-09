@@ -29,6 +29,11 @@
 #define LCD_K  P0_6
 #define CHARS_PER_LINE 16
 
+// buttons
+#define BUTTON0 !P2_5
+#define BUTTON1 !P2_6
+#define BUTTON2 !P2_7
+
 // function prototypes
 /* C51 bullshit */
 char _c51_external_startup(void);
