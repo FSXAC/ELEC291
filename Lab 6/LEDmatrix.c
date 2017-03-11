@@ -7,13 +7,21 @@
 #include <c8051f38x.h>
 #include "LEDmatrix.h"
 
-unsigned char sprite1[8] = {0x00, 0x00, 0x00, 0x18, 0x18, 0x00, 0x00, 0x00};
-unsigned char sprite2[8] = {0x00, 0x00, 0x18, 0x24, 0x24, 0x18, 0x00, 0x00};
-unsigned char sprite3[8] = {0x00, 0x18, 0x24, 0x5A, 0x5A, 0x24, 0x18, 0x00};
-unsigned char sprite4[8] = {0x3C, 0x42, 0x99, 0xA5, 0xA5, 0x99, 0x42, 0x3C};
-unsigned char sprite5[8] = {0x42, 0x99, 0x24, 0x42, 0x42, 0x24, 0x99, 0x42};
-unsigned char sprite6[8] = {0x3C, 0x42, 0x81, 0x81, 0x81, 0x81, 0x42, 0x3C};
-unsigned char sprite7[8] = {0x42, 0x81, 0x00, 0x00, 0x00, 0x00, 0x81, 0x42};
+// unsigned char sprite1[8] = {0x00, 0x00, 0x00, 0x18, 0x18, 0x00, 0x00, 0x00};
+// unsigned char sprite2[8] = {0x00, 0x00, 0x18, 0x24, 0x24, 0x18, 0x00, 0x00};
+// unsigned char sprite3[8] = {0x00, 0x18, 0x24, 0x5A, 0x5A, 0x24, 0x18, 0x00};
+// unsigned char sprite4[8] = {0x3C, 0x42, 0x99, 0xA5, 0xA5, 0x99, 0x42, 0x3C};
+// unsigned char sprite5[8] = {0x42, 0x99, 0x24, 0x42, 0x42, 0x24, 0x99, 0x42};
+// unsigned char sprite6[8] = {0x3C, 0x42, 0x81, 0x81, 0x81, 0x81, 0x42, 0x3C};
+// unsigned char sprite7[8] = {0x42, 0x81, 0x00, 0x00, 0x00, 0x00, 0x81, 0x42};
+
+ unsigned char IMAGES[4][8] = {
+  {0x7c, 0x32, 0x11, 0x81, 0x81, 0x88, 0x4c, 0x3e},
+  {0x3c, 0x62, 0xf0, 0xc0, 0x03, 0x0f, 0x06, 0x3c},
+  {0x38, 0x41, 0x83, 0x87, 0xe1, 0xc1, 0x82, 0x1c},
+  {0x0c, 0x4e, 0x87, 0x85, 0xa1, 0xe1, 0x72, 0x30}
+};
+const int IMAGES_LEN = sizeof(IMAGES)/8;
 
 void main(void) {
     unsigned char position = 1;
@@ -32,22 +40,23 @@ void main(void) {
         // checkers
         // LED_write(position, (position % 2) ? 0x55 : 0xAA);
         // position = (position == 0x08) ? 0x01 : position + 1;
-        LED_display(sprite1);
-        delay(50);
-        LED_display(sprite2);
-        delay(50);
-        LED_display(sprite3);
-        delay(50);
-        LED_display(sprite4);
-        delay(50);
-        LED_display(sprite5);
-        delay(50);
-        LED_display(sprite6);
-        delay(50);
-        LED_display(sprite7);
-        delay(50);
-        LED_clear();
-        delay(5000);
+        // LED_display(sprite1);
+        // delay(25);
+        // LED_display(sprite2);
+        // delay(25);
+        // LED_display(sprite3);
+        // delay(25);
+        // LED_display(sprite4);
+        // delay(25);
+        // LED_display(sprite5);
+        // delay(25);
+        // LED_display(sprite6);
+        // delay(25);
+        // LED_display(sprite7);
+        // delay(25);
+        // LED_clear();
+        // delay(5000);
+        LED_animate(IMAGES, 4, 30);
     }
 }
 
@@ -55,6 +64,14 @@ void LED_display(unsigned char *grid) {
     unsigned int i;
     for (i = 1; i <= 8; i++) {
         LED_write(i, grid[i-1]);
+    }
+}
+
+void LED_animate(unsigned char grid[][8], unsigned char frames, int fps) {
+    unsigned int i;
+    for (i = 0; i < frames; i++) {
+        LED_display(grid[i]);
+        delay(1000/fps);
     }
 }
 

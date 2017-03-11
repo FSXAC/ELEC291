@@ -21,7 +21,7 @@ void delay(unsigned int ms);
 #define LED_DATA P2_4
 #define LED_CLK P2_3
 
-#define LED_INTENSITY 0x03
+#define LED_INTENSITY 0x01
 
 /* Toggles CS */
 void LED_pulse(void);
@@ -42,3 +42,4 @@ void LED_write(unsigned char address, unsigned char value);
 void LED_test(void);
 
 void LED_display(unsigned char *grid);
+void LED_animate(unsigned char grid[][8], unsigned char frames, int fps);
