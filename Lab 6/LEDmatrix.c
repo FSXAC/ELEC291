@@ -7,6 +7,14 @@
 #include <c8051f38x.h>
 #include "LEDmatrix.h"
 
+unsigned char sprite1[8] = {0x00, 0x00, 0x00, 0x18, 0x18, 0x00, 0x00, 0x00};
+unsigned char sprite2[8] = {0x00, 0x00, 0x18, 0x24, 0x24, 0x18, 0x00, 0x00};
+unsigned char sprite3[8] = {0x00, 0x18, 0x24, 0x5A, 0x5A, 0x24, 0x18, 0x00};
+unsigned char sprite4[8] = {0x3C, 0x42, 0x99, 0xA5, 0xA5, 0x99, 0x42, 0x3C};
+unsigned char sprite5[8] = {0x42, 0x99, 0x24, 0x42, 0x42, 0x24, 0x99, 0x42};
+unsigned char sprite6[8] = {0x3C, 0x42, 0x81, 0x81, 0x81, 0x81, 0x42, 0x3C};
+unsigned char sprite7[8] = {0x42, 0x81, 0x00, 0x00, 0x00, 0x00, 0x81, 0x42};
+
 void main(void) {
     unsigned char position = 1;
     printf("\x1b[2J");
@@ -21,8 +29,32 @@ void main(void) {
     LED_init();
     printf("\x1b[s");
     while (1) {
-        LED_write(position, (position % 2) ? 0x55 : 0xAA);
-        position = (position == 0x08) ? 0x01 : position + 1;
+        // checkers
+        // LED_write(position, (position % 2) ? 0x55 : 0xAA);
+        // position = (position == 0x08) ? 0x01 : position + 1;
+        LED_display(sprite1);
+        delay(50);
+        LED_display(sprite2);
+        delay(50);
+        LED_display(sprite3);
+        delay(50);
+        LED_display(sprite4);
+        delay(50);
+        LED_display(sprite5);
+        delay(50);
+        LED_display(sprite6);
+        delay(50);
+        LED_display(sprite7);
+        delay(50);
+        LED_clear();
+        delay(5000);
+    }
+}
+
+void LED_display(unsigned char *grid) {
+    unsigned int i;
+    for (i = 1; i <= 8; i++) {
+        LED_write(i, grid[i-1]);
     }
 }
 
@@ -136,7 +168,7 @@ void LED_clear(void) {
     unsigned char j;
     for (j = 1; j <= 8; j++) {
         LED_spi(j);
-        LED_spi(0xFF);
+        LED_spi(0x00);
         LED_pulse();
     }
 }

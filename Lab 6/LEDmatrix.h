@@ -40,3 +40,5 @@ void LED_write(unsigned char address, unsigned char value);
 
 /* test LED matrix */
 void LED_test(void);
+
+void LED_display(unsigned char *grid);
