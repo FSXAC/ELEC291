@@ -8,8 +8,7 @@
 #include "LEDmatrix.h"
 
 void main(void) {
-    unsigned char intensity = 0;
-    unsigned char increasing = 1;
+    unsigned char position = 1;
     printf("\x1b[2J");
     printf("LED TESTING\n"
         "Author:   Muchen He (44638154)\n"
@@ -19,17 +18,11 @@ void main(void) {
         __FILE__, __DATE__, __TIME__
     );
 
+    LED_init();
     printf("\x1b[s");
     while (1) {
-        LED_init(intensity);
-        if (increasing) {
-            intensity++;
-            if (intensity == 0x0F) increasing = 0;
-        } else {
-            intensity--;
-            if (intensity == 0x00) increasing = 1;
-        }
-        delay(50);
+        LED_write(position, (position % 2) ? 0x55 : 0xAA);
+        position = (position == 0x08) ? 0x01 : position + 1;
     }
 }
 
@@ -148,8 +141,17 @@ void LED_clear(void) {
     }
 }
 
+
+/* set custom intensity for LEDs */
+void LED_setIntensity(unsigned char intensity) {
+    if (intensity > 0x0F) return;
+    LED_spi(0x0A);
+    LED_spi(intensity);
+    LED_pulse();
+}
+
 /* initialize the LED */
-void LED_init(unsigned char intensity) {
+void LED_init(void) {
     LED_CS = LOW;
 
     // set decode mode (no-decode)
@@ -160,7 +162,7 @@ void LED_init(unsigned char intensity) {
 
     // set intensity (0-F)
     LED_spi(0x0A);
-    LED_spi(intensity);
+    LED_spi(LED_INTENSITY);
     LED_pulse();
 
     // set scan limit (8 digits)
@@ -178,7 +180,7 @@ void LED_init(unsigned char intensity) {
 }
 
 /* write to MAX7219 */
-void LED_write(char address, char value) {
+void LED_write(unsigned char address, unsigned char value) {
     if ((address < 1) || (address > 8)) return;
     LED_spi(address);
     LED_spi(value);

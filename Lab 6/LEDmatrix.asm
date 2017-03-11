@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1069 (Apr 23 2015) (MSVC)
-; This file was generated Sat Mar 11 01:53:09 2017
+; This file was generated Sat Mar 11 02:04:37 2017
 ;--------------------------------------------------------
 $name LEDmatrix
 $optc51 --model-small
@@ -23,6 +23,7 @@ $optc51 --model-small
 ;--------------------------------------------------------
 ; Public variables in this module
 ;--------------------------------------------------------
+	public _LED_setIntensity
 	public _main
 	public _LED_write_PARM_2
 	public __c51_external_startup
@@ -425,8 +426,7 @@ _LED_write_PARM_2:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
-;intensity                 Allocated to registers r2 
-;increasing                Allocated to registers r3 
+;position                  Allocated to registers r2 
 ;------------------------------------------------------------
 ;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:10: void main(void) {
 ;	-----------------------------------------
@@ -434,13 +434,10 @@ _LED_write_PARM_2:
 ;	-----------------------------------------
 _main:
 	using	0
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:11: unsigned char intensity = 0;
-	mov	r2,#0x00
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:12: unsigned char increasing = 1;
-	mov	r3,#0x01
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:13: printf("\x1b[2J");
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:11: unsigned char position = 1;
+	mov	r2,#0x01
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:12: printf("\x1b[2J");
 	push	ar2
-	push	ar3
 	mov	a,#__str_0
 	push	acc
 	mov	a,#(__str_0 >> 8)
@@ -451,9 +448,9 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:20: );
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:19: __FILE__, __DATE__, __TIME__
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:18: "===================\n",
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:19: );
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:18: __FILE__, __DATE__, __TIME__
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:17: "===================\n",
 	mov	a,#__str_4
 	push	acc
 	mov	a,#(__str_4 >> 8)
@@ -482,6 +479,8 @@ _main:
 	mov	a,sp
 	add	a,#0xf4
 	mov	sp,a
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:21: LED_init();
+	lcall	_LED_init
 ;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:22: printf("\x1b[s");
 	mov	a,#__str_5
 	push	acc
@@ -493,87 +492,80 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-	pop	ar3
 	pop	ar2
 ;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:23: while (1) {
-L002009?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:24: LED_init(intensity);
-	mov	dpl,r2
-	push	ar2
-	push	ar3
-	lcall	_LED_init
-	pop	ar3
-	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:25: if (increasing) {
-	mov	a,r3
-	jz	L002006?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:26: intensity++;
-	inc	r2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:27: if (intensity == 0x0F) increasing = 0;
-	cjne	r2,#0x0F,L002007?
-	mov	r3,#0x00
+L002002?:
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:24: LED_write(position, (position % 2) ? 0x55 : 0xAA);
+	mov	a,r2
+	jnb	acc.0,L002006?
+	mov	r3,#0x55
 	sjmp	L002007?
 L002006?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:29: intensity--;
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:30: if (intensity == 0x00) increasing = 1;
-	djnz	r2,L002007?
-	mov	r3,#0x01
+	mov	r3,#0xAA
 L002007?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:32: delay(50);
-	mov	dptr,#0x0032
+	mov	_LED_write_PARM_2,r3
+	mov	dpl,r2
 	push	ar2
-	push	ar3
-	lcall	_delay
-	pop	ar3
+	lcall	_LED_write
 	pop	ar2
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:25: position = (position == 0x08) ? 0x01 : position + 1;
+	cjne	r2,#0x08,L002008?
+	mov	r3,#0x01
 	sjmp	L002009?
+L002008?:
+	mov	a,r2
+	inc	a
+	mov	r3,a
+L002009?:
+	mov	ar2,r3
+	sjmp	L002002?
 ;------------------------------------------------------------
 ;Allocation info for local variables in function '_c51_external_startup'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:36: char _c51_external_startup(void) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:29: char _c51_external_startup(void) {
 ;	-----------------------------------------
 ;	 function _c51_external_startup
 ;	-----------------------------------------
 __c51_external_startup:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:37: PCA0MD &= (~0x40) ;    // DISABLE WDT: clear Watchdog Enable bit
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:30: PCA0MD &= (~0x40) ;    // DISABLE WDT: clear Watchdog Enable bit
 	anl	_PCA0MD,#0xBF
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:38: VDM0CN  = 0x80; // enable VDD monitor
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:31: VDM0CN  = 0x80; // enable VDD monitor
 	mov	_VDM0CN,#0x80
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:39: RSTSRC  = 0x02|0x04; // Enable reset on missing clock detector and VDD
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:32: RSTSRC  = 0x02|0x04; // Enable reset on missing clock detector and VDD
 	mov	_RSTSRC,#0x06
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:45: CLKSEL|=0b_0000_0010; // SYSCLK derived from the Internal High-Frequency Oscillator / 2.
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:38: CLKSEL|=0b_0000_0010; // SYSCLK derived from the Internal High-Frequency Oscillator / 2.
 	orl	_CLKSEL,#0x02
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:52: OSCICN |= 0x03; // Configure internal oscillator for its maximum frequency
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:45: OSCICN |= 0x03; // Configure internal oscillator for its maximum frequency
 	orl	_OSCICN,#0x03
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:55: SCON0 = 0x10;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:48: SCON0 = 0x10;
 	mov	_SCON0,#0x10
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:57: TH1 = 0x10000-((SYSCLK/BAUDRATE)/2L);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:50: TH1 = 0x10000-((SYSCLK/BAUDRATE)/2L);
 	mov	_TH1,#0x98
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:58: CKCON &= ~0x0B;                  // T1M = 1; SCA1:0 = xx
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:51: CKCON &= ~0x0B;                  // T1M = 1; SCA1:0 = xx
 	anl	_CKCON,#0xF4
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:59: CKCON |=  0x08;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:52: CKCON |=  0x08;
 	orl	_CKCON,#0x08
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:73: TL1   = TH1;      // Init Timer1
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:66: TL1   = TH1;      // Init Timer1
 	mov	_TL1,_TH1
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:74: TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit autoreload
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:67: TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit autoreload
 	anl	_TMOD,#0x0F
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:75: TMOD |= 0x20;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:68: TMOD |= 0x20;
 	orl	_TMOD,#0x20
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:76: TR1   = 1; // START Timer1
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:69: TR1   = 1; // START Timer1
 	setb	_TR1
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:77: TI    = 1;  // Indicate TX0 ready
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:70: TI    = 1;  // Indicate TX0 ready
 	setb	_TI
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:80: P0MDOUT |= 0x01;  // set P0.0 and P0.4 as push-pull outputs
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:73: P0MDOUT |= 0x01;  // set P0.0 and P0.4 as push-pull outputs
 	orl	_P0MDOUT,#0x01
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:83: P2MDOUT &= 0x00;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:76: P2MDOUT &= 0x00;
 	mov	a,_P2MDOUT
 	mov	_P2MDOUT,#0x00
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:84: XBR0 = 0x01;      // Enable UART0 on P0.4(TX0) and P0.5(RX0)
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:77: XBR0 = 0x01;      // Enable UART0 on P0.4(TX0) and P0.5(RX0)
 	mov	_XBR0,#0x01
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:85: XBR1 = 0x40;      // enable crossbar
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:78: XBR1 = 0x40;      // enable crossbar
 	mov	_XBR1,#0x40
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:87: return 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:80: return 0;
 	mov	dpl,#0x00
 	ret
 ;------------------------------------------------------------
@@ -582,40 +574,40 @@ __c51_external_startup:
 ;us                        Allocated to registers r2 
 ;i                         Allocated to registers r3 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:91: void delayUs(unsigned char us) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:84: void delayUs(unsigned char us) {
 ;	-----------------------------------------
 ;	 function delayUs
 ;	-----------------------------------------
 _delayUs:
 	mov	r2,dpl
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:93: CKCON  |= 0b_0100_0000;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:86: CKCON  |= 0b_0100_0000;
 	orl	_CKCON,#0x40
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:94: TMR3RL  = (-(SYSCLK)/1000000L);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:87: TMR3RL  = (-(SYSCLK)/1000000L);
 	mov	_TMR3RL,#0xE8
 	mov	(_TMR3RL >> 8),#0xFF
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:95: TMR3    = TMR3RL;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:88: TMR3    = TMR3RL;
 	mov	_TMR3,_TMR3RL
 	mov	(_TMR3 >> 8),(_TMR3RL >> 8)
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:96: TMR3CN  = 0x04;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:89: TMR3CN  = 0x04;
 	mov	_TMR3CN,#0x04
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:99: for (i = 0; i < us; i++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:92: for (i = 0; i < us; i++) {
 	mov	r3,#0x00
 L004004?:
 	clr	c
 	mov	a,r3
 	subb	a,r2
 	jnc	L004007?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:100: while (!(TMR3CN & 0x80));
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:93: while (!(TMR3CN & 0x80));
 L004001?:
 	mov	a,_TMR3CN
 	jnb	acc.7,L004001?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:101: TMR3CN &= ~(0x80);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:94: TMR3CN &= ~(0x80);
 	anl	_TMR3CN,#0x7F
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:99: for (i = 0; i < us; i++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:92: for (i = 0; i < us; i++) {
 	inc	r3
 	sjmp	L004004?
 L004007?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:103: TMR3CN = 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:96: TMR3CN = 0;
 	mov	_TMR3CN,#0x00
 	ret
 ;------------------------------------------------------------
@@ -624,14 +616,14 @@ L004007?:
 ;ms                        Allocated to registers r2 r3 
 ;j                         Allocated to registers r4 r5 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:107: void delay(unsigned int ms) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:100: void delay(unsigned int ms) {
 ;	-----------------------------------------
 ;	 function delay
 ;	-----------------------------------------
 _delay:
 	mov	r2,dpl
 	mov	r3,dph
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:109: for (j = 0; j < ms; j++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:102: for (j = 0; j < ms; j++) {
 	mov	r4,#0x00
 	mov	r5,#0x00
 L005001?:
@@ -641,27 +633,27 @@ L005001?:
 	mov	a,r5
 	subb	a,r3
 	jnc	L005005?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:110: delayUs(249);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:103: delayUs(249);
 	mov	dpl,#0xF9
 	push	ar2
 	push	ar3
 	push	ar4
 	push	ar5
 	lcall	_delayUs
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:111: delayUs(249);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:104: delayUs(249);
 	mov	dpl,#0xF9
 	lcall	_delayUs
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:112: delayUs(249);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:105: delayUs(249);
 	mov	dpl,#0xF9
 	lcall	_delayUs
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:113: delayUs(250);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:106: delayUs(250);
 	mov	dpl,#0xFA
 	lcall	_delayUs
 	pop	ar5
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:109: for (j = 0; j < ms; j++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:102: for (j = 0; j < ms; j++) {
 	inc	r4
 	cjne	r4,#0x00,L005001?
 	inc	r5
@@ -675,309 +667,227 @@ L005005?:
 ;j                         Allocated to registers r3 
 ;temp                      Allocated to registers r4 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:119: void LED_spi(unsigned char value) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:112: void LED_spi(unsigned char value) {
 ;	-----------------------------------------
 ;	 function LED_spi
 ;	-----------------------------------------
 _LED_spi:
 	mov	r2,dpl
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:121: for (j = 1; j <= 8; j++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:114: for (j = 1; j <= 8; j++) {
 	mov	r3,#0x01
 L006001?:
 	mov	a,r3
 	add	a,#0xff - 0x08
-	jc	L006004?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:122: temp = value & 0x80;
+	jc	L006005?
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:115: temp = value & 0x80;
 	mov	a,#0x80
 	anl	a,r2
 	mov	r4,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:123: LED_DATA = (temp == 0x80) ? HIGH : LOW;
-	cjne	r4,#0x80,L006014?
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:116: LED_DATA = (temp == 0x80) ? HIGH : LOW;
+	cjne	r4,#0x80,L006011?
 	setb	c
-	sjmp	L006015?
-L006014?:
+	sjmp	L006012?
+L006011?:
 	clr	c
-L006015?:
+L006012?:
 	mov	_P2_4,c
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:124: printf("%c", (temp == 0x80) ? '1' : '0');
-	cjne	r4,#0x80,L006007?
-	mov	r4,#0x31
-	sjmp	L006008?
-L006007?:
-	mov	r4,#0x30
-L006008?:
-	mov	a,r4
-	rlc	a
-	subb	a,acc
-	mov	r5,a
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:119: LED_CLK = HIGH;
+	setb	_P2_3
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:120: delayUs(20);
+	mov	dpl,#0x14
 	push	ar2
 	push	ar3
-	push	ar4
-	push	ar5
-	mov	a,#__str_6
-	push	acc
-	mov	a,#(__str_6 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	mov	a,sp
-	add	a,#0xfb
-	mov	sp,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:127: LED_CLK = HIGH;
-	setb	_P2_3
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:128: delayUs(20);
-	mov	dpl,#0x14
 	lcall	_delayUs
 	pop	ar3
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:129: LED_CLK = LOW;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:121: LED_CLK = LOW;
 	clr	_P2_3
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:132: value = value << 1;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:124: value = value << 1;
 	mov	a,r2
 	add	a,r2
 	mov	r2,a
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:121: for (j = 1; j <= 8; j++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:114: for (j = 1; j <= 8; j++) {
 	inc	r3
 	sjmp	L006001?
-L006004?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:134: printf("\n");
-	mov	a,#__str_7
-	push	acc
-	mov	a,#(__str_7 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
+L006005?:
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LED_pulse'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:137: void LED_pulse(void) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:128: void LED_pulse(void) {
 ;	-----------------------------------------
 ;	 function LED_pulse
 ;	-----------------------------------------
 _LED_pulse:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:138: LED_CS = HIGH;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:129: LED_CS = HIGH;
 	setb	_P2_5
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:139: delay(1);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:130: delay(1);
 	mov	dptr,#0x0001
 	lcall	_delay
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:140: LED_CS = LOW;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:131: LED_CS = LOW;
 	clr	_P2_5
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:141: printf("===\n");
-	mov	a,#__str_8
-	push	acc
-	mov	a,#(__str_8 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LED_clear'
 ;------------------------------------------------------------
 ;j                         Allocated to registers r2 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:145: void LED_clear(void) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:135: void LED_clear(void) {
 ;	-----------------------------------------
 ;	 function LED_clear
 ;	-----------------------------------------
 _LED_clear:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:147: for (j = 1; j <= 8; j++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:137: for (j = 1; j <= 8; j++) {
 	mov	r2,#0x01
 L008001?:
 	mov	a,r2
 	add	a,#0xff - 0x08
 	jc	L008005?
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:148: LED_spi(j);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:138: LED_spi(j);
 	mov	dpl,r2
 	push	ar2
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:149: LED_spi(0xFF);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:139: LED_spi(0xFF);
 	mov	dpl,#0xFF
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:150: LED_pulse();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:140: LED_pulse();
 	lcall	_LED_pulse
 	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:147: for (j = 1; j <= 8; j++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:137: for (j = 1; j <= 8; j++) {
 	inc	r2
 	sjmp	L008001?
 L008005?:
 	ret
 ;------------------------------------------------------------
-;Allocation info for local variables in function 'LED_init'
+;Allocation info for local variables in function 'LED_setIntensity'
 ;------------------------------------------------------------
 ;intensity                 Allocated to registers r2 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:155: void LED_init(unsigned char intensity) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:146: void LED_setIntensity(unsigned char intensity) {
+;	-----------------------------------------
+;	 function LED_setIntensity
+;	-----------------------------------------
+_LED_setIntensity:
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:147: if (intensity > 0x0F) return;
+	mov	a,dpl
+	mov	r2,a
+	add	a,#0xff - 0x0F
+	jnc	L009002?
+	ret
+L009002?:
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:148: LED_spi(0x0A);
+	mov	dpl,#0x0A
+	push	ar2
+	lcall	_LED_spi
+	pop	ar2
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:149: LED_spi(intensity);
+	mov	dpl,r2
+	lcall	_LED_spi
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:150: LED_pulse();
+	ljmp	_LED_pulse
+;------------------------------------------------------------
+;Allocation info for local variables in function 'LED_init'
+;------------------------------------------------------------
+;------------------------------------------------------------
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:154: void LED_init(void) {
 ;	-----------------------------------------
 ;	 function LED_init
 ;	-----------------------------------------
 _LED_init:
-	mov	r2,dpl
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:156: LED_CS = LOW;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:155: LED_CS = LOW;
 	clr	_P2_5
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:159: LED_spi(0x09);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:158: LED_spi(0x09);
 	mov	dpl,#0x09
-	push	ar2
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:161: LED_spi(0x00);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:160: LED_spi(0x00);
 	mov	dpl,#0x00
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:162: LED_pulse();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:161: LED_pulse();
 	lcall	_LED_pulse
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:163: printf("decoder set\n");
-	mov	a,#__str_9
-	push	acc
-	mov	a,#(__str_9 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:166: LED_spi(0x0A);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:164: LED_spi(0x0A);
 	mov	dpl,#0x0A
 	lcall	_LED_spi
-	pop	ar2
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:167: LED_spi(intensity);
-	mov	dpl,r2
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:165: LED_spi(LED_INTENSITY);
+	mov	dpl,#0x03
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:168: LED_pulse();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:166: LED_pulse();
 	lcall	_LED_pulse
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:169: printf("intensity set\n");
-	mov	a,#__str_10
-	push	acc
-	mov	a,#(__str_10 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:172: LED_spi(0x0b);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:169: LED_spi(0x0b);
 	mov	dpl,#0x0B
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:173: LED_spi(0x07);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:170: LED_spi(0x07);
 	mov	dpl,#0x07
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:174: LED_pulse();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:171: LED_pulse();
 	lcall	_LED_pulse
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:175: printf("scan limit set\n");
-	mov	a,#__str_11
-	push	acc
-	mov	a,#(__str_11 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:178: printf("cleared display\n");
-	mov	a,#__str_12
-	push	acc
-	mov	a,#(__str_12 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:179: LED_clear();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:174: LED_clear();
 	lcall	_LED_clear
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:182: LED_spi(0x0C);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:177: LED_spi(0x0C);
 	mov	dpl,#0x0C
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:183: LED_spi(0x01);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:178: LED_spi(0x01);
 	mov	dpl,#0x01
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:184: LED_pulse();
-	lcall	_LED_pulse
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:185: printf("normal operation set\n");
-	mov	a,#__str_13
-	push	acc
-	mov	a,#(__str_13 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-	ret
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:179: LED_pulse();
+	ljmp	_LED_pulse
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LED_write'
 ;------------------------------------------------------------
 ;value                     Allocated with name '_LED_write_PARM_2'
 ;address                   Allocated to registers r2 
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:189: void LED_write(char address, char value) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:183: void LED_write(unsigned char address, unsigned char value) {
 ;	-----------------------------------------
 ;	 function LED_write
 ;	-----------------------------------------
 _LED_write:
 	mov	r2,dpl
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:190: if ((address < 1) || (address > 8)) return;
-	clr	c
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:184: if ((address < 1) || (address > 8)) return;
+	cjne	r2,#0x01,L011007?
+L011007?:
+	jc	L011001?
 	mov	a,r2
-	xrl	a,#0x80
-	subb	a,#0x81
-	jc	L010001?
-	mov	a,#(0x08 ^ 0x80)
-	mov	b,r2
-	xrl	b,#0x80
-	subb	a,b
-	jnc	L010002?
-L010001?:
+	add	a,#0xff - 0x08
+	jnc	L011002?
+L011001?:
 	ret
-L010002?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:191: LED_spi(address);
+L011002?:
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:185: LED_spi(address);
 	mov	dpl,r2
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:192: LED_spi(value);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:186: LED_spi(value);
 	mov	dpl,_LED_write_PARM_2
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:193: LED_pulse();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:187: LED_pulse();
 	ljmp	_LED_pulse
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LED_test'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:197: void LED_test(void) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:191: void LED_test(void) {
 ;	-----------------------------------------
 ;	 function LED_test
 ;	-----------------------------------------
 _LED_test:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:198: LED_spi(0x0F);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:192: LED_spi(0x0F);
 	mov	dpl,#0x0F
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:199: LED_spi(0x01);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:193: LED_spi(0x01);
 	mov	dpl,#0x01
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:200: LED_pulse();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:194: LED_pulse();
 	lcall	_LED_pulse
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:201: delay(1000);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:195: delay(1000);
 	mov	dptr,#0x03E8
 	lcall	_delay
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:202: LED_spi(0x0F);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:196: LED_spi(0x0F);
 	mov	dpl,#0x0F
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:203: LED_spi(0x00);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:197: LED_spi(0x00);
 	mov	dpl,#0x00
 	lcall	_LED_spi
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:204: LED_pulse();
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:198: LED_pulse();
 	ljmp	_LED_pulse
 	rseg R_CSEG
 
@@ -1020,41 +930,11 @@ __str_3:
 	db 'Mar 11 2017'
 	db 0x00
 __str_4:
-	db '01:53:09'
+	db '02:04:37'
 	db 0x00
 __str_5:
 	db 0x1B
 	db '[s'
-	db 0x00
-__str_6:
-	db '%c'
-	db 0x00
-__str_7:
-	db 0x0A
-	db 0x00
-__str_8:
-	db '==='
-	db 0x0A
-	db 0x00
-__str_9:
-	db 'decoder set'
-	db 0x0A
-	db 0x00
-__str_10:
-	db 'intensity set'
-	db 0x0A
-	db 0x00
-__str_11:
-	db 'scan limit set'
-	db 0x0A
-	db 0x00
-__str_12:
-	db 'cleared display'
-	db 0x0A
-	db 0x00
-__str_13:
-	db 'normal operation set'
-	db 0x0A
 	db 0x00
 
 	CSEG

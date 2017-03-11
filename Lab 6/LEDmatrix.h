@@ -21,20 +21,22 @@ void delay(unsigned int ms);
 #define LED_DATA P2_4
 #define LED_CLK P2_3
 
+#define LED_INTENSITY 0x03
+
 /* Toggles CS */
 void LED_pulse(void);
 
 /* send one byte */
-void LED_spi(unsigned char data);
+void LED_spi(unsigned char value);
 
 /* clear all MAX7219s */
 void LED_clear(void);
 
 /* initialize the LED */
-void LED_init(unsigned char intensity);
+void LED_init(void);
 
 /* write to MAX7219 */
-void LED_write(char address, char data);
+void LED_write(unsigned char address, unsigned char value);
 
 /* test LED matrix */
 void LED_test(void);
