@@ -195,7 +195,7 @@ C0 E0
 15 81
 15 81
 75 data8(_LED_animate_PARM_2;) 04
-75 data8(_LED_animate_PARM_3;) 1E
+75 data8(_LED_animate_PARM_3;) 0A
 E4
 F5 data8(_LED_animate_PARM_3;0x0001;+;)
 90 data16(_IMAGES;)  
@@ -531,7 +531,7 @@ EA
 00
 4D 61 72 20 31 31 20 32 30 31 37 
 00
-31 30 3A 35 38 3A 35 33 
+31 31 3A 30 34 3A 30 31 
 00
 1B
 5B 73 

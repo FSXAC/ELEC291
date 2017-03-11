@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1069 (Apr 23 2015) (MSVC)
-; This file was generated Sat Mar 11 10:58:53 2017
+; This file was generated Sat Mar 11 11:04:01 2017
 ;--------------------------------------------------------
 $name LEDmatrix
 $optc51 --model-small
@@ -540,9 +540,9 @@ _main:
 	dec	sp
 ;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:39: while (1) {
 L002002?:
-;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:59: LED_animate(IMAGES, 4, 30);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\LEDmatrix.c:59: LED_animate(IMAGES, 4, 10);
 	mov	_LED_animate_PARM_2,#0x04
-	mov	_LED_animate_PARM_3,#0x1E
+	mov	_LED_animate_PARM_3,#0x0A
 	clr	a
 	mov	(_LED_animate_PARM_3 + 1),a
 	mov	dptr,#_IMAGES
@@ -1107,7 +1107,7 @@ __str_3:
 	db 'Mar 11 2017'
 	db 0x00
 __str_4:
-	db '10:58:53'
+	db '11:04:01'
 	db 0x00
 __str_5:
 	db 0x1B
