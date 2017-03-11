@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1069 (Apr 23 2015) (MSVC)
-; This file was generated Fri Mar 10 13:29:59 2017
+; This file was generated Sat Mar 11 01:07:49 2017
 ;--------------------------------------------------------
 $name digitalIO
 $optc51 --model-small
@@ -411,7 +411,7 @@ _TickCount:
 ; data variables initialization
 ;--------------------------------------------------------
 	rseg R_DINIT
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:7: volatile unsigned int TickCount=0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:7: volatile unsigned int TickCount=0;
 	clr	a
 	mov	_TickCount,a
 	mov	(_TickCount + 1),a
@@ -424,27 +424,27 @@ _TickCount:
 ;Allocation info for local variables in function '_c51_external_startup'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:9: char _c51_external_startup (void)
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:9: char _c51_external_startup (void)
 ;	-----------------------------------------
 ;	 function _c51_external_startup
 ;	-----------------------------------------
 __c51_external_startup:
 	using	0
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:11: PCA0MD&=(~WDTE) ;    // DISABLE WDT: clear Watchdog Enable bit
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:11: PCA0MD&=(~WDTE) ;    // DISABLE WDT: clear Watchdog Enable bit
 	anl	_PCA0MD,#0xBF
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:12: VDM0CN=0x80; // enable VDD monitor
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:12: VDM0CN=0x80; // enable VDD monitor
 	mov	_VDM0CN,#0x80
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:13: RSTSRC=0x02|0x04; // Enable reset on missing clock detector and VDD
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:13: RSTSRC=0x02|0x04; // Enable reset on missing clock detector and VDD
 	mov	_RSTSRC,#0x06
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:21: CLKSEL|=0b_0000_0011; // SYSCLK derived from the Internal High-Frequency Oscillator / 1.
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:21: CLKSEL|=0b_0000_0011; // SYSCLK derived from the Internal High-Frequency Oscillator / 1.
 	orl	_CLKSEL,#0x03
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:25: OSCICN |= 0x03; // Configure internal oscillator for its maximum frequency
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:25: OSCICN |= 0x03; // Configure internal oscillator for its maximum frequency
 	orl	_OSCICN,#0x03
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:30: P2MDOUT|=0b_0000_0000; // P2.2 has the LED
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:30: P2MDOUT|=0b_0000_0000; // P2.2 has the LED
 	mov	_P2MDOUT,_P2MDOUT
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:31: XBR1     = 0x40; // Enable crossbar and weak pull-ups
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:31: XBR1     = 0x40; // Enable crossbar and weak pull-ups
 	mov	_XBR1,#0x40
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:33: return 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:33: return 0;
 	mov	dpl,#0x00
 	ret
 ;------------------------------------------------------------
@@ -453,40 +453,40 @@ __c51_external_startup:
 ;us                        Allocated to registers r2 
 ;i                         Allocated to registers r3 
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:37: void delayUs(unsigned char us) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:37: void delayUs(unsigned char us) {
 ;	-----------------------------------------
 ;	 function delayUs
 ;	-----------------------------------------
 _delayUs:
 	mov	r2,dpl
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:39: CKCON  |= 0b_0100_0000;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:39: CKCON  |= 0b_0100_0000;
 	orl	_CKCON,#0x40
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:40: TMR3RL  = (-(SYSCLK)/1000000L);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:40: TMR3RL  = (-(SYSCLK)/1000000L);
 	mov	_TMR3RL,#0xD0
 	mov	(_TMR3RL >> 8),#0xFF
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:41: TMR3    = TMR3RL;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:41: TMR3    = TMR3RL;
 	mov	_TMR3,_TMR3RL
 	mov	(_TMR3 >> 8),(_TMR3RL >> 8)
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:42: TMR3CN  = 0x04;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:42: TMR3CN  = 0x04;
 	mov	_TMR3CN,#0x04
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:45: for (i = 0; i < us; i++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:45: for (i = 0; i < us; i++) {
 	mov	r3,#0x00
 L003004?:
 	clr	c
 	mov	a,r3
 	subb	a,r2
 	jnc	L003007?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:46: while (!(TMR3CN & 0x80));
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:46: while (!(TMR3CN & 0x80));
 L003001?:
 	mov	a,_TMR3CN
 	jnb	acc.7,L003001?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:47: TMR3CN &= ~(0x80);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:47: TMR3CN &= ~(0x80);
 	anl	_TMR3CN,#0x7F
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:45: for (i = 0; i < us; i++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:45: for (i = 0; i < us; i++) {
 	inc	r3
 	sjmp	L003004?
 L003007?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:49: TMR3CN = 0;
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:49: TMR3CN = 0;
 	mov	_TMR3CN,#0x00
 	ret
 ;------------------------------------------------------------
@@ -495,14 +495,14 @@ L003007?:
 ;ms                        Allocated to registers r2 r3 
 ;j                         Allocated to registers r4 r5 
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:53: void delay(unsigned int ms) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:53: void delay(unsigned int ms) {
 ;	-----------------------------------------
 ;	 function delay
 ;	-----------------------------------------
 _delay:
 	mov	r2,dpl
 	mov	r3,dph
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:55: for (j = 0; j < ms; j++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:55: for (j = 0; j < ms; j++) {
 	mov	r4,#0x00
 	mov	r5,#0x00
 L004001?:
@@ -512,27 +512,27 @@ L004001?:
 	mov	a,r5
 	subb	a,r3
 	jnc	L004005?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:56: delayUs(249);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:56: delayUs(249);
 	mov	dpl,#0xF9
 	push	ar2
 	push	ar3
 	push	ar4
 	push	ar5
 	lcall	_delayUs
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:57: delayUs(249);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:57: delayUs(249);
 	mov	dpl,#0xF9
 	lcall	_delayUs
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:58: delayUs(249);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:58: delayUs(249);
 	mov	dpl,#0xF9
 	lcall	_delayUs
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:59: delayUs(250);
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:59: delayUs(250);
 	mov	dpl,#0xFA
 	lcall	_delayUs
 	pop	ar5
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:55: for (j = 0; j < ms; j++) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:55: for (j = 0; j < ms; j++) {
 	inc	r4
 	cjne	r4,#0x00,L004001?
 	inc	r5
@@ -543,19 +543,33 @@ L004005?:
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:63: void main (void) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:63: void main (void) {
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:64: P2_2 = 1;
-	setb	_P2_2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:65: while (1) {
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:64: P2_3 = 1;
+	setb	_P2_3
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:65: P2_4 = 1;
+	setb	_P2_4
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:66: P2_5 = 1;
+	setb	_P2_5
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:67: while (1) {
 L005002?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:66: P2_2 = !P2_2;
-	cpl	_P2_2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:67: delay(3000);
-	mov	dptr,#0x0BB8
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:68: P2_3 = !P2_3;
+	cpl	_P2_3
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:69: delay(1000);
+	mov	dptr,#0x03E8
+	lcall	_delay
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:70: P2_4 = !P2_4;
+	cpl	_P2_4
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:71: delay(1000);
+	mov	dptr,#0x03E8
+	lcall	_delay
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:72: P2_5 = !P2_5;
+	cpl	_P2_5
+;	F:\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\digitalIO.c:73: delay(1000);
+	mov	dptr,#0x03E8
 	lcall	_delay
 	sjmp	L005002?
 	rseg R_CSEG

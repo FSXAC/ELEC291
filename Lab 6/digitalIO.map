@@ -1,13 +1,13 @@
 Modules linked:
    'digitalIO' from 'digitalIO.obj'
-   'crt0' from 'C:\CrossIDE\Call51\Bin\..\lib\small\libc51.lib'
+   'crt0' from 'D:\CrossIDE\Call51\Bin\..\lib\small\libc51.lib'
 
 Memory use per module linked:
-C:00147 D:002 I:000 B:000 X:00000 - digitalIO
+C:00167 D:002 I:000 B:000 X:00000 - digitalIO
 C:00113 D:000 I:000 B:000 X:00000 - crt0
 C:00004 D:000 I:000 B:000 X:00000 - ABSOLUTE
 ------------------------------------------------------
-C:00264 D:002 I:000 B:000 X:00000 - Totals
+C:00284 D:002 I:000 B:000 X:00000 - Totals
 
 INTERMAL RAM map (see legend below):
 00: 0 0 0 0 0 0 0 0 a a . . . . . . 
@@ -46,7 +46,7 @@ BIT map:
 70: . . . . . . . . . . . . . . . . 
 
 CODE usage map:
-0000: 256 008 000 000 000 000 000 000 000 000 000 000 000 000 000 000 
+0000: 256 028 000 000 000 000 000 000 000 000 000 000 000 000 000 000 
 1000: 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 
 2000: 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 
 3000: 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 
@@ -62,7 +62,7 @@ C000: 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000
 D000: 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 
 E000: 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 
 F000: 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 
-Total: 264 bytes
+Total: 284 bytes
 
 XDATA usage map:
 0000: 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 
@@ -87,7 +87,7 @@ Base Segments:
    BIT_BANK=D:0000, size=0000
    R_BSEG=B:0000, size=0000
    R_CONST=C:0000, size=0000
-   R_CSEG=C:007A, size=008E
+   R_CSEG=C:007A, size=00A2
    R_DINIT=C:0074, size=0005
    R_DSEG=D:0000, size=0002
    R_GSINIT=C:0003, size=0071
@@ -103,7 +103,7 @@ Base Segments:
 Module Segments:
    CSEG=C:0000, size=0004
    crt0:R_GSINIT=C:0003, size=0071
-   digitalIO:R_CSEG=C:007A, size=008E
+   digitalIO:R_CSEG=C:007A, size=00A2
    digitalIO:R_DINIT=C:0074, size=0005
    digitalIO:R_DSEG=D:0008, size=0002
 
@@ -112,7 +112,7 @@ Public symbols:
    _R_BSEG_start=L:0000
    _R_CONST_size=L:0000
    _R_CONST_start=L:0000
-   _R_CSEG_size=L:008E
+   _R_CSEG_size=L:00A2
    _R_CSEG_start=L:007A
    _R_DINIT_size=L:0005
    _R_DINIT_start=L:0074
@@ -139,7 +139,7 @@ Public symbols:
    _delayUs=C:0093
    _digitalIO_R_DSEG_size=L:0002
    _digitalIO_R_DSEG_start=L:0008
-   _dummy_name_crt0=C:0108
+   _dummy_name_crt0=C:011C
    _main=C:00FC
    _stack_start=L:000A
 
@@ -158,4 +158,4 @@ Local symbols:
    digitalIO:L003007?=C:00B9
    digitalIO:L004001?=C:00C5
    digitalIO:L004005?=C:00FB
-   digitalIO:L005002?=C:00FE
+   digitalIO:L005002?=C:0102

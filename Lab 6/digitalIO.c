@@ -27,7 +27,7 @@ char _c51_external_startup (void)
 	// Configure the pin used for output
 
 	// set everything as open drain
-	P2MDOUT|=0b_0000_0000; // P2.2 has the LED
+	P2MDOUT |= 0b_0000_0000; // P2.2 has the LED
 	XBR1     = 0x40; // Enable crossbar and weak pull-ups
 
 	return 0;
@@ -61,9 +61,15 @@ void delay(unsigned int ms) {
 }
 
 void main (void) {
-	P2_2 = 1;
+	P2_3 = 1;
+	P2_4 = 1;
+	P2_5 = 1;
 	while (1) {
-		P2_2 = !P2_2;
-		delay(3000);
+		P2_3 = !P2_3;
+		delay(1000);
+		P2_4 = !P2_4;
+		delay(1000);
+		P2_5 = !P2_5;
+		delay(1000);
 	}
 }
