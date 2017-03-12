@@ -45,8 +45,8 @@ public void setup() {
 public void draw() {
     background(255);
     ambientLight(50, 50, 50);
-    directionalLight(255,255,255,-1,1, 0);
-    directionalLight(255,255,255,1,0, -1);
+    directionalLight(255,255,255,0,1, 0);
+    directionalLight(255,255,255,0,0, -1);
 
     turnOffset_tgt = map(mouseX - width/2, -width/2, width/2, 80, -80);
     turnOffset = lerp(turnOffset, turnOffset_tgt, 0.1f);
@@ -156,26 +156,69 @@ class Player {
 
 class Block {
     private PVector position;
-    private boolean isEnabled = true;
+    private boolean isEnabled;
+    private PVector corner1;
+    private PVector corner2;
+    private PVector corner3;
+    private PVector corner4;
 
     Block(PVector newVector) {
         position = newVector.copy();
+        isEnabled = true;
+
+        // generate random shapes
+        corner1 = new PVector(random(25, 50), random(-50, -25), random(-200, -50));
+        corner2 = new PVector(random(25, 50), random(25, 50), random(-200, -50));
+        corner3 = new PVector(random(-50, -25), random(25, 50), random(-200, -50));
+        corner4 = new PVector(random(-50, -25), random(-50, -25), random(-200, -50));
     }
 
     Block() {
         position = new PVector(random(-mapWidth, mapWidth), mapDepth);
+        isEnabled = true;
+
+        // generate random shapes
+        corner1 = new PVector(random(25, 50), random(-50, -25), random(-200, -50));
+        corner2 = new PVector(random(25, 50), random(25, 50), random(-200, -50));
+        corner3 = new PVector(random(-50, -25), random(25, 50), random(-200, -50));
+        corner4 = new PVector(random(-50, -25), random(-50, -25), random(-200, -50));
     }
 
     public void draw() {
-        stroke(
-            map(dist(position.x, position.y, 0, 0), 300, 8000, 0, 255));
+        stroke(map(dist(position.x, position.y, 0, 0), 1000, 8000, 100, 255));
         pushMatrix();
-        translate(position.x, position.y, -50);
-        box(100);
+        translate(position.x, position.y, 0);
+        // box(100);
+        renderBox();
         popMatrix();
 
         // update block
         update();
+    }
+
+    private void renderBox() {
+        beginShape(QUADS);
+        // front
+        vertex(50, -50, 0);
+        vertex(corner1.x, corner1.y, corner1.z);
+        vertex(corner4.x, corner4.y, corner4.z);
+        vertex(-50, -50, 0);
+        // left
+        vertex(-50, -50, 0);
+        vertex(corner4.x, corner4.y, corner4.z);
+        vertex(corner3.x, corner3.y, corner3.z);
+        vertex(-50, 50, 0);
+        // right
+        vertex(50, -50, 0);
+        vertex(corner1.x, corner1.y, corner1.z);
+        vertex(corner2.x, corner2.y, corner2.z);
+        vertex(50, 50, 0);
+        // top
+        vertex(corner1.x, corner1.y, corner1.z);
+        vertex(corner2.x, corner2.y, corner2.z);
+        vertex(corner3.x, corner3.y, corner3.z);
+        vertex(corner4.x, corner4.y, corner4.z);
+        endShape(CLOSE);
     }
 
     public boolean isEnabled() {
