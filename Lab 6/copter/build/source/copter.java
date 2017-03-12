@@ -142,14 +142,23 @@ class Player {
 
     private void renderFan() {
         box(10);
-        strokeWeight(1);
-        for (int i = 0; i < 4; i++)  {
-            rotateY(i * TWO_PI / 4);
-            beginShape(TRIANGLE);
-            vertex(0, 0, -5);
-            vertex(-5, 0, -30);
-            vertex(5, 0, -20);
-            endShape();
+        if (mouseY > width/2) {
+            strokeWeight(1);
+            for (int i = 0; i < 4; i++)  {
+                rotateY(i * TWO_PI / 4);
+                beginShape(TRIANGLE);
+                vertex(0, 0, -5);
+                vertex(-5, 0, -30);
+                vertex(5, 0, -20);
+                endShape();
+            }
+        } else {
+            pushMatrix();
+            translate(0, -2, 0);
+            rotateX(PI/2);
+            fill(255, 50);
+            ellipse(0, 0, 60, 60);
+            popMatrix();
         }
     }
 }
