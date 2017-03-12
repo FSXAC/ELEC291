@@ -1,9 +1,11 @@
 // helicopter game made using processing
 // controlled using the f38x microcontroller
 
+// game constants
+
 Player player;
 
-Block[] blocks = new Block[100];
+Block[] blocks = new Block[50];
 
 // lateral movement
 float turnOffset_tgt;
@@ -13,8 +15,8 @@ void setup() {
     size(800, 600, P3D);
     player = new Player();
 
-    for (int i = 0; i < 100; i++) {
-        blocks[i] = new Block();
+    for (int i = 0; i < blocks.length; i++) {
+        blocks[i] = new Block(new PVector(random(-2000, 2000), random(0, 8000)));
     }
 }
 
@@ -31,8 +33,12 @@ void draw() {
     // draw block
     fill(255);
     strokeWeight(1);
-    for (Block block:blocks) {
-        block.draw();
+    for (int i = 0; i < blocks.length; i++) {
+        if (blocks[i].isEnabled()) {
+            blocks[i].draw();
+        } else {
+            blocks[i] = new Block();
+        }
     }
 
     player.draw();
@@ -123,16 +129,39 @@ class Player {
 }
 
 class Block {
-    PVector position;
+    private PVector position;
+    private boolean isEnabled = true;
 
-    Block() {
-        position = new PVector(random(-2000, 2000), random(0, 3000));
+    Block(PVector newVector) {
+        position = newVector.copy();
     }
 
-    void draw() {
+    Block() {
+        position = new PVector(random(-2000, 2000), 8000);
+    }
+
+    public void draw() {
+        stroke(
+            map(dist(position.x, position.y, 0, 0), 300, 8000, 0, 255));
         pushMatrix();
         translate(position.x, position.y, -50);
         box(100);
         popMatrix();
+
+        // update block
+        update();
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    private void update() {
+        position.y-=map(mouseY, 0, height, 100, 1);
+
+        // check if it's out of bound
+        if (position.y < -500) {
+            isEnabled = false;
+        }
     }
 }
