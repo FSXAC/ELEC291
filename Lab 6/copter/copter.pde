@@ -2,10 +2,16 @@
 // controlled using the f38x microcontroller
 
 // game constants
+// map size
+final int mapWidth = 3000;
+final int mapDepth = 10000;
+
+// number of concurrent blocks
+final int maxBlocks = 150;
 
 Player player;
 
-Block[] blocks = new Block[50];
+Block[] blocks = new Block[maxBlocks];
 
 // lateral movement
 float turnOffset_tgt;
@@ -16,12 +22,15 @@ void setup() {
     player = new Player();
 
     for (int i = 0; i < blocks.length; i++) {
-        blocks[i] = new Block(new PVector(random(-2000, 2000), random(0, 8000)));
+        blocks[i] = new Block(new PVector(random(-mapWidth, mapWidth), random(0, mapDepth)));
     }
 }
 
 void draw() {
     background(255);
+    ambientLight(50, 50, 50);
+    directionalLight(255,255,255,-1,1, 0);
+    directionalLight(255,255,255,1,0, -1);
 
     turnOffset_tgt = map(mouseX - width/2, -width/2, width/2, 80, -80);
     turnOffset = lerp(turnOffset, turnOffset_tgt, 0.1);
@@ -32,7 +41,7 @@ void draw() {
 
     // draw block
     fill(255);
-    strokeWeight(1);
+    // strokeWeight(1);
     for (int i = 0; i < blocks.length; i++) {
         if (blocks[i].isEnabled()) {
             blocks[i].draw();
@@ -64,7 +73,7 @@ class Player {
 
     public void draw() {
         stroke(0);
-        strokeWeight(1);
+        // strokeWeight(1);
         noFill();
         pushMatrix();
         translate(0, -height/2, 0);
@@ -74,6 +83,7 @@ class Player {
     }
 
     private void render() {
+        noFill();
         beginShape(QUADS);
         // front face
         vertex(-15, 50, -30);
@@ -116,7 +126,7 @@ class Player {
 
     private void renderFan() {
         box(10);
-        strokeWeight(2);
+        strokeWeight(1);
         for (int i = 0; i < 4; i++)  {
             rotateY(i * TWO_PI / 4);
             beginShape(TRIANGLE);
@@ -130,14 +140,23 @@ class Player {
 
 class Block {
     private PVector position;
-    private boolean isEnabled = true;
+    private boolean isEnabled;
+    private PVector corner1;
+    private PVector corner2;
+    private PVector corner3;
+    private PVector corner4;
 
     Block(PVector newVector) {
         position = newVector.copy();
+        isEnabled = true;
+
+        // generate random shapes
+        corner1 = new PVector(random(5, 50))
     }
 
     Block() {
-        position = new PVector(random(-2000, 2000), 8000);
+        position = new PVector(random(-mapWidth, mapWidth), mapDepth);
+        isEnabled = true;
     }
 
     public void draw() {
