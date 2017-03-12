@@ -3,29 +3,42 @@
 
 Player player;
 
+Block[] blocks = new Block[100];
+
+// lateral movement
+float turnOffset_tgt;
+float turnOffset = 0;
+
 void setup() {
     size(800, 600, P3D);
     player = new Player();
+
+    for (int i = 0; i < 100; i++) {
+        blocks[i] = new Block();
+    }
 }
 
 void draw() {
     background(255);
-    translate(width/2, height/2+100, -100);
-    // scale(100);
-    // noFill();
-    // rotateX(map(mouseX, 0, width, 0, TWO_PI));
-    // rotateY(map(mouseY, 0, height, 0, TWO_PI));
+
+    turnOffset_tgt = map(mouseX - width/2, -width/2, width/2, 80, -80);
+    turnOffset = lerp(turnOffset, turnOffset_tgt, 0.1);
+    translate(width/2 + turnOffset, height/2+100, -100);
     rotateX(3*PI/2 - radians(5));
     stroke(50);
     noFill();
 
-    pushMatrix();
-    translate(0, 0, -50);
-    box(100);
-    popMatrix();
+    // draw block
+    fill(255);
+    strokeWeight(1);
+    for (Block block:blocks) {
+        block.draw();
+    }
 
-    strokeWeight(2);
+    player.draw();
+}
 
+void drawAxis() {
     // x axis
     stroke(255, 0, 0);
     line(0, 0, 0, 100, 0, 0);
@@ -37,8 +50,6 @@ void draw() {
     // z
     stroke(0, 0, 255);
     line(0, 0, 0, 0, 0, -100);
-
-    player.draw();
 }
 
 class Player {
@@ -48,6 +59,7 @@ class Player {
     public void draw() {
         stroke(0);
         strokeWeight(1);
+        noFill();
         pushMatrix();
         translate(0, -height/2, 0);
         rotateY(map(mouseX, 0, width, PI/3, -PI/3));
@@ -91,7 +103,7 @@ class Player {
 
         pushMatrix();
         translate(0, -50, -15);
-        rotateY(radians(map(mouseY, 0, height, 0, 1) *millis()));
+        rotateY(0.3*radians(millis()));
         renderFan();
         popMatrix();
     }
@@ -107,5 +119,20 @@ class Player {
             vertex(5, 0, -20);
             endShape();
         }
+    }
+}
+
+class Block {
+    PVector position;
+
+    Block() {
+        position = new PVector(random(-2000, 2000), random(0, 3000));
+    }
+
+    void draw() {
+        pushMatrix();
+        translate(position.x, position.y, -50);
+        box(100);
+        popMatrix();
     }
 }
