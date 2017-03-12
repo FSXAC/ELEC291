@@ -181,27 +181,33 @@ class Block {
     }
 
     private void renderBox() {
+        float k;
+        if (position.y > 2000) {
+            k = map(position.y, 2000, 8000, 1, 0);
+        } else {
+            k = 1;
+        }
         beginShape(QUADS);
         // front
         vertex(50, -50, 0);
-        vertex(corner1.x, corner1.y, corner1.z);
-        vertex(corner4.x, corner4.y, corner4.z);
+        vertex(corner1.x, corner1.y, k*corner1.z);
+        vertex(corner4.x, corner4.y, k*corner4.z);
         vertex(-50, -50, 0);
         // left
         vertex(-50, -50, 0);
-        vertex(corner4.x, corner4.y, corner4.z);
-        vertex(corner3.x, corner3.y, corner3.z);
+        vertex(corner4.x, corner4.y, k*corner4.z);
+        vertex(corner3.x, corner3.y, k*corner3.z);
         vertex(-50, 50, 0);
         // right
         vertex(50, -50, 0);
-        vertex(corner1.x, corner1.y, corner1.z);
-        vertex(corner2.x, corner2.y, corner2.z);
+        vertex(corner1.x, corner1.y, k*corner1.z);
+        vertex(corner2.x, corner2.y, k*corner2.z);
         vertex(50, 50, 0);
         // top
-        vertex(corner1.x, corner1.y, corner1.z);
-        vertex(corner2.x, corner2.y, corner2.z);
-        vertex(corner3.x, corner3.y, corner3.z);
-        vertex(corner4.x, corner4.y, corner4.z);
+        vertex(corner1.x, corner1.y, k*corner1.z);
+        vertex(corner2.x, corner2.y, k*corner2.z);
+        vertex(corner3.x, corner3.y, k*corner3.z);
+        vertex(corner4.x, corner4.y, k*corner4.z);
         endShape(CLOSE);
     }
 
@@ -210,10 +216,15 @@ class Block {
     }
 
     private void update() {
+
+        // move blocks forward
         position.y-=map(mouseY, 0, height, 100, 1);
 
+        // move blocks sideways
+        position.x-=map(mouseX, 0, width, -10, 10);
+
         // check if it's out of bound
-        if (position.y < -500) {
+        if (position.y < -500 || position.x > mapWidth || position.x < -mapWidth) {
             isEnabled = false;
         }
     }
