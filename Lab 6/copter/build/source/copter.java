@@ -34,6 +34,7 @@ Block[] blocks = new Block[maxBlocks];
 // lateral movement
 float turnOffset_tgt;
 float turnOffset = 0;
+float trackOffset = 0;
 
 public void setup() {
     
@@ -55,7 +56,8 @@ public void draw() {
     // camera offsets
     turnOffset_tgt = map(mouseX - width/2, -width/2, width/2, 80, -80);
     turnOffset = lerp(turnOffset, turnOffset_tgt, 0.1f);
-    translate(width/2 + turnOffset, height/2+100, -100);
+    trackOffset = lerp(trackOffset, (player.getSpeed() > 60) ? -200 : -100, 0.05f);
+    translate(width/2 + turnOffset, height/2+100, trackOffset); //FIXME
     rotateX(3*PI/2 - radians(5));
 
     // draw ground
@@ -183,7 +185,7 @@ class Player {
         pushMatrix();
         translate(0, -2, 0);
         box(10);
-        if (mouseY > width/2) {
+        if (speed < 60) {
             for (int i = 0; i < 4; i++)  {
                 rotateY(i * TWO_PI / 4);
                 beginShape(TRIANGLE);
@@ -193,6 +195,17 @@ class Player {
                 endShape();
             }
         } else {
+            // draw afterburner
+            beginShape(QUADS);
+            fill(255, 255, 255);
+            vertex(-10, 0, 0);
+            vertex(10, 0, 0);
+            fill(0, 255, 255);
+            vertex(10, -100, 0);
+            vertex(-10, -100, 0);
+            endShape();
+
+            // draw circular
             rotateX(PI/2);
             fill(255, 50);
             ellipse(0, 0, 60, 60);
