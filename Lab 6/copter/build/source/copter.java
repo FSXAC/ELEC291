@@ -53,7 +53,7 @@ public void setup() {
     }
 
     // load font
-    font = createFont("data/big_noodle_titling_oblique.ttf", 100);
+    font = createFont("data/big_noodle_titling_oblique.ttf", 100, true);
 
     // create title
     title = new Title("Welcome");
@@ -99,7 +99,6 @@ public void draw() {
     player.draw();
 
     // end of drawing 3D world
-    drawAxis();
     popMatrix();
 
     // draw on screen effects
@@ -359,23 +358,45 @@ class Title {
     // keyframes - time
     int time = 0;
 
+    // text size lerp
+
     Title(String msg) {
         message = msg;
     }
 
     public void draw() {
         if (enabled) {
-            fill(255, 150, 0,
+            // draw dimming
+            noStroke();
+            rectMode(CORNER);
+            fill(0, constrain(map(time, 0, 10, 0, 175), 0, 175) - constrain(map(time, 168, 220, 0, 175), 0, 175));
+            rect(0, 180, width, 160);
+
+            // change fill
+            fill(
+                // rgb
+                255,
+                constrain(map(time, 30, 110, 255, 213), 0, 255),
+                constrain(map(time, 20, 30, 255, 0), 0, 255) + constrain(map(time, 30, 110, 0, 74), 0, 255),
+
+                // alpha
                 constrain(map(time, 0, 10, 0, 255), 0, 255) - constrain(map(time, 168, 220, 0, 255), 0, 255));
-                textAlign(CENTER, CENTER);
+
+            textAlign(CENTER, CENTER);
             textFont(font);
+
+            // change text size
+            textSize(PApplet.parseInt(map(time, 0, 220, 150, 100)));
+
             text(message, width/2, height/2 - 50);
+
+            // update text status
             update();
         }
     }
 
     private void update() {
-        if (time < 230) {
+        if (time < 220) {
             time++;
         } else {
             enabled = false;
