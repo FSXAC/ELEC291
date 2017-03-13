@@ -3,6 +3,8 @@ import processing.data.*;
 import processing.event.*; 
 import processing.opengl.*; 
 
+import processing.sound.*; 
+
 import java.util.HashMap; 
 import java.util.ArrayList; 
 import java.io.File; 
@@ -17,6 +19,9 @@ public class copter extends PApplet {
 // helicopter game made using processing
 // controlled using the f38x microcontroller
 
+// sound libarry
+
+
 // game constants
 // map size
 final int mapWidth = 3000;
@@ -29,8 +34,8 @@ final int maxBlocks = 150;
 PFont font;
 Title title;
 
-// another layer
-PGraphics pg;
+// sound player
+SoundFile victorySound;
 
 // create player object
 Player player;
@@ -55,13 +60,16 @@ public void setup() {
     // load font
     font = createFont("data/big_noodle_titling_oblique.ttf", 100, true);
 
+    // load sound
+    victorySound = new SoundFile(this, "data/victory.mp3");
+
     // create title
     title = new Title("Welcome");
 }
 
 public void draw() {
     // setup background and camera
-    background(255);
+    background(216, 251, 255);
     ambientLight(50, 50, 50);
     directionalLight(255,255,255,0,1, 0);
     directionalLight(255,255,255,0,0, -1);
@@ -356,7 +364,7 @@ class Title {
 
     // keyframes - time
     int time = 0;
-    int maxTime = 250;
+    int maxTime = 260;
 
     // flashing star and circle
     boolean flashC;
@@ -365,8 +373,12 @@ class Title {
     float x, y;
     boolean flash;
 
+    // flash intial letter
+    boolean flashI;
+
     Title(String msg) {
         message = msg;
+        victorySound.play();
     }
 
     public void draw() {
@@ -374,24 +386,24 @@ class Title {
             // draw dimming
             noStroke();
             rectMode(CORNER);
-            fill(0, constrain(map(time, 0, 10, 0, 175), 0, 175) - constrain(map(time, 168, maxTime, 0, 175), 0, 175));
+            fill(0, constrain(map(time, 0, 20, 0, 175), 0, 175) - constrain(map(time, 178, maxTime, 0, 175), 0, 175));
             rect(0, 180, width, 160);
 
             // change fill
             textColor = color(
                 // rgb
                 255,
-                constrain(map(time, 30, 110, 255, 213), 0, 255),
-                constrain(map(time, 20, 30, 255, 0), 0, 255) + constrain(map(time, 30, 110, 0, 74), 0, 255),
+                constrain(map(time, 40, 120, 255, 213), 0, 255),
+                constrain(map(time, 30, 40, 255, 0), 0, 255) + constrain(map(time, 40, 120, 0, 74), 0, 255),
 
                 // alpha
-                constrain(map(time, 0, 10, 0, 255), 0, 255) - constrain(map(time, 168, 220, 0, 255), 0, 255));
+                constrain(map(time, 10, 20, 0, 255), 0, 255) - constrain(map(time, 178, 230, 0, 255), 0, 255));
 
             textAlign(CENTER, CENTER);
             textFont(font);
 
             // change text size
-            textSize(PApplet.parseInt(map(time, 0, 220, 150, 100)));
+            textSize(PApplet.parseInt(map(time, 10, 230, 150, 100)));
 
             // flash
             flashCircle();
@@ -403,6 +415,9 @@ class Title {
             fill(textColor);
             text(message, width/2, height/2 - 50);
 
+            // flash initials
+            flashInitial();
+
             // update text status
             update();
         }
@@ -412,8 +427,8 @@ class Title {
         if (flashC) {
             noFill();
             stroke(255);
-            strokeWeight(constrain(map(time, 0, 30, 30, 0), 0, 30));
-            float diam = map(time, 0, 50, 50, 500);
+            strokeWeight(constrain(map(time, 10, 40, 30, 0), 0, 30));
+            float diam = map(time, 10, 60, 50, 500);
             ellipse(width/2 - 150, height/2 - 60, diam, diam);
         }
     }
@@ -435,9 +450,18 @@ class Title {
         }
     }
 
+    private void flashInitial() {
+        if (flashI) {
+            fill(255);
+            textSize(PApplet.parseInt(map(time, 0, 15, 800, 150)));
+            text(message.charAt(0), width/2-20*message.length(), height/2-50);
+        }
+    }
+
     private void update() {
-        flash = (time > 10 && time < 60) && !flash;
-        flashC = (time < 30);
+        flash = (time > 20 && time < 70) && !flash;
+        flashC = (time > 10 && time < 40);
+        flashI = (time < 15);
         if (time < maxTime) {
             time++;
         } else {
