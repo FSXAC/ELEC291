@@ -37,11 +37,27 @@ void draw() {
     directionalLight(255,255,255,0,1, 0);
     directionalLight(255,255,255,0,0, -1);
 
+    // draw on screen effects
+    if (player.getSpeed() > 60) {
+        // draw random camera effects
+        stroke(150);
+        strokeWeight(5);
+        float randomRStart = random(100, 300);
+        float randomREnd = random(500, 800);
+        float randomAngle = random(0, TWO_PI);
+        line(
+            width/2 + randomRStart * cos(randomAngle),
+            height/2 + randomRStart * sin(randomAngle),
+            width/2 + randomREnd * cos(randomAngle),
+            height/2 + randomREnd * sin(randomAngle)
+            );
+    }
+
     // camera offsets
     turnOffset_tgt = map(mouseX - width/2, -width/2, width/2, 80, -80);
     turnOffset = lerp(turnOffset, turnOffset_tgt, 0.1);
     trackOffset = lerp(trackOffset, (player.getSpeed() > 60) ? -200 : -100, 0.05);
-    translate(width/2 + turnOffset, height/2+100, trackOffset); //FIXME
+    translate(width/2 + turnOffset, height/2+100, trackOffset);
     rotateX(3*PI/2 - radians(5));
 
     // draw ground
