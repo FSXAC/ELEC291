@@ -98,9 +98,15 @@ public void drawAxis() {
 }
 
 class Player {
+    private float speed;
+    private float fanRotation;
 
     // constructor
     Player() {
+        speed = 10;
+
+        // initial fan rotation
+        fanRotation = 0;
     }
 
     // draw the player
@@ -112,8 +118,21 @@ class Player {
         rotateY(map(mouseX, 0, width, PI/3, -PI/3));
         this.render();
         popMatrix();
+
+        // call the update function to update player status
+        update();
     }
 
+    public float getSpeed() {
+        return speed;
+    }
+
+    private void update() {
+        speed = map(mouseY, 0, height, 100, 10);
+        fanRotation = (fanRotation >= TWO_PI) ? 0 : fanRotation + 0.01f * speed;
+    }
+
+    // render player frame
     private void render() {
         noFill();
         beginShape(QUADS);
@@ -149,13 +168,17 @@ class Player {
         vertex(50, -50, 0);
         endShape();
 
+        // render propeellers
         pushMatrix();
         translate(0, -50, -15);
-        rotateY(0.3f*radians(millis()));
+
+        // rotation is a function of time
+        rotateY(fanRotation);
         renderFan();
         popMatrix();
     }
 
+    // rander propellers
     private void renderFan() {
         pushMatrix();
         translate(0, -2, 0);
@@ -255,15 +278,16 @@ class Block {
         return isEnabled;
     }
 
+    // move blocks towards players
     private void update() {
 
         // move blocks forward
-        position.y-=map(mouseY, 0, height, 100, 1);
+        position.y-=player.getSpeed();
 
         // move blocks sideways
-        position.x-=map(mouseX, 0, width, -10, 10);
+        position.x-=map(mouseX, 0, width, -15, 15);
 
-        // check if it's out of bound
+        // check if it's out of bound, if so: reset
         if (position.y < -500 || position.x > mapWidth || position.x < -mapWidth) {
             isEnabled = false;
         }
