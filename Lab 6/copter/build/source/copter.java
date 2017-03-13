@@ -27,6 +27,7 @@ final int maxBlocks = 150;
 
 // font object
 PFont font;
+Title title;
 
 // another layer
 PGraphics pg;
@@ -53,6 +54,9 @@ public void setup() {
 
     // load font
     font = createFont("data/big_noodle_titling_oblique.ttf", 100);
+
+    // create title
+    title = new Title("Welcome");
 }
 
 public void draw() {
@@ -114,12 +118,14 @@ public void draw() {
             width/2 + randomREnd * cos(randomAngle),
             height/2 + randomREnd * sin(randomAngle)
             );
-
-        fill(255, 200, 0);
-        textAlign(CENTER, CENTER);
-        textFont(font);
-        text("MATCH COMPLETE", width/2, height/2);
     }
+
+    // draw title
+    title.draw();
+}
+
+public void mouseClicked() {
+    title = new Title("Victory!");
 }
 
 public void drawAxis() {
@@ -340,6 +346,39 @@ class Block {
         // check if it's out of bound, if so: reset
         if (position.y < -500 || position.x > mapWidth || position.x < -mapWidth) {
             isEnabled = false;
+        }
+    }
+}
+
+class Title {
+    boolean enabled = true;
+
+    // contains the string of the message
+    String message;
+
+    // keyframes - time
+    int time = 0;
+
+    Title(String msg) {
+        message = msg;
+    }
+
+    public void draw() {
+        if (enabled) {
+            fill(255, 150, 0,
+                constrain(map(time, 0, 10, 0, 255), 0, 255) - constrain(map(time, 168, 220, 0, 255), 0, 255));
+                textAlign(CENTER, CENTER);
+            textFont(font);
+            text(message, width/2, height/2 - 50);
+            update();
+        }
+    }
+
+    private void update() {
+        if (time < 230) {
+            time++;
+        } else {
+            enabled = false;
         }
     }
 }
