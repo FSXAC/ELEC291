@@ -360,6 +360,7 @@ class Title {
 
     // keyframes - time
     int time = 0;
+    int maxTime = 250;
 
     // random flashing text offsets
     float x, y;
@@ -374,7 +375,7 @@ class Title {
             // draw dimming
             noStroke();
             rectMode(CORNER);
-            fill(0, constrain(map(time, 0, 10, 0, 175), 0, 175) - constrain(map(time, 168, 220, 0, 175), 0, 175));
+            fill(0, constrain(map(time, 0, 10, 0, 175), 0, 175) - constrain(map(time, 168, maxTime, 0, 175), 0, 175));
             rect(0, 180, width, 160);
 
             // change fill
@@ -394,20 +395,7 @@ class Title {
             textSize(PApplet.parseInt(map(time, 0, 220, 150, 100)));
 
             // flashing text
-            if (flash) {
-                x = random(-10, 10);
-                y = random(-10, 10);
-                fill(textColor);
-                pushMatrix();
-                translate(width/2 + x, height/2 - 50 + y);
-                for (int v = -1; v < 2; v++) {
-                    text(message, 3*v, 0);
-                    text(message, 0, 3*v);
-                }
-                fill(0);
-                text(message, 0, 0);
-                popMatrix();
-            }
+            flashText();
 
             fill(textColor);
             text(message, width/2, height/2 - 50);
@@ -417,9 +405,26 @@ class Title {
         }
     }
 
+    private void flashText() {
+        if (flash) {
+            x = random(-10, 10);
+            y = random(-10, 10);
+            fill(textColor);
+            pushMatrix();
+            translate(width/2 + x, height/2 - 50 + y);
+            for (int v = -1; v < 2; v++) {
+                text(message, 3*v, 0);
+                text(message, 0, 3*v);
+            }
+            fill(0);
+            text(message, 0, 0);
+            popMatrix();
+        }
+    }
+
     private void update() {
         flash = (time > 10 && time < 60) && !flash;
-        if (time < 220) {
+        if (time < maxTime) {
             time++;
         } else {
             enabled = false;

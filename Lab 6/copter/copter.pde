@@ -344,6 +344,7 @@ class Title {
 
     // keyframes - time
     int time = 0;
+    int maxTime = 250;
 
     // random flashing text offsets
     float x, y;
@@ -358,7 +359,7 @@ class Title {
             // draw dimming
             noStroke();
             rectMode(CORNER);
-            fill(0, constrain(map(time, 0, 10, 0, 175), 0, 175) - constrain(map(time, 168, 220, 0, 175), 0, 175));
+            fill(0, constrain(map(time, 0, 10, 0, 175), 0, 175) - constrain(map(time, 168, maxTime, 0, 175), 0, 175));
             rect(0, 180, width, 160);
 
             // change fill
@@ -407,7 +408,7 @@ class Title {
 
     private void update() {
         flash = (time > 10 && time < 60) && !flash;
-        if (time < 220) {
+        if (time < maxTime) {
             time++;
         } else {
             enabled = false;
