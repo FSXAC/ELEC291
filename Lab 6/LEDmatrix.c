@@ -37,26 +37,7 @@ void main(void) {
     LED_init();
     printf("\x1b[s");
     while (1) {
-        // checkers
-        // LED_write(position, (position % 2) ? 0x55 : 0xAA);
-        // position = (position == 0x08) ? 0x01 : position + 1;
-        // LED_display(sprite1);
-        // delay(25);
-        // LED_display(sprite2);
-        // delay(25);
-        // LED_display(sprite3);
-        // delay(25);
-        // LED_display(sprite4);
-        // delay(25);
-        // LED_display(sprite5);
-        // delay(25);
-        // LED_display(sprite6);
-        // delay(25);
-        // LED_display(sprite7);
-        // delay(25);
-        // LED_clear();
-        // delay(5000);
-        LED_animate(IMAGES, 4, 10);
+        LED_animate(IMAGES, 4, 30);
     }
 }
 

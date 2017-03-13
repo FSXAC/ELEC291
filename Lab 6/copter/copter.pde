@@ -10,7 +10,7 @@ final int mapWidth = 3000;
 final int mapDepth = 10000;
 
 // number of concurrent blocks
-final int maxBlocks = 150;
+final int maxBlocks = 50;
 
 // font object
 PFont font;
@@ -110,10 +110,19 @@ void draw() {
     if (title != null) {
         title.draw();
     }
+    
+    // draw collisions
+    fill(230, 0, 0);
+    for (int i = 0; i < player.collisions; i++) {
+        ellipse(60 + 60*i, 60, 50, 50);
+    }
 }
 
 void mouseClicked() {
     title = new Title("Victory!");
+}
+
+void keyPressed() {
 }
 
 void drawAxis() {
@@ -133,6 +142,8 @@ void drawAxis() {
 class Player {
     private float speed;
     private float fanRotation;
+    
+    int collisions = 0;
 
     // constructor
     Player() {
@@ -158,6 +169,11 @@ class Player {
 
     public float getSpeed() {
         return speed;
+    }
+    
+    // collide with player
+    public void collide() {
+        collisions++;
     }
 
     private void update() {
@@ -223,13 +239,12 @@ class Player {
             }
         } else {
             // draw afterburner
-            beginShape(QUADS);
+            beginShape(TRIANGLE);
             fill(255, 255, 255);
             vertex(-10, 0, 0);
             vertex(10, 0, 0);
             fill(0, 255, 255);
-            vertex(10, -100, 0);
-            vertex(-10, -100, 0);
+            vertex(0, -random(80, 130), 0);
             endShape();
 
             // draw circular
@@ -331,6 +346,12 @@ class Block {
         if (position.y < -500 || position.x > mapWidth || position.x < -mapWidth) {
             isEnabled = false;
         }
+        
+        // check if collision
+        if (position.y < -200 && abs(position.x) < 65) {
+            isEnabled = false;
+            player.collide();
+        }
     }
 }
 
@@ -368,7 +389,7 @@ class Title {
             noStroke();
             rectMode(CORNER);
             fill(0, constrain(map(time, 0, 20, 0, 175), 0, 175) - constrain(map(time, 178, maxTime, 0, 175), 0, 175));
-            rect(0, 180, width, 160);
+            rect(0, 155, width, 200);
 
             // change fill
             textColor = color(
