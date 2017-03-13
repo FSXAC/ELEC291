@@ -213,21 +213,17 @@ class Player {
         endShape();
 
         // render propeellers
-        pushMatrix();
-        translate(0, -50, -15);
-
-        // rotation is a function of time
-        rotateY(fanRotation);
         renderFan();
-        popMatrix();
     }
 
     // rander propellers
     private void renderFan() {
         pushMatrix();
-        translate(0, -2, 0);
+        translate(0, -52, -15);
         box(10);
         if (speed < 60) {
+            // rotation is a function of time
+            rotateY(fanRotation);
             for (int i = 0; i < 4; i++)  {
                 rotateY(i * TWO_PI / 4);
                 beginShape(TRIANGLE);
@@ -362,6 +358,9 @@ class Title {
     int time = 0;
     int maxTime = 250;
 
+    // flashing star and circle
+    boolean flashC;
+
     // random flashing text offsets
     float x, y;
     boolean flash;
@@ -394,14 +393,28 @@ class Title {
             // change text size
             textSize(PApplet.parseInt(map(time, 0, 220, 150, 100)));
 
+            // flash
+            flashCircle();
+
             // flashing text
             flashText();
 
+            // actual text
             fill(textColor);
             text(message, width/2, height/2 - 50);
 
             // update text status
             update();
+        }
+    }
+
+    private void flashCircle() {
+        if (flashC) {
+            noFill();
+            stroke(255);
+            strokeWeight(constrain(map(time, 0, 30, 30, 0), 0, 30));
+            float diam = map(time, 0, 50, 50, 500);
+            ellipse(width/2 - 150, height/2 - 60, diam, diam);
         }
     }
 
@@ -424,6 +437,7 @@ class Title {
 
     private void update() {
         flash = (time > 10 && time < 60) && !flash;
+        flashC = (time < 30);
         if (time < maxTime) {
             time++;
         } else {
