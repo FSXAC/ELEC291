@@ -25,8 +25,10 @@ final int mapDepth = 10000;
 // number of concurrent blocks
 final int maxBlocks = 150;
 
+// create player object
 Player player;
 
+// create obsticle objects
 Block[] blocks = new Block[maxBlocks];
 
 // lateral movement
@@ -37,27 +39,38 @@ public void setup() {
     
     player = new Player();
 
+    // spawn random blocks
     for (int i = 0; i < blocks.length; i++) {
         blocks[i] = new Block(new PVector(random(-mapWidth, mapWidth), random(0, mapDepth)));
     }
 }
 
 public void draw() {
+    // setup background and camera
     background(255);
     ambientLight(50, 50, 50);
     directionalLight(255,255,255,0,1, 0);
     directionalLight(255,255,255,0,0, -1);
 
+    // camera offsets
     turnOffset_tgt = map(mouseX - width/2, -width/2, width/2, 80, -80);
     turnOffset = lerp(turnOffset, turnOffset_tgt, 0.1f);
     translate(width/2 + turnOffset, height/2+100, -100);
     rotateX(3*PI/2 - radians(5));
-    stroke(50);
-    noFill();
+
+    // draw ground
+    pushMatrix();
+    translate(0, 0, 50);
+    rectMode(CENTER);
+    fill(150, 150, 150);
+    rect(0, 0, 4*mapWidth, 4*mapDepth);
+    popMatrix();
+
 
     // draw block
+    stroke(50);
+    strokeWeight(10);
     fill(255);
-    // strokeWeight(1);
     for (int i = 0; i < blocks.length; i++) {
         if (blocks[i].isEnabled()) {
             blocks[i].draw();
@@ -66,6 +79,7 @@ public void draw() {
         }
     }
 
+    // draw player
     player.draw();
 }
 
@@ -84,12 +98,14 @@ public void drawAxis() {
 }
 
 class Player {
+
+    // constructor
     Player() {
     }
 
+    // draw the player
     public void draw() {
         stroke(0);
-        // strokeWeight(1);
         noFill();
         pushMatrix();
         translate(0, -height/2, 0);
@@ -141,9 +157,10 @@ class Player {
     }
 
     private void renderFan() {
+        pushMatrix();
+        translate(0, -2, 0);
         box(10);
         if (mouseY > width/2) {
-            strokeWeight(1);
             for (int i = 0; i < 4; i++)  {
                 rotateY(i * TWO_PI / 4);
                 beginShape(TRIANGLE);
@@ -153,13 +170,11 @@ class Player {
                 endShape();
             }
         } else {
-            pushMatrix();
-            translate(0, -2, 0);
             rotateX(PI/2);
             fill(255, 50);
             ellipse(0, 0, 60, 60);
-            popMatrix();
         }
+        popMatrix();
     }
 }
 

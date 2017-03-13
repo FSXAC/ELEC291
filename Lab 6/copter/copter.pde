@@ -9,8 +9,10 @@ final int mapDepth = 10000;
 // number of concurrent blocks
 final int maxBlocks = 150;
 
+// create player object
 Player player;
 
+// create obsticle objects
 Block[] blocks = new Block[maxBlocks];
 
 // lateral movement
@@ -21,27 +23,38 @@ void setup() {
     size(800, 600, P3D);
     player = new Player();
 
+    // spawn random blocks
     for (int i = 0; i < blocks.length; i++) {
         blocks[i] = new Block(new PVector(random(-mapWidth, mapWidth), random(0, mapDepth)));
     }
 }
 
 void draw() {
+    // setup background and camera
     background(255);
     ambientLight(50, 50, 50);
     directionalLight(255,255,255,0,1, 0);
     directionalLight(255,255,255,0,0, -1);
 
+    // camera offsets
     turnOffset_tgt = map(mouseX - width/2, -width/2, width/2, 80, -80);
     turnOffset = lerp(turnOffset, turnOffset_tgt, 0.1);
     translate(width/2 + turnOffset, height/2+100, -100);
     rotateX(3*PI/2 - radians(5));
-    stroke(50);
-    noFill();
+
+    // draw ground
+    pushMatrix();
+    translate(0, 0, 50);
+    rectMode(CENTER);
+    fill(150, 150, 150);
+    rect(0, 0, 4*mapWidth, 4*mapDepth);
+    popMatrix();
+
 
     // draw block
+    stroke(50);
+    strokeWeight(10);
     fill(255);
-    // strokeWeight(1);
     for (int i = 0; i < blocks.length; i++) {
         if (blocks[i].isEnabled()) {
             blocks[i].draw();
@@ -50,6 +63,7 @@ void draw() {
         }
     }
 
+    // draw player
     player.draw();
 }
 
@@ -68,12 +82,14 @@ void drawAxis() {
 }
 
 class Player {
+
+    // constructor
     Player() {
     }
 
+    // draw the player
     public void draw() {
         stroke(0);
-        // strokeWeight(1);
         noFill();
         pushMatrix();
         translate(0, -height/2, 0);
@@ -82,6 +98,7 @@ class Player {
         popMatrix();
     }
 
+    // render player frame
     private void render() {
         noFill();
         beginShape(QUADS);
@@ -124,10 +141,12 @@ class Player {
         popMatrix();
     }
 
+    // rander propellers
     private void renderFan() {
+        pushMatrix();
+        translate(0, -2, 0);
         box(10);
         if (mouseY > width/2) {
-            strokeWeight(1);
             for (int i = 0; i < 4; i++)  {
                 rotateY(i * TWO_PI / 4);
                 beginShape(TRIANGLE);
@@ -137,13 +156,11 @@ class Player {
                 endShape();
             }
         } else {
-            pushMatrix();
-            translate(0, -2, 0);
             rotateX(PI/2);
             fill(255, 50);
             ellipse(0, 0, 60, 60);
-            popMatrix();
         }
+        popMatrix();
     }
 }
 
@@ -224,15 +241,16 @@ class Block {
         return isEnabled;
     }
 
+    // move blocks towards players
     private void update() {
 
         // move blocks forward
         position.y-=map(mouseY, 0, height, 100, 1);
 
         // move blocks sideways
-        position.x-=map(mouseX, 0, width, -10, 10);
+        position.x-=map(mouseX, 0, width, -15, 15);
 
-        // check if it's out of bound
+        // check if it's out of bound, if so: reset
         if (position.y < -500 || position.x > mapWidth || position.x < -mapWidth) {
             isEnabled = false;
         }
