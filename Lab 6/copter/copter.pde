@@ -24,6 +24,7 @@ Player player;
 
 // create obsticle objects
 Block[] blocks = new Block[maxBlocks];
+Megablock mBlock = new Megablock(new PVector(random(-mapWidth, mapWidth), mapDepth));
 
 // lateral movement
 float turnOffset_tgt;
@@ -36,7 +37,7 @@ void setup() {
 
     // spawn random blocks
     for (int i = 0; i < blocks.length; i++) {
-        blocks[i] = new Block(new PVector(random(-mapWidth, mapWidth), random(0, mapDepth)));
+        blocks[i] = new Block(new PVector(random(-mapWidth, mapWidth), random(500, mapDepth)));
     }
 
     // load font
@@ -90,6 +91,8 @@ void draw() {
             blocks[i] = new Block();
         }
     }
+    if (mBlock.isEnabled()) mBlock.draw();
+    else mBlock = new Megablock();
 
     // draw player
     player.draw();
@@ -122,16 +125,13 @@ void draw() {
         title.draw();
     }
 
-    // draw collisions
-    fill(230, 0, 0);
-    for (int i = 0; i < player.collisions; i++) {
-        ellipse(60 + 60*i, 60, 50, 50);
-    }
+    fill(0);
+    text(mBlock.position.y, 10, 10);
 }
 
 // mouse events
 void mouseClicked() {
-    title = new Title("Victory!");
+    title = new Title("Complete!");
 }
 
 // debug axis

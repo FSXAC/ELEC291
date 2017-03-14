@@ -20,6 +20,7 @@ class Player {
         pushMatrix();
         translate(0, -height/2, 0);
         rotateY(map(mouseX, 0, width, PI/3, -PI/3));
+        rotateZ(map(mouseX, 0, width, PI/12, -PI/12));
         this.render();
         popMatrix();
 
@@ -52,6 +53,13 @@ class Player {
     // render player frame
     private void render() {
         noFill();
+        if (speed > 60) {
+            stroke(
+                constrain(map(speed, 60, 70, 0, 255), 0, 255),
+                constrain(map(speed, 60, 100, 0, 255), 0, 255),
+                constrain(map(speed, 80, 100, 0, 100), 0, 100)
+                );
+        }
         beginShape(QUADS);
         // front face
         vertex(-15, 50, -30);
@@ -93,6 +101,7 @@ class Player {
     private void renderFan() {
         pushMatrix();
         translate(0, -52, -15);
+        stroke(0);
         box(10);
         if (speed < 60) {
             // rotation is a function of time

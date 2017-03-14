@@ -1,31 +1,31 @@
-class Block {
-    private PVector position;
+class Megablock {
+    PVector position;
     private boolean isEnabled;
     private PVector corner1;
     private PVector corner2;
     private PVector corner3;
     private PVector corner4;
 
-    Block(PVector newVector) {
+    Megablock(PVector newVector) {
         position = newVector.copy();
         isEnabled = true;
 
         // generate random shapes
-        corner1 = new PVector(random(25, 50), random(-50, -25), random(-200, -50));
-        corner2 = new PVector(random(25, 50), random(25, 50), random(-200, -50));
-        corner3 = new PVector(random(-50, -25), random(25, 50), random(-200, -50));
-        corner4 = new PVector(random(-50, -25), random(-50, -25), random(-200, -50));
+        corner1 = new PVector(random(100, 200), random(-200, -100), random(-1000, -200));
+        corner2 = new PVector(random(100, 300), random(100, 200), random(-1000, -200));
+        corner3 = new PVector(random(-200, -100), random(100, 200), random(-1000, -200));
+        corner4 = new PVector(random(-200, -100), random(-200, -100), random(-1000, -200));
     }
 
-    Block() {
+    Megablock() {
         position = new PVector(random(-mapWidth, mapWidth), random(mapDepth-1000, mapDepth));
         isEnabled = true;
 
         // generate random shapes
-        corner1 = new PVector(random(25, 50), random(-50, -25), random(-200, -50));
-        corner2 = new PVector(random(25, 50), random(25, 50), random(-200, -50));
-        corner3 = new PVector(random(-50, -25), random(25, 50), random(-200, -50));
-        corner4 = new PVector(random(-50, -25), random(-50, -25), random(-200, -50));
+        corner1 = new PVector(random(100, 200), random(-200, -100), random(-1000, -200));
+        corner2 = new PVector(random(100, 300), random(100, 200), random(-1000, -200));
+        corner3 = new PVector(random(-200, -100), random(100, 200), random(-1000, -200));
+        corner4 = new PVector(random(-200, -100), random(-200, -100), random(-1000, -200));
     }
 
     public void draw() {
@@ -48,20 +48,20 @@ class Block {
         }
         beginShape(QUADS);
         // front
-        vertex(50, -50, 0);
+        vertex(300, -300, 0);
         vertex(corner1.x, corner1.y, k*corner1.z);
         vertex(corner4.x, corner4.y, k*corner4.z);
-        vertex(-50, -50, 0);
+        vertex(-300, -300, 0);
         // left
-        vertex(-50, -50, 0);
+        vertex(-300, -300, 0);
         vertex(corner4.x, corner4.y, k*corner4.z);
         vertex(corner3.x, corner3.y, k*corner3.z);
-        vertex(-50, 50, 0);
+        vertex(-300, 300, 0);
         // right
-        vertex(50, -50, 0);
+        vertex(300, -300, 0);
         vertex(corner1.x, corner1.y, k*corner1.z);
         vertex(corner2.x, corner2.y, k*corner2.z);
-        vertex(50, 50, 0);
+        vertex(300, 300, 0);
         // top
         vertex(corner1.x, corner1.y, k*corner1.z);
         vertex(corner2.x, corner2.y, k*corner2.z);
@@ -89,7 +89,7 @@ class Block {
         }
 
         // check if collision
-        if ((position.y < -200 && position.y > -500) && abs(position.x) < 65) {
+        if ((position.y < 0) && abs(position.x) < 300) {
             isEnabled = false;
             player.collide();
         }
