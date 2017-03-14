@@ -28,7 +28,7 @@ final int mapWidth = 3000;
 final int mapDepth = 10000;
 
 // number of concurrent blocks
-final int maxBlocks = 150;
+final int maxBlocks = 75;
 
 // font object
 PFont font;
@@ -61,10 +61,7 @@ public void setup() {
     font = createFont("data/big_noodle_titling_oblique.ttf", 100, true);
 
     // load sound
-    victorySound = new SoundFile(this, "data/victory.mp3");
-
-    // create title
-    title = new Title("Welcome");
+    victorySound = new SoundFile(this, "victory.mp3");
 }
 
 public void draw() {
@@ -81,6 +78,15 @@ public void draw() {
     trackOffset = lerp(trackOffset, (player.getSpeed() > 60) ? -200 : -100, 0.05f);
     translate(width/2 + turnOffset, height/2+100, trackOffset);
     rotateX(3*PI/2 - radians(5));
+
+    // screenshake
+    if (player.getSpeed() > 60) {
+        translate(random(-2, 2), random(-2, 2), random(-2, 2));
+    }
+    if (player.getCollide()) {
+        float pSpeed = map(player.getSpeed(), 10, 100, 10, 50);
+        translate(random(-pSpeed, pSpeed), 0,  random(-pSpeed, pSpeed));
+    }
 
     // draw ground
     pushMatrix();
@@ -112,6 +118,8 @@ public void draw() {
     // draw on screen effects
     if (player.getSpeed() > 60) {
         // draw random camera effects
+        // screenshake
+        translate(random(-5, 5), random(-5, 5));
 
         // windsheild effects
         stroke(150);
@@ -128,11 +136,22 @@ public void draw() {
     }
 
     // draw title
-    title.draw();
+    if (title != null) {
+        title.draw();
+    }
+
+    // draw collisions
+    fill(230, 0, 0);
+    for (int i = 0; i < player.collisions; i++) {
+        ellipse(60 + 60*i, 60, 50, 50);
+    }
 }
 
 public void mouseClicked() {
     title = new Title("Victory!");
+}
+
+public void keyPressed() {
 }
 
 public void drawAxis() {
@@ -152,6 +171,9 @@ public void drawAxis() {
 class Player {
     private float speed;
     private float fanRotation;
+
+    int collisions = 0;
+    int collisionTimer = 0;
 
     // constructor
     Player() {
@@ -179,9 +201,22 @@ class Player {
         return speed;
     }
 
+    // collide with player
+    public void collide() {
+        collisions++;
+        collisionTimer = 30;
+        if (speed > 10) speed *= 0.5f;
+    }
+
+    public boolean getCollide() {
+        return (collisionTimer > 0);
+    }
+
     private void update() {
-        speed = map(mouseY, 0, height, 100, 10);
+        if (speed < 100) speed = lerp(speed, 100, 0.001f);
+        // speed = map(mouseY, 0, height, 100, 10);
         fanRotation = (fanRotation >= TWO_PI) ? 0 : fanRotation + 0.01f * speed;
+        if (collisionTimer > 0) collisionTimer--;
     }
 
     // render player frame
@@ -242,13 +277,12 @@ class Player {
             }
         } else {
             // draw afterburner
-            beginShape(QUADS);
+            beginShape(TRIANGLE);
             fill(255, 255, 255);
             vertex(-10, 0, 0);
             vertex(10, 0, 0);
             fill(0, 255, 255);
-            vertex(10, -100, 0);
-            vertex(-10, -100, 0);
+            vertex(0, -random(80, 130) * map(speed, 60, 100, 0.5f, 3), 0);
             endShape();
 
             // draw circular
@@ -350,6 +384,12 @@ class Block {
         if (position.y < -500 || position.x > mapWidth || position.x < -mapWidth) {
             isEnabled = false;
         }
+
+        // check if collision
+        if (position.y < -200 && abs(position.x) < 65) {
+            isEnabled = false;
+            player.collide();
+        }
     }
 }
 
@@ -387,7 +427,7 @@ class Title {
             noStroke();
             rectMode(CORNER);
             fill(0, constrain(map(time, 0, 20, 0, 175), 0, 175) - constrain(map(time, 178, maxTime, 0, 175), 0, 175));
-            rect(0, 180, width, 160);
+            rect(0, 155, width, 200);
 
             // change fill
             textColor = color(
