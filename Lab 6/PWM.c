@@ -5,20 +5,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <c8051f38x.h>
-#include "LEDmatrix.h"
 
-unsigned char IMAGES[4][8] = {
-  {0x7c, 0x32, 0x11, 0x81, 0x81, 0x88, 0x4c, 0x3e},
-  {0x3c, 0x62, 0xf0, 0xc0, 0x03, 0x0f, 0x06, 0x3c},
-  {0x38, 0x41, 0x83, 0x87, 0xe1, 0xc1, 0x82, 0x1c},
-  {0x0c, 0x4e, 0x87, 0x85, 0xa1, 0xe1, 0x72, 0x30}
-};
-const int IMAGES_LEN = sizeof(IMAGES)/8;
+#define SYSCLK    48000000L
+#define BAUDRATE  115200L
+
+char _c51_external_startup(void);
+void delayUs(unsigned char us);
+void delay(unsigned int ms);
+
+// ISR / PWM counter
+volatile unsigned char pwm_count=0;
+volatile unsigned char power_level = 50;
+volatile unsigned bit reverse = 0;
 
 void main(void) {
-    unsigned char position = 1;
     printf("\x1b[2J");
-    printf("LED TESTING\n"
+    printf("PWM and motor output\n"
         "Author:   Muchen He (44638154)\n"
         "File:     %s\n"
         "Compiled: %s, %s\n"
@@ -26,25 +28,9 @@ void main(void) {
         __FILE__, __DATE__, __TIME__
     );
 
-    LED_init();
-    printf("\x1b[s");
     while (1) {
-        LED_animate(IMAGES, 4, 30);
-    }
-}
-
-void LED_display(unsigned char *grid) {
-    unsigned int i;
-    for (i = 1; i <= 8; i++) {
-        LED_write(i, grid[i-1]);
-    }
-}
-
-void LED_animate(unsigned char grid[][8], unsigned char frames, int fps) {
-    unsigned int i;
-    for (i = 0; i < frames; i++) {
-        LED_display(grid[i]);
-        delay(1000/fps);
+        delay(2000);
+        reverse = !reverse;
     }
 }
 
@@ -92,14 +78,51 @@ char _c51_external_startup(void) {
     TI    = 1;  // Indicate TX0 ready
 
     // Configure the pins used for motor control and communication
-    P0MDOUT |= 0x01;  // set P0.0 and P0.4 as push-pull outputs
-
-    // set port 2 as open drain
-    P2MDOUT &= 0x00;
+    // set port 2(3 to 5) as open drain
+    P2MDOUT &= 0b_1110_0011;
     XBR0 = 0x01;      // Enable UART0 on P0.4(TX0) and P0.5(RX0)
     XBR1 = 0x40;      // enable crossbar
 
+    // CHANGED: GENERATING PWM SIGNAL
+    // Initialize timer 2 for periodic interrupts
+	TMR2CN  = 0x00;   // Stop Timer2; Clear TF2;
+	CKCON  |= 0b_0001_0000;
+	TMR2RL  = (-(SYSCLK/(2*48))/(100L)); // Initialize reload value
+	TMR2    = 0xffff;   // Set to reload immediately
+	ET2     = 1;         // Enable Timer2 interrupts
+	TR2     = 1;         // Start Timer2
+
+	EA = 1; // Enable interrupts
+
     return 0;
+}
+
+// Timer 2 ISR
+void T2_ISR(void) interrupt 5 {
+    // clear timer 2 interrupt flag
+    TF2H = 0;
+
+    // count pwm
+    pwm_count++;
+    if (pwm_count > 100) pwm_count = 0;
+
+    // generate <power_level>% duty cycle
+    if (reverse) {
+    	P2_6 = pwm_count > power_level ? 0 : 1;
+    	P2_7 = 0;
+    } else {
+    	P2_7 = pwm_count > power_level ? 0 : 1;
+    	P2_6 = 0;
+    }
+}
+
+// Serial ISR
+void SPI_ISR(void) interrupt 4 {
+	if (RI) {
+		RI = 0;
+		//scanf("%d", &power_level);
+		// get input stream right here
+	}
 }
 
 // Use timer 3 to delay <us> micro-seconds
@@ -127,95 +150,4 @@ void delay(unsigned int ms) {
         delayUs(249);
         delayUs(250);
     }
-}
-
-// ===[STUFF FOR MAX7219 HERE]===
-/* send one byte */
-void LED_spi(unsigned char value) {
-    unsigned char j, temp;
-    for (j = 1; j <= 8; j++) {
-        temp = value & 0x80;
-        LED_DATA = (temp == 0x80) ? HIGH : LOW;
-
-        // toggle clock
-        LED_CLK = HIGH;
-        delayUs(20);
-        LED_CLK = LOW;
-
-        // shift bit one over
-        value = value << 1;
-    }
-}
-
-void LED_pulse(void) {
-    LED_CS = HIGH;
-    delay(1);
-    LED_CS = LOW;
-}
-
-/* clear all MAX7219s */
-void LED_clear(void) {
-    unsigned char j;
-    for (j = 1; j <= 8; j++) {
-        LED_spi(j);
-        LED_spi(0x00);
-        LED_pulse();
-    }
-}
-
-
-/* set custom intensity for LEDs */
-void LED_setIntensity(unsigned char intensity) {
-    if (intensity > 0x0F) return;
-    LED_spi(0x0A);
-    LED_spi(intensity);
-    LED_pulse();
-}
-
-/* initialize the LED */
-void LED_init(void) {
-    LED_CS = LOW;
-
-    // set decode mode (no-decode)
-    LED_spi(0x09);
-    // LED_spi(0xFF);
-    LED_spi(0x00);
-    LED_pulse();
-
-    // set intensity (0-F)
-    LED_spi(0x0A);
-    LED_spi(LED_INTENSITY);
-    LED_pulse();
-
-    // set scan limit (8 digits)
-    LED_spi(0x0b);
-    LED_spi(0x07);
-    LED_pulse();
-
-    // clear MAX7219
-    LED_clear();
-
-    // set for normal operation
-    LED_spi(0x0C);
-    LED_spi(0x01);
-    LED_pulse();
-}
-
-/* write to MAX7219 */
-void LED_write(unsigned char address, unsigned char value) {
-    if ((address < 1) || (address > 8)) return;
-    LED_spi(address);
-    LED_spi(value);
-    LED_pulse();
-}
-
-/* turn on ALL LEDs for testing */
-void LED_test(void) {
-    LED_spi(0x0F);
-    LED_spi(0x01);
-    LED_pulse();
-    delay(1000);
-    LED_spi(0x0F);
-    LED_spi(0x00);
-    LED_pulse();
 }
