@@ -126,7 +126,7 @@ void draw() {
     }
 
     fill(0);
-    text(mBlock.position.y, 10, 10);
+    // text(mBlock.position.y, 10, 10);
 }
 
 // mouse events

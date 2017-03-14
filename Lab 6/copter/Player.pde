@@ -17,12 +17,12 @@ class Player {
     public void draw() {
         stroke(0);
         noFill();
-        pushMatrix();
+        // pushMatrix();
         translate(0, -height/2, 0);
         rotateY(map(mouseX, 0, width, PI/3, -PI/3));
         rotateZ(map(mouseX, 0, width, PI/12, -PI/12));
         this.render();
-        popMatrix();
+        // popMatrix();
 
         // call the update function to update player status
         update();
@@ -44,7 +44,7 @@ class Player {
     }
 
     private void update() {
-        if (speed < 100) speed = lerp(speed, 100, 0.001);
+        if (speed < 120) speed = lerp(speed, 100, 0.001);
         // speed = map(mouseY, 0, height, 100, 10);
         fanRotation = (fanRotation >= TWO_PI) ? 0 : fanRotation + 0.01 * speed;
         if (collisionTimer > 0) collisionTimer--;

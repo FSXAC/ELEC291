@@ -143,14 +143,8 @@ public void draw() {
         title.draw();
     }
 
-    // draw collisions
-    // fill(230, 0, 0);
-    // for (int i = 0; i < player.collisions; i++) {
-    //     ellipse(60 + 60*i, 60, 50, 50);
-    // }
-
     fill(0);
-    text(mBlock.position.y, 10, 10);
+    // text(mBlock.position.y, 10, 10);
 }
 
 // mouse events
@@ -385,12 +379,12 @@ class Player {
     public void draw() {
         stroke(0);
         noFill();
-        pushMatrix();
+        // pushMatrix();
         translate(0, -height/2, 0);
         rotateY(map(mouseX, 0, width, PI/3, -PI/3));
         rotateZ(map(mouseX, 0, width, PI/12, -PI/12));
         this.render();
-        popMatrix();
+        // popMatrix();
 
         // call the update function to update player status
         update();
