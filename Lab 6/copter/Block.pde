@@ -81,7 +81,7 @@ class Block {
         position.y-=player.getSpeed();
 
         // move blocks sideways
-        position.x-=map(mouseX, 0, width, -15, 15);
+        position.x-=map(turnValue, 0, width, -15, 15);
 
         // check if it's out of bound, if so: reset
         if (position.y < -1000 || position.x > mapWidth || position.x < -mapWidth) {

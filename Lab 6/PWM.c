@@ -117,7 +117,7 @@ void T2_ISR(void) interrupt 5 {
 }
 
 // Serial ISR
-void SPI_ISR(void) interrupt 4 {
+void SPI_ISR(void) interrupt 4 using 1{
 	if (RI) {
 		RI = 0;
 		//scanf("%d", &power_level);

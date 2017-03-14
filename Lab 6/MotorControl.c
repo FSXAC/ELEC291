@@ -9,17 +9,53 @@
 #define SYSCLK    48000000L
 #define BAUDRATE  115200L
 
+// reference digial voltage
+#define VDD 3.2
+#define POT_1 LQFP32_MUX_P1_5
+
 char _c51_external_startup(void);
 void delayUs(unsigned char us);
 void delay(unsigned int ms);
+void initializeADC(void);
+void initializePin(unsigned char port, unsigned char pin);
+unsigned int getADCAtPin(unsigned char pin);
 
 // ISR / PWM counter
 volatile unsigned char pwm_count=0;
-volatile int power_level = 50;
+volatile unsigned char power_level = 50;
+volatile unsigned bit reverse = 0;
+
+// Timer 2 ISR
+void T2_ISR(void) interrupt 5 {
+    // clear timer 2 interrupt flag
+    TF2H = 0;
+
+    // count pwm
+    pwm_count++;
+    if (pwm_count > 100) pwm_count = 0;
+
+    // generate <power_level>% duty cycle
+    if (reverse) {
+    	P2_6 = pwm_count > power_level ? 0 : 1;
+    	P2_7 = 0;
+    } else {
+    	P2_7 = pwm_count > power_level ? 0 : 1;
+    	P2_6 = 0;
+    }
+}
+
+// Serial ISR
+void SPI_ISR(void) interrupt 4 {
+	if (RI) {
+		RI = 0;
+		//scanf("%d", &power_level);
+		// get input stream right here
+	}
+}
 
 void main(void) {
     printf("\x1b[2J");
-    printf("LED TESTING\n"
+    printf("PWM and motor output\n"
         "Author:   Muchen He (44638154)\n"
         "File:     %s\n"
         "Compiled: %s, %s\n"
@@ -27,13 +63,15 @@ void main(void) {
         __FILE__, __DATE__, __TIME__
     );
 
-	//printf("Press any key to start\n");
-	//while (power_level < 0 || power_level > 100) {
-		//scanf("%d", &power_level);
-	//}
+    // initialize some shit
+    initializePin(1, 5);
+    initializeADC();
+
     while (1) {
-    	//delay(1000);
-    	//puts("test");
+        printf("$%d;\n", getADCAtPin(POT_1));
+        delay(50);
+        // delay(2000);
+        // reverse = !reverse;
     }
 }
 
@@ -81,8 +119,8 @@ char _c51_external_startup(void) {
     TI    = 1;  // Indicate TX0 ready
 
     // Configure the pins used for motor control and communication
-    // set port 2 as open drain
-    //P2MDOUT &= 0x00;
+    // set port 2(3 to 5) as open drain
+    P2MDOUT &= 0b_1110_0011;
     XBR0 = 0x01;      // Enable UART0 on P0.4(TX0) and P0.5(RX0)
     XBR1 = 0x40;      // enable crossbar
 
@@ -100,17 +138,47 @@ char _c51_external_startup(void) {
     return 0;
 }
 
-// Timer 2 ISR
-void T2_ISR(void) interrupt 5 {
-    // clear timer 2 interrupt flag
-    TF2H = 0;
+// initialize ADC
+void initializeADC(void) {
+    ADC0CF = 0xF8; // SAR clock = 31, Right-justified result
+    ADC0CN = 0b_1000_0000; // AD0EN=1, AD0TM=0
+    REF0CN = 0b_0000_1000; // Select VDD as the voltage reference
+}
 
-    // count pwm
-    pwm_count++;
-    if (pwm_count > 100) pwm_count = 0;
+void initializePin(unsigned char port, unsigned char pin) {
+    unsigned char mask;
+    mask = 1 << pin;
+    switch (port) {
+        case 0:
+            P0MDIN &= (~mask);
+            P0SKIP |= mask;
+            break;
+        case 1:
+            P1MDIN &= (~mask);
+            P1SKIP |= mask;
+            break;
+        case 2:
+            P2MDIN &= (~mask);
+            P2SKIP |= mask;
+            break;
+        case 3:
+            P3MDIN &= (~mask);
+            P3SKIP |= mask;
+            break;
+        default: break;
+    }
+}
 
-    // generate PWM on 2.6
-    P2_6 = pwm_count > power_level ? 0 : 1;
+unsigned int getADCAtPin(unsigned char pin) {
+    AMX0P = pin;             // Select positive input from pin
+    AMX0N = LQFP32_MUX_GND;  // GND is negative input (Single-ended Mode)
+    // Dummy conversion first to select new pin
+    AD0BUSY = 1;
+    while (AD0BUSY); // Wait for dummy conversion to finish
+    // Convert voltage at the pin
+    AD0BUSY = 1;
+    while (AD0BUSY); // Wait for conversion to complete
+    return (ADC0L+(ADC0H*0x100));
 }
 
 // Use timer 3 to delay <us> micro-seconds

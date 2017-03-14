@@ -19,8 +19,8 @@ class Player {
         noFill();
         // pushMatrix();
         translate(0, -height/2, 0);
-        rotateY(map(mouseX, 0, width, PI/3, -PI/3));
-        rotateZ(map(mouseX, 0, width, PI/12, -PI/12));
+        rotateY(map(turnValue, 0, width, PI/3, -PI/3));
+        rotateZ(map(turnValue, 0, width, PI/12, -PI/12));
         this.render();
         // popMatrix();
 

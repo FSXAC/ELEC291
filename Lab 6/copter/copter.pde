@@ -4,6 +4,13 @@
 // sound libarry
 import processing.sound.*;
 
+// serial
+import processing.serial.*;
+
+// serial
+Serial ser;
+String serInput;
+
 // game constants
 // map size
 final int mapWidth = 3000;
@@ -27,6 +34,8 @@ Block[] blocks = new Block[maxBlocks];
 Megablock mBlock = new Megablock(new PVector(random(-mapWidth, mapWidth), mapDepth));
 
 // lateral movement
+float turnValue_tgt = 400;
+float turnValue;
 float turnOffset_tgt;
 float turnOffset = 0;
 float trackOffset = 0;
@@ -34,6 +43,10 @@ float trackOffset = 0;
 void setup() {
     size(800, 600, P3D);
     player = new Player();
+
+    // serial initialize
+    ser = new Serial(this, Serial.list()[0], 115200);
+    ser.readStringUntil('$');
 
     // spawn random blocks
     for (int i = 0; i < blocks.length; i++) {
@@ -56,7 +69,22 @@ void draw() {
 
     // camera offsets
     pushMatrix();
-    turnOffset_tgt = map(mouseX - width/2, -width/2, width/2, 80, -80);
+
+    // get control input from SPI
+    if (ser.available() > 0) {
+        ser.readStringUntil('$');
+        serInput = ser.readStringUntil(';');
+        if (serInput != NULL) {
+            serInput = serInput.substring(0, serInput.length() - 1);
+
+            // get numerical values
+            turnValue_tgt = map(Integer.parseInt(serInput), 0, 1023, 0, width);
+        }
+    }
+    turnValue = lerp(turnValue, turnValue_tgt, 0.5);
+
+    // FIXME Optimize
+    turnOffset_tgt = map(turnValue - width/2, -width/2, width/2, 80, -80);
     turnOffset = lerp(turnOffset, turnOffset_tgt, 0.1);
     trackOffset = lerp(trackOffset, (player.getSpeed() > 60) ? -200 : -100, 0.05);
     translate(width/2 + turnOffset, height/2+100, trackOffset);
