@@ -15,20 +15,19 @@
 #define LOW 0
 
 // reference digial voltage
-#define VDD 3.2
+#define VDD 4.4
 #define POT_1 LQFP32_MUX_P1_5
+#define POT_2 LQFP32_MUX_P1_7
 
 // BUTTONS
 #define BTN0 P0_5
-#define BTN1 P0_6
-#define BTN2 P0_7
+#define BTN1 P0_7
 #define BTNX P1_6
 
 /* ===[MAX7219 CONTROL]=== */
 #define LED_CS P2_5
 #define LED_DATA P2_4
 #define LED_CLK P2_3
-
 #define LED_INTENSITY 0x01
 
 /* Toggles CS */
@@ -79,7 +78,7 @@ unsigned char IMAGE[4][8] = {
     {0x10, 0x10, 0x10, 0x18, 0x18, 0x08, 0x08, 0x08},
     {0x80, 0x40, 0x20, 0x18, 0x18, 0x04, 0x02, 0x01}
 };
-unsigned char IMAGE_MODE0[8] = {0xc3, 0xe7, 0x7E, 0x3c, 0x3c, 0x7e, 0xe7, 0xc3};
+unsigned char IMAGE_MODE0[8] = {0x18, 0x18, 0x18, 0x3c, 0x7e, 0x66, 0x66, 0x24};
 unsigned char IMAGE_MODE1[8] = {0x7e, 0xc3, 0x81, 0xf9, 0x01, 0x01, 0xc3, 0x7e};
 
 // demo mode:
@@ -128,7 +127,8 @@ void main(void) {
     );
 
     // initialize some shit
-    initializePin(1, 5);
+    initializePin(1, 5); // pot1
+    initializePin(1, 7); // pot2
     initializeADC();
 
     // initalize MAX7219
@@ -196,10 +196,12 @@ void mode0(void) {
 }
 
 void mode1(void) {
-	int potentValue;
-    potentValue = getADCAtPin(POT_1);
-    power_level = 100.0*potentValue / 1023.0;
-    printf("$%d;", potentValue);
+	int potent1Value;
+	int potent2Value;
+    potent1Value = getADCAtPin(POT_1);
+    potent2Value = getADCAtPin(POT_2);
+    power_level = 100.0*potent1Value / 1023.0;
+    printf("$%d,%d;", potent1Value, potent2Value);
     delay(50);
 }
 
