@@ -21,9 +21,10 @@ class Title {
     // flash intial letter
     boolean flashI;
 
-    Title(String msg) {
+    Title(String msg, boolean playMusic) {
         message = msg;
-        victorySound.play();
+        if (playMusic) victorySound.play();
+        println(message);
     }
 
     public void draw() {

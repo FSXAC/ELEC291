@@ -99,14 +99,6 @@ void draw() {
         }
     }
 
-    // winning condition
-    if (player.fuel <= 0 && !gameOver) {
-        gameOver = true;
-        turnValue_tgt = width/2;
-        playerSpeed_tgt = 0;
-        title = new Title("Complete!");
-    }
-
     // smooth out potentiometer turn
     turnValue = lerp(turnValue, turnValue_tgt, 0.5);
 
@@ -174,7 +166,7 @@ void draw() {
             );
     }
 
-    // boosting
+    // boosting and score gui
     if (!gameOver) {
         if (player.boostAvailable) fill(#30BAFC);
         else noFill();
@@ -183,7 +175,10 @@ void draw() {
         arc(60, 60, 50, 50, 0, TWO_PI * player.distance / boostDistance);
 
         // distance and life
-        textSize(20);
+        textFont(font);
+        textSize(30);
+        fill(255);
+        text("SCORE: "+str(player.score), width/2, 50);
         text("FUEL: "+String.format("%.1f", player.fuel/10)+"%", width - 200, 50);
     }
 
@@ -191,11 +186,19 @@ void draw() {
     if (title != null) {
         title.draw();
     }
-}
 
-// mouse events
-void mouseClicked() {
-    title = new Title("Complete!");
+    // winning condition
+    if (player.fuel <= 0 && !gameOver && !player.boosting) {
+        gameOver = true;
+        turnValue_tgt = width/2;
+        playerSpeed_tgt = 0;
+        title = new Title("Complete!", true);
+    }
+
+    // display score
+    if (gameOver && title.time >= title.maxTime) {
+        title = new Title(str(player.score), false);
+    }
 }
 
 // debug axis

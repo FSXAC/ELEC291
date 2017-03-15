@@ -11,7 +11,8 @@ class Player {
     int boostTimer = 500;
 
     // game ending conditions
-    float fuel = 50;
+    float fuel = 1000;
+    int score = 0;
 
     // constructor
     Player() {
@@ -40,12 +41,13 @@ class Player {
 
     // collide with player
     public void collide() {
-        if (boosting) return;
+        if (boosting || gameOver) return;
         collisionTimer = 30;
         if (speed > 10) speed *= 0.5;
 
-        // decrease fuel
+        // decrease fuel, decrease score
         fuel -= 10;
+        if (score > 100) score -= 100;
 
         // reset boost
         distance = 0;
@@ -57,8 +59,11 @@ class Player {
     }
 
     private void update() {
-        // decrease fuel
-        if (!gameOver) fuel -= 0.1;
+        // decrease fuel, increase score
+        if (!gameOver) {
+            fuel -= 1;
+            score++;
+        }
 
         // speed and collision
         if (speed < 120) speed = lerp(speed, playerSpeed_tgt, 0.005);
@@ -83,10 +88,11 @@ class Player {
 
         // boosting button is pressed
         if (boostButton && boostAvailable) {
-            // reset boost
-            player.distance = 0;
-            player.boostAvailable = false;
-            player.boosting = true;
+            // start boost, reset boost
+            distance = 0;
+            boostAvailable = false;
+            boosting = true;
+            score += 1000;
         }
     }
 
