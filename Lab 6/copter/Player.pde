@@ -46,7 +46,7 @@ class Player {
         if (speed > 10) speed *= 0.5;
 
         // decrease fuel, decrease score
-        if (fuel > 0) fuel -= 10;
+        if (fuel > 0) fuel -= 70;
         if (score > 100) score -= 100;
 
         // reset boost
