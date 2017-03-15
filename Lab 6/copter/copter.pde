@@ -44,7 +44,7 @@ float trackOffset = 0;
 
 // boosting
 boolean boostButton = false;
-final int boostDistance = 3000;
+final int boostDistance = 30000;
 
 // game conditions
 boolean gameOver = false;
@@ -178,7 +178,8 @@ void draw() {
         textFont(font);
         textSize(30);
         fill(255);
-        text("SCORE: "+str(player.score), width/2, 50);
+        text("SCORE: "+String.format("%.0f", player.score), width/2, 50);
+        if (player.fuel < 100) fill(255, 0, 0);
         text("FUEL: "+String.format("%.1f", player.fuel/10)+"%", width - 200, 50);
     }
 
@@ -197,7 +198,7 @@ void draw() {
 
     // display score
     if (gameOver && title.time >= title.maxTime) {
-        title = new Title(str(player.score), false);
+        title = new Title(String.format("%.0f", player.score), false);
     }
 }
 

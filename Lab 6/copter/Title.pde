@@ -24,7 +24,6 @@ class Title {
     Title(String msg, boolean playMusic) {
         message = msg;
         if (playMusic) victorySound.play();
-        println(message);
     }
 
     public void draw() {

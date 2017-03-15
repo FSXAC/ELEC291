@@ -8,11 +8,11 @@ class Player {
     // boosting
     int distance = 0;
     boolean boosting = false, boostAvailable = false;
-    int boostTimer = 500;
+    int boostTimer = 300;
 
     // game ending conditions
     float fuel = 1000;
-    int score = 0;
+    float score = 0;
 
     // constructor
     Player() {
@@ -46,7 +46,7 @@ class Player {
         if (speed > 10) speed *= 0.5;
 
         // decrease fuel, decrease score
-        fuel -= 10;
+        if (fuel > 0) fuel -= 10;
         if (score > 100) score -= 100;
 
         // reset boost
@@ -61,8 +61,8 @@ class Player {
     private void update() {
         // decrease fuel, increase score
         if (!gameOver) {
-            fuel -= 1;
-            score++;
+            if (fuel > 0 && !boosting) fuel -= 0.3;
+            score+= 1 + speed/120;
         }
 
         // speed and collision
@@ -72,7 +72,7 @@ class Player {
 
         // accumulate distance
         if (!boosting && !boostAvailable) {
-            distance += speed/10;
+            distance += speed;
 
             // accumulate distance
             if (distance > boostDistance) {
