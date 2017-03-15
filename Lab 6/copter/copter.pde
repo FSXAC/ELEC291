@@ -46,6 +46,9 @@ float trackOffset = 0;
 boolean boostButton = false;
 final int boostDistance = 3000;
 
+// game conditions
+boolean gameOver = false;
+
 void setup() {
     size(800, 600, P3D);
     player = new Player();
@@ -68,7 +71,8 @@ void setup() {
 
 void draw() {
     // setup background and camera
-    background(216, 251, 255);
+    // background(216, 251, 255);
+    background(116, 151, 200);
     ambientLight(50, 50, 50);
     directionalLight(255,255,255,0,1, 0);
     directionalLight(255,255,255,0,0, -1);
@@ -77,7 +81,7 @@ void draw() {
     pushMatrix();
 
     // get control input from SPI
-    if (ser.available() > 0) {
+    if (ser.available() > 0 && !gameOver) {
         ser.readStringUntil('$');
         serInput = ser.readStringUntil(';');
         if (serInput != null) {
@@ -92,11 +96,21 @@ void draw() {
             }
             turnValue_tgt = map(Integer.parseInt(serInputComponents[1]), 0, 1023, 0, width);
             boostButton = (Integer.parseInt(serInputComponents[2]) == 1) ? false : true;
-            println(boostButton);
         }
     }
+
+    // winning condition
+    if (player.fuel <= 0 && !gameOver) {
+        gameOver = true;
+        turnValue_tgt = width/2;
+        playerSpeed_tgt = 0;
+        title = new Title("Complete!");
+    }
+
+    // smooth out potentiometer turn
     turnValue = lerp(turnValue, turnValue_tgt, 0.5);
 
+    // translating control into graphics
     turnOffset_tgt = map(turnValue - width/2, -width/2, width/2, 80, -80);
     turnOffset = lerp(turnOffset, turnOffset_tgt, 0.1);
     trackOffset = lerp(trackOffset, (player.getSpeed() > 60) ? -200 : -100, 0.05);
@@ -160,17 +174,23 @@ void draw() {
             );
     }
 
+    // boosting
+    if (!gameOver) {
+        if (player.boostAvailable) fill(#30BAFC);
+        else noFill();
+        strokeWeight(5);
+        stroke(255);
+        arc(60, 60, 50, 50, 0, TWO_PI * player.distance / boostDistance);
+
+        // distance and life
+        textSize(20);
+        text("FUEL: "+String.format("%.1f", player.fuel/10)+"%", width - 200, 50);
+    }
+
     // draw title
     if (title != null) {
         title.draw();
     }
-
-    // boosting
-    if (player.boostAvailable) fill(0, 255, 0);
-    else fill(0, 50, 0, 150);
-    strokeWeight(5);
-    stroke(0, map(player.distance, 0, boostDistance, 0, 255), 0);
-    arc(60, 60, 50, 50, 0, TWO_PI * player.distance / boostDistance);
 }
 
 // mouse events

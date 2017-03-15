@@ -2,12 +2,16 @@ class Player {
     private float speed;
     private float fanRotation;
 
-    int collisions = 0;
+    // collision
     int collisionTimer = 0;
 
+    // boosting
     int distance = 0;
     boolean boosting = false, boostAvailable = false;
     int boostTimer = 500;
+
+    // game ending conditions
+    float fuel = 50;
 
     // constructor
     Player() {
@@ -21,12 +25,10 @@ class Player {
     public void draw() {
         stroke(0);
         noFill();
-        // pushMatrix();
         translate(0, -height/2, 0);
         rotateY(map(turnValue, 0, width, PI/3, -PI/3));
         rotateZ(map(turnValue, 0, width, PI/12, -PI/12));
         this.render();
-        // popMatrix();
 
         // call the update function to update player status
         update();
@@ -39,9 +41,15 @@ class Player {
     // collide with player
     public void collide() {
         if (boosting) return;
-        collisions++;
         collisionTimer = 30;
         if (speed > 10) speed *= 0.5;
+
+        // decrease fuel
+        fuel -= 10;
+
+        // reset boost
+        distance = 0;
+        boostAvailable = false;
     }
 
     public boolean getCollide() {
@@ -49,6 +57,10 @@ class Player {
     }
 
     private void update() {
+        // decrease fuel
+        if (!gameOver) fuel -= 0.1;
+
+        // speed and collision
         if (speed < 120) speed = lerp(speed, playerSpeed_tgt, 0.005);
         fanRotation = (fanRotation >= TWO_PI) ? 0 : fanRotation + 0.01 * speed;
         if (collisionTimer > 0) collisionTimer--;
@@ -129,9 +141,9 @@ class Player {
             pushMatrix();
             rotateX(millis()*0.001);
             rotateY(millis()*0.0033);
-            strokeWeight(20);
+            strokeWeight(50);
             stroke(0, 255, 255);
-            ellipse(0, 0, 120, 120);
+            ellipse(0, 0, 150, 150);
             popMatrix();
         }
     }
