@@ -7,6 +7,7 @@ class Player {
 
     int distance = 0;
     boolean boosting = false, boostAvailable = false;
+    int boostTimer = 500;
 
     // constructor
     Player() {
@@ -37,6 +38,7 @@ class Player {
 
     // collide with player
     public void collide() {
+        if (boosting) return;
         collisions++;
         collisionTimer = 30;
         if (speed > 10) speed *= 0.5;
@@ -54,12 +56,26 @@ class Player {
         // accumulate distance
         if (!boosting && !boostAvailable) {
             distance += speed/10;
-            if (distance > 6000) {
+
+            // accumulate distance
+            if (distance > boostDistance) {
                 boostAvailable = true;
+            }
+        } else if (boosting) {
+            if (boostTimer > 0) boostTimer--;
+            else {
+                boosting = false;
+                boostTimer = 300;
             }
         }
 
-        println(distance);
+        // boosting button is pressed
+        if (boostButton && boostAvailable) {
+            // reset boost
+            player.distance = 0;
+            player.boostAvailable = false;
+            player.boosting = true;
+        }
     }
 
     // render player frame
@@ -107,6 +123,17 @@ class Player {
 
         // render propeellers
         renderFan();
+
+        // render boosting shield
+        if (boosting) {
+            pushMatrix();
+            rotateX(millis()*0.001);
+            rotateY(millis()*0.0033);
+            strokeWeight(20);
+            stroke(0, 255, 255);
+            ellipse(0, 0, 120, 120);
+            popMatrix();
+        }
     }
 
     // rander propellers

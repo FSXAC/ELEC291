@@ -44,6 +44,7 @@ float trackOffset = 0;
 
 // boosting
 boolean boostButton = false;
+final int boostDistance = 3000;
 
 void setup() {
     size(800, 600, P3D);
@@ -84,9 +85,14 @@ void draw() {
 
             // get numerical values
             serInputComponents = serInput.split(",");
-            playerSpeed_tgt = map(Integer.parseInt(serInputComponents[0]), 0, 1023, 10, 60);
+            if (!player.boosting) {
+                playerSpeed_tgt = map(Integer.parseInt(serInputComponents[0]), 0, 1023, 10, 60);
+            } else {
+                playerSpeed_tgt = 120;
+            }
             turnValue_tgt = map(Integer.parseInt(serInputComponents[1]), 0, 1023, 0, width);
-            boostButton = (serInputComponents[2] == "1") ? false : true;
+            boostButton = (Integer.parseInt(serInputComponents[2]) == 1) ? false : true;
+            println(boostButton);
         }
     }
     turnValue = lerp(turnValue, turnValue_tgt, 0.5);
@@ -159,8 +165,12 @@ void draw() {
         title.draw();
     }
 
-    fill(0);
-    text(player.boostAvailable ? "ON" : "OFF", 10, 10);
+    // boosting
+    if (player.boostAvailable) fill(0, 255, 0);
+    else fill(0, 50, 0, 150);
+    strokeWeight(5);
+    stroke(0, map(player.distance, 0, boostDistance, 0, 255), 0);
+    arc(60, 60, 50, 50, 0, TWO_PI * player.distance / boostDistance);
 }
 
 // mouse events
