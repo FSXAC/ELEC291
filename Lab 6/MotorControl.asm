@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1069 (Apr 23 2015) (MSVC)
-; This file was generated Wed Mar 15 13:14:33 2017
+; This file was generated Wed Mar 15 13:29:23 2017
 ;--------------------------------------------------------
 $name MotorControl
 $optc51 --model-small
@@ -34,6 +34,7 @@ $optc51 --model-small
 	public _LED_animate_PARM_3
 	public _LED_animate_PARM_2
 	public _mode
+	public _IMAGE_MODE1
 	public _IMAGE_MODE0
 	public _IMAGE
 	public _power_level
@@ -41,7 +42,6 @@ $optc51 --model-small
 	public _changeMode
 	public _mode0
 	public _mode1
-	public _mode2
 	public __c51_external_startup
 	public _initializeADC
 	public _initializePin
@@ -395,13 +395,15 @@ _IMAGE:
 	ds 32
 _IMAGE_MODE0:
 	ds 8
+_IMAGE_MODE1:
+	ds 8
 _mode:
 	ds 1
 _mode0_inputPWM_1_75:
 	ds 2
 _mode0_direction_1_75:
 	ds 2
-_LED_display_grid_1_98:
+_LED_display_grid_1_96:
 	ds 3
 _LED_animate_PARM_2:
 	ds 1
@@ -517,6 +519,15 @@ _LED_animate_PARM_4:
 	mov	(_IMAGE_MODE0 + 0x0005),#0x7E
 	mov	(_IMAGE_MODE0 + 0x0006),#0xE7
 	mov	(_IMAGE_MODE0 + 0x0007),#0xC3
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:83: unsigned char IMAGE_MODE1[8] = {0x7e, 0xc3, 0x81, 0xf9, 0x01, 0x01, 0xc3, 0x7e};
+	mov	_IMAGE_MODE1,#0x7E
+	mov	(_IMAGE_MODE1 + 0x0001),#0xC3
+	mov	(_IMAGE_MODE1 + 0x0002),#0x81
+	mov	(_IMAGE_MODE1 + 0x0003),#0xF9
+	mov	(_IMAGE_MODE1 + 0x0004),#0x01
+	mov	(_IMAGE_MODE1 + 0x0005),#0x01
+	mov	(_IMAGE_MODE1 + 0x0006),#0xC3
+	mov	(_IMAGE_MODE1 + 0x0007),#0x7E
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:88: unsigned char mode = 0;
 	mov	_mode,#0x00
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:73: volatile unsigned bit reverse = 0;
@@ -659,74 +670,71 @@ _main:
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:138: power_level = 0;
 	mov	_power_level,#0x00
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:140: while (1) {
-L004007?:
+L004006?:
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:142: changeMode();
 	lcall	_changeMode
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:145: switch (mode) {
 	clr	a
-	cjne	a,_mode,L004015?
+	cjne	a,_mode,L004013?
 	sjmp	L004001?
-L004015?:
+L004013?:
 	mov	a,#0x01
-	cjne	a,_mode,L004016?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:146: case 0:
+	cjne	a,_mode,L004006?
 	sjmp	L004002?
-L004016?:
-	mov	a,#0x02
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:146: case 0: mode0(); break;
-	cjne	a,_mode,L004005?
-	sjmp	L004003?
 L004001?:
-	lcall	_mode0
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:147: case 1: mode1(); break;
-	sjmp	L004005?
-L004002?:
-	lcall	_mode1
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:148: case 2: mode2(); break;
-	sjmp	L004005?
-L004003?:
-	lcall	_mode2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:150: }
-L004005?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:153: LED_animate(IMAGE, 4, 30, !reverse);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:147: LED_animate(IMAGE, 4, 15, !reverse);
 	mov	c,_reverse
 	cpl	c
 	mov	_LED_animate_PARM_4,c
 	mov	_LED_animate_PARM_2,#0x04
-	mov	_LED_animate_PARM_3,#0x1E
+	mov	_LED_animate_PARM_3,#0x0F
 	mov	dptr,#_IMAGE
 	mov	b,#0x40
 	lcall	_LED_animate
-	sjmp	L004007?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:148: mode0();
+	lcall	_mode0
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:149: break;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:150: case 1:
+	sjmp	L004006?
+L004002?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:151: LED_display(IMAGE_MODE1);
+	mov	dptr,#_IMAGE_MODE1
+	mov	b,#0x40
+	lcall	_LED_display
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:152: mode1();
+	lcall	_mode1
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:153: break;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:155: }
+	sjmp	L004006?
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'changeMode'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:157: void changeMode(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:159: void changeMode(void) {
 ;	-----------------------------------------
 ;	 function changeMode
 ;	-----------------------------------------
 _changeMode:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:158: if (!BTNX) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:160: if (!BTNX) {
 	jb	_P1_6,L005008?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:159: delay(50);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:161: delay(50);
 	mov	dptr,#0x0032
 	lcall	_delay
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:160: if (!BTNX) mode = (mode == 2) ? 0 : mode + 1;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:162: if (!BTNX) mode = (mode == 1) ? 0 : 1;
 	jb	_P1_6,L005003?
-	mov	a,#0x02
+	mov	a,#0x01
 	cjne	a,_mode,L005010?
 	mov	r2,#0x00
 	sjmp	L005011?
 L005010?:
-	mov	a,_mode
-	inc	a
-	mov	r2,a
+	mov	r2,#0x01
 L005011?:
 	mov	_mode,r2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:161: while (!BTNX);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:163: while (!BTNX);
 L005003?:
 	jnb	_P1_6,L005003?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:162: printf("\n=== Mode %d ===\n", mode);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:164: printf("\n=== Mode %d ===\n", mode);
 	mov	r2,_mode
 	mov	r3,#0x00
 	push	ar2
@@ -749,7 +757,7 @@ L005008?:
 ;inputPWM                  Allocated with name '_mode0_inputPWM_1_75'
 ;direction                 Allocated with name '_mode0_direction_1_75'
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:166: void mode0(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:168: void mode0(void) {
 ;	-----------------------------------------
 ;	 function mode0
 ;	-----------------------------------------
@@ -880,29 +888,17 @@ L006005?:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'mode1'
 ;------------------------------------------------------------
+;potentValue               Allocated to registers r2 r3 
 ;------------------------------------------------------------
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:198: void mode1(void) {
 ;	-----------------------------------------
 ;	 function mode1
 ;	-----------------------------------------
 _mode1:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:199: delay(100);
-	mov	dptr,#0x0064
-	ljmp	_delay
-;------------------------------------------------------------
-;Allocation info for local variables in function 'mode2'
-;------------------------------------------------------------
-;potentValue               Allocated to registers r2 r3 
-;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:202: void mode2(void) {
-;	-----------------------------------------
-;	 function mode2
-;	-----------------------------------------
-_mode2:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:204: potentValue = getADCAtPin(POT_1);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:200: potentValue = getADCAtPin(POT_1);
 	mov	dpl,#0x05
 	lcall	_getADCAtPin
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:205: power_level = 100.0*potentValue / 1023.0;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:201: power_level = 100.0*potentValue / 1023.0;
 	mov	r2,dpl
 	mov  r3,dph
 	push	ar2
@@ -953,7 +949,7 @@ _mode2:
 	mov	a,r7
 	lcall	___fs2uchar
 	mov	_power_level,dpl
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:206: printf("$%d;", potentValue);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:202: printf("$%d;", potentValue);
 	mov	a,#__str_10
 	push	acc
 	mov	a,#(__str_10 >> 8)
@@ -964,85 +960,85 @@ _mode2:
 	mov	a,sp
 	add	a,#0xfb
 	mov	sp,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:207: delay(50);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:203: delay(50);
 	mov	dptr,#0x0032
 	ljmp	_delay
 ;------------------------------------------------------------
 ;Allocation info for local variables in function '_c51_external_startup'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:210: char _c51_external_startup(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:206: char _c51_external_startup(void) {
 ;	-----------------------------------------
 ;	 function _c51_external_startup
 ;	-----------------------------------------
 __c51_external_startup:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:211: PCA0MD &= (~0x40) ;    // DISABLE WDT: clear Watchdog Enable bit
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:207: PCA0MD &= (~0x40) ;    // DISABLE WDT: clear Watchdog Enable bit
 	anl	_PCA0MD,#0xBF
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:212: VDM0CN  = 0x80; // enable VDD monitor
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:208: VDM0CN  = 0x80; // enable VDD monitor
 	mov	_VDM0CN,#0x80
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:213: RSTSRC  = 0x02|0x04; // Enable reset on missing clock detector and VDD
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:209: RSTSRC  = 0x02|0x04; // Enable reset on missing clock detector and VDD
 	mov	_RSTSRC,#0x06
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:221: CLKSEL|=0b_0000_0011; // SYSCLK derived from the Internal High-Frequency Oscillator / 1.
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:217: CLKSEL|=0b_0000_0011; // SYSCLK derived from the Internal High-Frequency Oscillator / 1.
 	orl	_CLKSEL,#0x03
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:226: OSCICN |= 0x03; // Configure internal oscillator for its maximum frequency
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:222: OSCICN |= 0x03; // Configure internal oscillator for its maximum frequency
 	orl	_OSCICN,#0x03
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:229: SCON0 = 0x10;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:225: SCON0 = 0x10;
 	mov	_SCON0,#0x10
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:231: TH1 = 0x10000-((SYSCLK/BAUDRATE)/2L);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:227: TH1 = 0x10000-((SYSCLK/BAUDRATE)/2L);
 	mov	_TH1,#0x30
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:232: CKCON &= ~0x0B;                  // T1M = 1; SCA1:0 = xx
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:228: CKCON &= ~0x0B;                  // T1M = 1; SCA1:0 = xx
 	anl	_CKCON,#0xF4
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:233: CKCON |=  0x08;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:229: CKCON |=  0x08;
 	orl	_CKCON,#0x08
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:247: TL1   = TH1;      // Init Timer1
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:243: TL1   = TH1;      // Init Timer1
 	mov	_TL1,_TH1
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:248: TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit autoreload
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:244: TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit autoreload
 	anl	_TMOD,#0x0F
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:249: TMOD |= 0x20;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:245: TMOD |= 0x20;
 	orl	_TMOD,#0x20
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:250: TR1   = 1; // START Timer1
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:246: TR1   = 1; // START Timer1
 	setb	_TR1
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:251: TI    = 1;  // Indicate TX0 ready
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:247: TI    = 1;  // Indicate TX0 ready
 	setb	_TI
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:255: P2MDOUT &= 0b_1110_0011;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:251: P2MDOUT &= 0b_1110_0011;
 	anl	_P2MDOUT,#0xE3
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:256: XBR0 = 0x01;      // Enable UART0 on P0.4(TX0) and P0.5(RX0)
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:252: XBR0 = 0x01;      // Enable UART0 on P0.4(TX0) and P0.5(RX0)
 	mov	_XBR0,#0x01
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:257: XBR1 = 0x40;      // enable crossbar
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:253: XBR1 = 0x40;      // enable crossbar
 	mov	_XBR1,#0x40
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:261: TMR2CN  = 0x00;   // Stop Timer2; Clear TF2;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:257: TMR2CN  = 0x00;   // Stop Timer2; Clear TF2;
 	mov	_TMR2CN,#0x00
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:262: CKCON  |= 0b_0001_0000;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:258: CKCON  |= 0b_0001_0000;
 	orl	_CKCON,#0x10
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:263: TMR2RL  = (-(SYSCLK/(2*48))/(100L)); // Initialize reload value
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:259: TMR2RL  = (-(SYSCLK/(2*48))/(100L)); // Initialize reload value
 	mov	_TMR2RL,#0x78
 	mov	(_TMR2RL >> 8),#0xEC
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:264: TMR2    = 0xffff;   // Set to reload immediately
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:260: TMR2    = 0xffff;   // Set to reload immediately
 	mov	_TMR2,#0xFF
 	mov	(_TMR2 >> 8),#0xFF
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:265: ET2     = 1;         // Enable Timer2 interrupts
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:261: ET2     = 1;         // Enable Timer2 interrupts
 	setb	_ET2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:266: TR2     = 1;         // Start Timer2
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:262: TR2     = 1;         // Start Timer2
 	setb	_TR2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:268: EA = 1; // Enable interrupts
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:264: EA = 1; // Enable interrupts
 	setb	_EA
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:270: return 0;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:266: return 0;
 	mov	dpl,#0x00
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'initializeADC'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:274: void initializeADC(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:270: void initializeADC(void) {
 ;	-----------------------------------------
 ;	 function initializeADC
 ;	-----------------------------------------
 _initializeADC:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:275: ADC0CF = 0xF8; // SAR clock = 31, Right-justified result
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:271: ADC0CF = 0xF8; // SAR clock = 31, Right-justified result
 	mov	_ADC0CF,#0xF8
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:276: ADC0CN = 0b_1000_0000; // AD0EN=1, AD0TM=0
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:272: ADC0CN = 0b_1000_0000; // AD0EN=1, AD0TM=0
 	mov	_ADC0CN,#0x80
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:277: REF0CN = 0b_0000_1000; // Select VDD as the voltage reference
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:273: REF0CN = 0b_0000_1000; // Select VDD as the voltage reference
 	mov	_REF0CN,#0x08
 	ret
 ;------------------------------------------------------------
@@ -1052,106 +1048,106 @@ _initializeADC:
 ;port                      Allocated to registers r2 
 ;mask                      Allocated to registers r3 
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:280: void initializePin(unsigned char port, unsigned char pin) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:276: void initializePin(unsigned char port, unsigned char pin) {
 ;	-----------------------------------------
 ;	 function initializePin
 ;	-----------------------------------------
 _initializePin:
 	mov	r2,dpl
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:282: mask = 1 << pin;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:278: mask = 1 << pin;
 	mov	b,_initializePin_PARM_2
 	inc	b
 	mov	a,#0x01
-	sjmp	L011012?
-L011010?:
+	sjmp	L010012?
+L010010?:
 	add	a,acc
-L011012?:
-	djnz	b,L011010?
+L010012?:
+	djnz	b,L010010?
 	mov	r3,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:283: switch (port) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:279: switch (port) {
 	mov	a,r2
 	add	a,#0xff - 0x03
-	jc	L011007?
+	jc	L010007?
 	mov	a,r2
 	add	a,r2
 	add	a,r2
-	mov	dptr,#L011014?
+	mov	dptr,#L010014?
 	jmp	@a+dptr
-L011014?:
-	ljmp	L011001?
-	ljmp	L011002?
-	ljmp	L011003?
-	ljmp	L011004?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:284: case 0:
-L011001?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:285: P0MDIN &= (~mask);
+L010014?:
+	ljmp	L010001?
+	ljmp	L010002?
+	ljmp	L010003?
+	ljmp	L010004?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:280: case 0:
+L010001?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:281: P0MDIN &= (~mask);
 	mov	a,r3
 	cpl	a
 	anl	_P0MDIN,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:286: P0SKIP |= mask;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:282: P0SKIP |= mask;
 	mov	a,r3
 	orl	_P0SKIP,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:287: break;
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:288: case 1:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:283: break;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:284: case 1:
 	ret
-L011002?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:289: P1MDIN &= (~mask);
+L010002?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:285: P1MDIN &= (~mask);
 	mov	a,r3
 	cpl	a
 	anl	_P1MDIN,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:290: P1SKIP |= mask;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:286: P1SKIP |= mask;
 	mov	a,r3
 	orl	_P1SKIP,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:291: break;
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:292: case 2:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:287: break;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:288: case 2:
 	ret
-L011003?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:293: P2MDIN &= (~mask);
+L010003?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:289: P2MDIN &= (~mask);
 	mov	a,r3
 	cpl	a
 	anl	_P2MDIN,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:294: P2SKIP |= mask;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:290: P2SKIP |= mask;
 	mov	a,r3
 	orl	_P2SKIP,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:295: break;
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:296: case 3:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:291: break;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:292: case 3:
 	ret
-L011004?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:297: P3MDIN &= (~mask);
+L010004?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:293: P3MDIN &= (~mask);
 	mov	a,r3
 	cpl	a
 	mov	r2,a
 	anl	_P3MDIN,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:298: P3SKIP |= mask;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:294: P3SKIP |= mask;
 	mov	a,r3
 	orl	_P3SKIP,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:301: }
-L011007?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:297: }
+L010007?:
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'getADCAtPin'
 ;------------------------------------------------------------
 ;pin                       Allocated to registers 
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:304: unsigned int getADCAtPin(unsigned char pin) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:300: unsigned int getADCAtPin(unsigned char pin) {
 ;	-----------------------------------------
 ;	 function getADCAtPin
 ;	-----------------------------------------
 _getADCAtPin:
 	mov	_AMX0P,dpl
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:306: AMX0N = LQFP32_MUX_GND;  // GND is negative input (Single-ended Mode)
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:302: AMX0N = LQFP32_MUX_GND;  // GND is negative input (Single-ended Mode)
 	mov	_AMX0N,#0x1F
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:308: AD0BUSY = 1;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:304: AD0BUSY = 1;
 	setb	_AD0BUSY
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:309: while (AD0BUSY); // Wait for dummy conversion to finish
-L012001?:
-	jb	_AD0BUSY,L012001?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:311: AD0BUSY = 1;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:305: while (AD0BUSY); // Wait for dummy conversion to finish
+L011001?:
+	jb	_AD0BUSY,L011001?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:307: AD0BUSY = 1;
 	setb	_AD0BUSY
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:312: while (AD0BUSY); // Wait for conversion to complete
-L012004?:
-	jb	_AD0BUSY,L012004?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:313: return (ADC0L+(ADC0H*0x100));
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:308: while (AD0BUSY); // Wait for conversion to complete
+L011004?:
+	jb	_AD0BUSY,L011004?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:309: return (ADC0L+(ADC0H*0x100));
 	mov	r2,_ADC0L
 	mov	r3,#0x00
 	mov	r5,_ADC0H
@@ -1169,40 +1165,40 @@ L012004?:
 ;us                        Allocated to registers r2 
 ;i                         Allocated to registers r3 
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:317: void delayUs(unsigned char us) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:313: void delayUs(unsigned char us) {
 ;	-----------------------------------------
 ;	 function delayUs
 ;	-----------------------------------------
 _delayUs:
 	mov	r2,dpl
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:319: CKCON  |= 0b_0100_0000;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:315: CKCON  |= 0b_0100_0000;
 	orl	_CKCON,#0x40
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:320: TMR3RL  = (-(SYSCLK)/1000000L);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:316: TMR3RL  = (-(SYSCLK)/1000000L);
 	mov	_TMR3RL,#0xD0
 	mov	(_TMR3RL >> 8),#0xFF
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:321: TMR3    = TMR3RL;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:317: TMR3    = TMR3RL;
 	mov	_TMR3,_TMR3RL
 	mov	(_TMR3 >> 8),(_TMR3RL >> 8)
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:322: TMR3CN  = 0x04;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:318: TMR3CN  = 0x04;
 	mov	_TMR3CN,#0x04
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:325: for (i = 0; i < us; i++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:321: for (i = 0; i < us; i++) {
 	mov	r3,#0x00
-L013004?:
+L012004?:
 	clr	c
 	mov	a,r3
 	subb	a,r2
-	jnc	L013007?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:326: while (!(TMR3CN & 0x80));
-L013001?:
+	jnc	L012007?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:322: while (!(TMR3CN & 0x80));
+L012001?:
 	mov	a,_TMR3CN
-	jnb	acc.7,L013001?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:327: TMR3CN &= ~(0x80);
+	jnb	acc.7,L012001?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:323: TMR3CN &= ~(0x80);
 	anl	_TMR3CN,#0x7F
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:325: for (i = 0; i < us; i++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:321: for (i = 0; i < us; i++) {
 	inc	r3
-	sjmp	L013004?
-L013007?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:329: TMR3CN = 0;
+	sjmp	L012004?
+L012007?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:325: TMR3CN = 0;
 	mov	_TMR3CN,#0x00
 	ret
 ;------------------------------------------------------------
@@ -1211,75 +1207,75 @@ L013007?:
 ;ms                        Allocated to registers r2 r3 
 ;j                         Allocated to registers r4 r5 
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:333: void delay(unsigned int ms) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:329: void delay(unsigned int ms) {
 ;	-----------------------------------------
 ;	 function delay
 ;	-----------------------------------------
 _delay:
 	mov	r2,dpl
 	mov	r3,dph
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:335: for (j = 0; j < ms; j++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:331: for (j = 0; j < ms; j++) {
 	mov	r4,#0x00
 	mov	r5,#0x00
-L014001?:
+L013001?:
 	clr	c
 	mov	a,r4
 	subb	a,r2
 	mov	a,r5
 	subb	a,r3
-	jnc	L014005?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:336: delayUs(249);
+	jnc	L013005?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:332: delayUs(249);
 	mov	dpl,#0xF9
 	push	ar2
 	push	ar3
 	push	ar4
 	push	ar5
 	lcall	_delayUs
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:337: delayUs(249);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:333: delayUs(249);
 	mov	dpl,#0xF9
 	lcall	_delayUs
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:338: delayUs(249);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:334: delayUs(249);
 	mov	dpl,#0xF9
 	lcall	_delayUs
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:339: delayUs(250);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:335: delayUs(250);
 	mov	dpl,#0xFA
 	lcall	_delayUs
 	pop	ar5
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:335: for (j = 0; j < ms; j++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:331: for (j = 0; j < ms; j++) {
 	inc	r4
-	cjne	r4,#0x00,L014001?
+	cjne	r4,#0x00,L013001?
 	inc	r5
-	sjmp	L014001?
-L014005?:
+	sjmp	L013001?
+L013005?:
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LED_display'
 ;------------------------------------------------------------
-;grid                      Allocated with name '_LED_display_grid_1_98'
+;grid                      Allocated with name '_LED_display_grid_1_96'
 ;i                         Allocated to registers r5 r6 
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:343: void LED_display(unsigned char *grid) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:339: void LED_display(unsigned char *grid) {
 ;	-----------------------------------------
 ;	 function LED_display
 ;	-----------------------------------------
 _LED_display:
-	mov	_LED_display_grid_1_98,dpl
-	mov	(_LED_display_grid_1_98 + 1),dph
-	mov	(_LED_display_grid_1_98 + 2),b
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:345: for (i = 1; i <= 8; i++) {
+	mov	_LED_display_grid_1_96,dpl
+	mov	(_LED_display_grid_1_96 + 1),dph
+	mov	(_LED_display_grid_1_96 + 2),b
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:341: for (i = 1; i <= 8; i++) {
 	mov	r5,#0x01
 	mov	r6,#0x00
-L015001?:
+L014001?:
 	clr	c
 	mov	a,#0x08
 	subb	a,r5
 	clr	a
 	subb	a,r6
-	jc	L015005?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:346: LED_write(i, grid[i-1]);
+	jc	L014005?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:342: LED_write(i, grid[i-1]);
 	mov	a,r5
 	mov	r7,a
 	add	a,#0xff
@@ -1288,12 +1284,12 @@ L015001?:
 	addc	a,#0xff
 	mov	r1,a
 	mov	a,r0
-	add	a,_LED_display_grid_1_98
+	add	a,_LED_display_grid_1_96
 	mov	r0,a
 	mov	a,r1
-	addc	a,(_LED_display_grid_1_98 + 1)
+	addc	a,(_LED_display_grid_1_96 + 1)
 	mov	r1,a
-	mov	r2,(_LED_display_grid_1_98 + 2)
+	mov	r2,(_LED_display_grid_1_96 + 2)
 	mov	dpl,r0
 	mov	dph,r1
 	mov	b,r2
@@ -1305,12 +1301,12 @@ L015001?:
 	lcall	_LED_write
 	pop	ar6
 	pop	ar5
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:345: for (i = 1; i <= 8; i++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:341: for (i = 1; i <= 8; i++) {
 	inc	r5
-	cjne	r5,#0x00,L015001?
+	cjne	r5,#0x00,L014001?
 	inc	r6
-	sjmp	L015001?
-L015005?:
+	sjmp	L014001?
+L014005?:
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LED_animate'
@@ -1320,7 +1316,7 @@ L015005?:
 ;grid                      Allocated to registers r2 r3 r4 
 ;i                         Allocated to registers r5 r6 
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:350: void LED_animate(unsigned char grid[][8], unsigned char frames, unsigned char fps, bit forward) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:346: void LED_animate(unsigned char grid[][8], unsigned char frames, unsigned char fps, bit forward) {
 ;	-----------------------------------------
 ;	 function LED_animate
 ;	-----------------------------------------
@@ -1328,23 +1324,26 @@ _LED_animate:
 	mov	r2,dpl
 	mov	r3,dph
 	mov	r4,b
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:352: if (forward) {
-	jnb	_LED_animate_PARM_4,L016002?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:353: for (i = 0; i < frames; i++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:348: if (forward) {
+	jnb	_LED_animate_PARM_4,L015004?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:349: for (i = 0; i < frames; i++) {
 	mov	r5,#0x00
 	mov	r6,#0x00
-L016004?:
+L015006?:
 	mov	r7,_LED_animate_PARM_2
 	mov	r0,#0x00
 	clr	c
 	mov	a,r5
 	subb	a,r7
 	mov	a,r6
-	subb	a,r0
-	jc	L016022?
+	xrl	a,#0x80
+	mov	b,r0
+	xrl	b,#0x80
+	subb	a,b
+	jc	L015025?
 	ret
-L016022?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:354: LED_display(grid[i]);
+L015025?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:350: LED_display(grid[i]);
 	mov	ar7,r5
 	mov	a,r6
 	swap	a
@@ -1376,7 +1375,7 @@ L016022?:
 	push	ar5
 	push	ar6
 	lcall	_LED_display
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:355: delay(1000/fps);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:351: delay(1000/fps);
 	mov	__divsint_PARM_2,_LED_animate_PARM_3
 	mov	(__divsint_PARM_2 + 1),#0x00
 	mov	dptr,#0x03E8
@@ -1387,25 +1386,25 @@ L016022?:
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:353: for (i = 0; i < frames; i++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:349: for (i = 0; i < frames; i++) {
 	inc	r5
-	cjne	r5,#0x00,L016004?
+	cjne	r5,#0x00,L015006?
 	inc	r6
-	sjmp	L016004?
-L016002?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:358: for (i = frames-1; i != 0; i--) {
+	sjmp	L015006?
+L015004?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:354: for (i = frames-1; i >= 0; i--) {
 	mov	r5,_LED_animate_PARM_2
 	mov	r6,#0x00
 	dec	r5
-	cjne	r5,#0xff,L016024?
+	cjne	r5,#0xff,L015027?
 	dec	r6
-L016024?:
-L016008?:
-	cjne	r5,#0x00,L016025?
-	cjne	r6,#0x00,L016025?
+L015027?:
+L015010?:
+	mov	a,r6
+	jnb	acc.7,L015028?
 	ret
-L016025?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:359: LED_display(grid[i]);
+L015028?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:355: LED_display(grid[i]);
 	mov	ar7,r5
 	mov	a,r6
 	swap	a
@@ -1437,10 +1436,22 @@ L016025?:
 	push	ar5
 	push	ar6
 	lcall	_LED_display
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:360: delay(1000/fps);
+	pop	ar6
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:356: if (fps != 0) delay(1000/fps);
+	mov	a,_LED_animate_PARM_3
+	jz	L015012?
 	mov	__divsint_PARM_2,_LED_animate_PARM_3
 	mov	(__divsint_PARM_2 + 1),#0x00
 	mov	dptr,#0x03E8
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	push	ar6
 	lcall	__divsint
 	lcall	_delay
 	pop	ar6
@@ -1448,12 +1459,13 @@ L016025?:
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:358: for (i = frames-1; i != 0; i--) {
+L015012?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:354: for (i = frames-1; i >= 0; i--) {
 	dec	r5
-	cjne	r5,#0xff,L016026?
+	cjne	r5,#0xff,L015030?
 	dec	r6
-L016026?:
-	ljmp	L016008?
+L015030?:
+	ljmp	L015010?
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LED_spi'
 ;------------------------------------------------------------
@@ -1461,65 +1473,65 @@ L016026?:
 ;j                         Allocated to registers r3 
 ;temp                      Allocated to registers r4 
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:367: void LED_spi(unsigned char value) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:363: void LED_spi(unsigned char value) {
 ;	-----------------------------------------
 ;	 function LED_spi
 ;	-----------------------------------------
 _LED_spi:
 	mov	r2,dpl
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:369: for (j = 1; j <= 8; j++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:365: for (j = 1; j <= 8; j++) {
 	mov	r3,#0x01
-L017001?:
+L016001?:
 	mov	a,r3
 	add	a,#0xff - 0x08
-	jc	L017005?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:370: temp = value & 0x80;
+	jc	L016005?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:366: temp = value & 0x80;
 	mov	a,#0x80
 	anl	a,r2
 	mov	r4,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:371: LED_DATA = (temp == 0x80) ? HIGH : LOW;
-	cjne	r4,#0x80,L017011?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:367: LED_DATA = (temp == 0x80) ? HIGH : LOW;
+	cjne	r4,#0x80,L016011?
 	setb	c
-	sjmp	L017012?
-L017011?:
+	sjmp	L016012?
+L016011?:
 	clr	c
-L017012?:
+L016012?:
 	mov	_P2_4,c
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:374: LED_CLK = HIGH;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:370: LED_CLK = HIGH;
 	setb	_P2_3
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:375: delayUs(20);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:371: delayUs(20);
 	mov	dpl,#0x14
 	push	ar2
 	push	ar3
 	lcall	_delayUs
 	pop	ar3
 	pop	ar2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:376: LED_CLK = LOW;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:372: LED_CLK = LOW;
 	clr	_P2_3
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:379: value = value << 1;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:375: value = value << 1;
 	mov	a,r2
 	add	a,r2
 	mov	r2,a
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:369: for (j = 1; j <= 8; j++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:365: for (j = 1; j <= 8; j++) {
 	inc	r3
-	sjmp	L017001?
-L017005?:
+	sjmp	L016001?
+L016005?:
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LED_pulse'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:383: void LED_pulse(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:379: void LED_pulse(void) {
 ;	-----------------------------------------
 ;	 function LED_pulse
 ;	-----------------------------------------
 _LED_pulse:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:384: LED_CS = HIGH;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:380: LED_CS = HIGH;
 	setb	_P2_5
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:385: delay(1);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:381: delay(1);
 	mov	dptr,#0x0001
 	lcall	_delay
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:386: LED_CS = LOW;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:382: LED_CS = LOW;
 	clr	_P2_5
 	ret
 ;------------------------------------------------------------
@@ -1527,103 +1539,103 @@ _LED_pulse:
 ;------------------------------------------------------------
 ;j                         Allocated to registers r2 
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:390: void LED_clear(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:386: void LED_clear(void) {
 ;	-----------------------------------------
 ;	 function LED_clear
 ;	-----------------------------------------
 _LED_clear:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:392: for (j = 1; j <= 8; j++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:388: for (j = 1; j <= 8; j++) {
 	mov	r2,#0x01
-L019001?:
+L018001?:
 	mov	a,r2
 	add	a,#0xff - 0x08
-	jc	L019005?
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:393: LED_spi(j);
+	jc	L018005?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:389: LED_spi(j);
 	mov	dpl,r2
 	push	ar2
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:394: LED_spi(0x00);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:390: LED_spi(0x00);
 	mov	dpl,#0x00
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:395: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:391: LED_pulse();
 	lcall	_LED_pulse
 	pop	ar2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:392: for (j = 1; j <= 8; j++) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:388: for (j = 1; j <= 8; j++) {
 	inc	r2
-	sjmp	L019001?
-L019005?:
+	sjmp	L018001?
+L018005?:
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LED_setIntensity'
 ;------------------------------------------------------------
 ;intensity                 Allocated to registers r2 
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:400: void LED_setIntensity(unsigned char intensity) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:396: void LED_setIntensity(unsigned char intensity) {
 ;	-----------------------------------------
 ;	 function LED_setIntensity
 ;	-----------------------------------------
 _LED_setIntensity:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:401: if (intensity > 0x0F) return;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:397: if (intensity > 0x0F) return;
 	mov	a,dpl
 	mov	r2,a
 	add	a,#0xff - 0x0F
-	jnc	L020002?
+	jnc	L019002?
 	ret
-L020002?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:402: LED_spi(0x0A);
+L019002?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:398: LED_spi(0x0A);
 	mov	dpl,#0x0A
 	push	ar2
 	lcall	_LED_spi
 	pop	ar2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:403: LED_spi(intensity);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:399: LED_spi(intensity);
 	mov	dpl,r2
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:404: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:400: LED_pulse();
 	ljmp	_LED_pulse
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LED_init'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:408: void LED_init(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:404: void LED_init(void) {
 ;	-----------------------------------------
 ;	 function LED_init
 ;	-----------------------------------------
 _LED_init:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:409: LED_CS = LOW;
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:405: LED_CS = LOW;
 	clr	_P2_5
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:412: LED_spi(0x09);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:408: LED_spi(0x09);
 	mov	dpl,#0x09
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:414: LED_spi(0x00);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:410: LED_spi(0x00);
 	mov	dpl,#0x00
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:415: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:411: LED_pulse();
 	lcall	_LED_pulse
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:418: LED_spi(0x0A);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:414: LED_spi(0x0A);
 	mov	dpl,#0x0A
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:419: LED_spi(LED_INTENSITY);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:415: LED_spi(LED_INTENSITY);
 	mov	dpl,#0x01
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:420: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:416: LED_pulse();
 	lcall	_LED_pulse
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:423: LED_spi(0x0b);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:419: LED_spi(0x0b);
 	mov	dpl,#0x0B
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:424: LED_spi(0x07);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:420: LED_spi(0x07);
 	mov	dpl,#0x07
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:425: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:421: LED_pulse();
 	lcall	_LED_pulse
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:428: LED_clear();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:424: LED_clear();
 	lcall	_LED_clear
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:431: LED_spi(0x0C);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:427: LED_spi(0x0C);
 	mov	dpl,#0x0C
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:432: LED_spi(0x01);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:428: LED_spi(0x01);
 	mov	dpl,#0x01
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:433: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:429: LED_pulse();
 	ljmp	_LED_pulse
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LED_write'
@@ -1631,57 +1643,57 @@ _LED_init:
 ;value                     Allocated with name '_LED_write_PARM_2'
 ;address                   Allocated to registers r2 
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:437: void LED_write(unsigned char address, unsigned char value) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:433: void LED_write(unsigned char address, unsigned char value) {
 ;	-----------------------------------------
 ;	 function LED_write
 ;	-----------------------------------------
 _LED_write:
 	mov	r2,dpl
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:438: if ((address < 1) || (address > 8)) return;
-	cjne	r2,#0x01,L022007?
-L022007?:
-	jc	L022001?
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:434: if ((address < 1) || (address > 8)) return;
+	cjne	r2,#0x01,L021007?
+L021007?:
+	jc	L021001?
 	mov	a,r2
 	add	a,#0xff - 0x08
-	jnc	L022002?
-L022001?:
+	jnc	L021002?
+L021001?:
 	ret
-L022002?:
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:439: LED_spi(address);
+L021002?:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:435: LED_spi(address);
 	mov	dpl,r2
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:440: LED_spi(value);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:436: LED_spi(value);
 	mov	dpl,_LED_write_PARM_2
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:441: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:437: LED_pulse();
 	ljmp	_LED_pulse
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'LED_test'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:445: void LED_test(void) {
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:441: void LED_test(void) {
 ;	-----------------------------------------
 ;	 function LED_test
 ;	-----------------------------------------
 _LED_test:
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:442: LED_spi(0x0F);
+	mov	dpl,#0x0F
+	lcall	_LED_spi
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:443: LED_spi(0x01);
+	mov	dpl,#0x01
+	lcall	_LED_spi
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:444: LED_pulse();
+	lcall	_LED_pulse
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:445: delay(1000);
+	mov	dptr,#0x03E8
+	lcall	_delay
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:446: LED_spi(0x0F);
 	mov	dpl,#0x0F
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:447: LED_spi(0x01);
-	mov	dpl,#0x01
-	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:448: LED_pulse();
-	lcall	_LED_pulse
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:449: delay(1000);
-	mov	dptr,#0x03E8
-	lcall	_delay
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:450: LED_spi(0x0F);
-	mov	dpl,#0x0F
-	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:451: LED_spi(0x00);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:447: LED_spi(0x00);
 	mov	dpl,#0x00
 	lcall	_LED_spi
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:452: LED_pulse();
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:448: LED_pulse();
 	ljmp	_LED_pulse
 	rseg R_CSEG
 
@@ -1729,7 +1741,7 @@ __str_3:
 	db 'Mar 15 2017'
 	db 0x00
 __str_4:
-	db '13:14:33'
+	db '13:29:22'
 	db 0x00
 __str_5:
 	db 0x0A

@@ -80,11 +80,11 @@ unsigned char IMAGE[4][8] = {
     {0x80, 0x40, 0x20, 0x18, 0x18, 0x04, 0x02, 0x01}
 };
 unsigned char IMAGE_MODE0[8] = {0xc3, 0xe7, 0x7E, 0x3c, 0x3c, 0x7e, 0xe7, 0xc3};
+unsigned char IMAGE_MODE1[8] = {0x7e, 0xc3, 0x81, 0xf9, 0x01, 0x01, 0xc3, 0x7e};
 
 // demo mode:
 // [0] - scanf putty
-// [1] - temperature fan
-// [2] - video game
+// [1] - video game
 unsigned char mode = 0;
 
 // Timer 2 ISR
@@ -143,21 +143,23 @@ void main(void) {
 
         // check modes
         switch (mode) {
-            case 0: mode0(); break;
-            case 1: mode1(); break;
-            case 2: mode2(); break;
+            case 0:
+                LED_animate(IMAGE, 4, 15, !reverse);
+                mode0();
+                break;
+            case 1:
+                LED_display(IMAGE_MODE1);
+                mode1();
+                break;
             default: break;
         }
-
-        // LED matrix
-    	LED_animate(IMAGE, 4, 30, !reverse);
     }
 }
 
 void changeMode(void) {
 	if (!BTNX) {
 		delay(50);
-		if (!BTNX) mode = (mode == 2) ? 0 : mode + 1;
+		if (!BTNX) mode = (mode == 1) ? 0 : 1;
 		while (!BTNX);
 		printf("\n=== Mode %d ===\n", mode);
 	}
@@ -194,10 +196,6 @@ void mode0(void) {
 }
 
 void mode1(void) {
-	delay(100);
-}
-
-void mode2(void) {
 	int potentValue;
     potentValue = getADCAtPin(POT_1);
     power_level = 100.0*potentValue / 1023.0;
@@ -346,14 +344,14 @@ void LED_display(unsigned char *grid) {
 }
 
 void LED_animate(unsigned char grid[][8], unsigned char frames, unsigned char fps, bit forward) {
-    unsigned int i;
+    short int i;
     if (forward) {
         for (i = 0; i < frames; i++) {
             LED_display(grid[i]);
             delay(1000/fps);
         }
     } else {
-        for (i = frames-1; i != 0; i--) {
+        for (i = frames-1; i >= 0; i--) {
             LED_display(grid[i]);
             if (fps != 0) delay(1000/fps);
         }
