@@ -11,69 +11,131 @@ R_GSINIT,code,0000,NO
 R_BSEG,bit,0002,NO
 R_XSEG,xdata,0000,NO
 BIT_BANK,data,0000,OV
-R_CONST,code,00D0,NO
+R_CONST,code,0126,NO
 rbank0,data,0000,OV
 R_PSEG,xdata,0000,NO
-R_DINIT,code,0008,NO
-R_DSEG,data,0002,NO
+R_DINIT,code,006B,NO
+R_DSEG,data,0031,NO
 R_OSEG,data,0001,OV
 R_IXSEG,xdata,0000,NO
 R_ISEG,idata,0000,NO
 R_HOME,code,0000,NO
 R_XINIT,code,0000,NO
-R_CSEG,code,01EC,NO
+R_CSEG,code,04CA,NO
 </SEGMENTS>
 
 <LOCALS>
 L002006?,R_CSEG,0031,0000
 L002004?,R_CSEG,0025,0000
 L002002?,R_CSEG,0014,0000
-L003006?,R_CSEG,003B,0000
-L003003?,R_CSEG,003B,0000
-L007014?,R_CSEG,0135,0000
-L007012?,R_CSEG,0125,0000
-L007010?,R_CSEG,0123,0000
-L004002?,R_CSEG,0096,0000
+L018012?,R_CSEG,03ED,0000
+L018011?,R_CSEG,03EC,0000
+L015005?,R_CSEG,0314,0000
+L006011?,R_CSEG,00F8,0000
+_mode0_inputPWM_1_79,R_DSEG,0023,0002
+L006010?,R_CSEG,00F4,0000
+L015001?,R_CSEG,02DE,0000
+L003002?,R_CSEG,003D,0000
+L007019?,R_CSEG,0102,0000
+L016005?,R_CSEG,035C,0000
+L016001?,R_CSEG,0322,0000
+L004007?,R_CSEG,00A3,0000
+__str_10,R_CONST,011E,0000
+L004003?,R_CSEG,00C4,0000
+L004002?,R_CSEG,00BF,0000
+L004001?,R_CSEG,00BA,0000
 _T2_ISR_sloc0_1_0,R_BSEG,0001,0001
-L010005?,R_CSEG,01EB,0000
-L007007?,R_CSEG,0161,0000
-L010001?,R_CSEG,01B5,0000
-L007004?,R_CSEG,0159,0000
-L007003?,R_CSEG,0151,0000
-L007002?,R_CSEG,0149,0000
-L007001?,R_CSEG,0141,0000
-__str_0,R_CONST,0000,0000
-__str_1,R_CONST,0005,0000
-__str_2,R_CONST,006C,0000
-__str_3,R_CONST,00B5,0000
-__str_4,R_CONST,00C1,0000
-__str_5,R_CONST,00CA,0000
-L008004?,R_CSEG,016F,0000
-L008001?,R_CSEG,016A,0000
-L009007?,R_CSEG,01A9,0000
-L009004?,R_CSEG,0199,0000
-L009001?,R_CSEG,019E,0000
+L007022?,R_CSEG,01AF,0000
+L007021?,R_CSEG,01A2,0000
+L007020?,R_CSEG,010C,0000
+L020005?,R_CSEG,042F,0000
+L017005?,R_CSEG,03D8,0000
+L020001?,R_CSEG,0415,0000
+L017001?,R_CSEG,037A,0000
+L005004?,R_CSEG,00DD,0000
+_LED_display_grid_1_102,R_DSEG,0027,0003
+L012014?,R_CSEG,025E,0000
+L012012?,R_CSEG,024E,0000
+L021002?,R_CSEG,0438,0000
+L012010?,R_CSEG,024C,0000
+L018005?,R_CSEG,0407,0000
+L018001?,R_CSEG,03DD,0000
+L006008?,R_CSEG,00FD,0000
+L006003?,R_CSEG,00FA,0000
+L007005?,R_CSEG,01BA,0000
+L007002?,R_CSEG,010C,0000
+L023007?,R_CSEG,0490,0000
+L023002?,R_CSEG,0498,0000
+L023001?,R_CSEG,0497,0000
+_LED_animate_grid_1_105,R_DSEG,002D,0003
+__str_0,R_CONST,0002,0000
+__str_1,R_CONST,0007,0000
+__str_2,R_CONST,006E,0000
+__str_3,R_CONST,00B7,0000
+__str_4,R_CONST,00C3,0000
+__str_5,R_CONST,00CC,0000
+__str_6,R_CONST,00F6,0000
+__str_7,R_CONST,00F9,0000
+__str_8,R_CONST,0109,0000
+__str_9,R_CONST,0116,0000
+_mode0_direction_1_79,R_DSEG,0025,0002
+L012007?,R_CSEG,028A,0000
+L012004?,R_CSEG,0282,0000
+L012003?,R_CSEG,027A,0000
+L012002?,R_CSEG,0272,0000
+L012001?,R_CSEG,026A,0000
+L004016?,R_CSEG,00B3,0000
+L004015?,R_CSEG,00AC,0000
+L013004?,R_CSEG,0298,0000
+L013001?,R_CSEG,0293,0000
+L014007?,R_CSEG,02D2,0000
+L014004?,R_CSEG,02C2,0000
+L014001?,R_CSEG,02C7,0000
 </LOCALS>
 
 <PUBLICS>
-_main,R_CSEG,003C,0000
+_LED_pulse,R_CSEG,0408,0000
+_main,R_CSEG,0043,0000
 _power_level,R_DSEG,0001,0001
-__c51_external_startup,R_CSEG,00C1,0000
-_delayUs,R_CSEG,0183,0000
-_SPI_ISR,R_CSEG,0036,0000
-_getADCAtPin,R_CSEG,0162,0000
-_delay,R_CSEG,01AD,0000
+_LED_clear,R_CSEG,0413,0000
+_LED_display,R_CSEG,0315,0000
+_getKey,R_CSEG,0036,0000
+_IMAGES_LEN,R_CONST,0000,0000
+_LED_write,R_CSEG,048B,0000
+__c51_external_startup,R_CSEG,01EA,0000
+_mode0,R_CSEG,00FE,0000
+_mode1,R_CSEG,01BE,0000
+_mode2,R_CSEG,01D4,0000
+_LED_animate,R_CSEG,035D,0000
+_LED_write_PARM_2,R_DSEG,0030,0001
+_LED_init,R_CSEG,044A,0000
+_delayUs,R_CSEG,02AC,0000
+_LED_spi,R_CSEG,03D9,0000
+_getADCAtPin,R_CSEG,028B,0000
+_delay,R_CSEG,02D6,0000
+_LED_test,R_CSEG,04A6,0000
 _pwm_count,R_DSEG,0000,0001
-_initializePin,R_CSEG,0118,0000
+_LED_setIntensity,R_CSEG,0430,0000
+_initializePin,R_CSEG,0241,0000
+_IMAGES,R_DSEG,0002,0020
+_LED_animate_PARM_2,R_DSEG,002A,0001
+_LED_animate_PARM_3,R_DSEG,002B,0002
+_mode,R_DSEG,0022,0001
 _initializePin_PARM_2,R_OSEG,0000,0001
+_changeMode,R_CSEG,00DF,0000
 _T2_ISR,R_CSEG,0000,0000
+_checkButton,R_CSEG,00C9,0000
 _reverse,R_BSEG,0000,0001
-_initializeADC,R_CSEG,010E,0000
+_initializeADC,R_CSEG,0237,0000
 </PUBLICS>
 
 <EXTERNALS>
+_scanf,any,0000,0000
+__gptrget,any,0000,0000
 _printf,any,0000,0000
+__divsint,any,0000,0000
 _crt0,any,0000,0000
+__divsint_PARM_2,any,0000,0000
 </EXTERNALS>
 
 <CODE AT 0000>
@@ -92,10 +154,6 @@ _crt0,any,0000,0000
 02 addr16(_crt0;)  
 </CODE>
 
-<CODE AT 0023>
-02 addr16(_SPI_ISR;)  
-</CODE>
-
 <CODE AT 002B>
 02 addr16(_T2_ISR;)  
 </CODE>
@@ -112,6 +170,39 @@ _crt0,any,0000,0000
 <CODE R_DINIT>
 75 data8(_pwm_count;) 00
 75 data8(_power_level;) 32
+75 data8(_IMAGES;) 7C
+75 data8(_IMAGES;0x0001;+;) 32
+75 data8(_IMAGES;0x0002;+;) 11
+75 data8(_IMAGES;0x0003;+;) 81
+75 data8(_IMAGES;0x0004;+;) 81
+75 data8(_IMAGES;0x0005;+;) 88
+75 data8(_IMAGES;0x0006;+;) 4C
+75 data8(_IMAGES;0x0007;+;) 3E
+75 data8(_IMAGES;0x0008;+;) 3C
+75 data8(_IMAGES;0x0009;+;) 62
+75 data8(_IMAGES;0x000A;+;) F0
+75 data8(_IMAGES;0x000B;+;) C0
+75 data8(_IMAGES;0x000C;+;) 03
+75 data8(_IMAGES;0x000D;+;) 0F
+75 data8(_IMAGES;0x000E;+;) 06
+75 data8(_IMAGES;0x000F;+;) 3C
+75 data8(_IMAGES;0x0010;+;) 38
+75 data8(_IMAGES;0x0011;+;) 41
+75 data8(_IMAGES;0x0012;+;) 83
+75 data8(_IMAGES;0x0013;+;) 87
+75 data8(_IMAGES;0x0014;+;) E1
+75 data8(_IMAGES;0x0015;+;) C1
+75 data8(_IMAGES;0x0016;+;) 82
+75 data8(_IMAGES;0x0017;+;) 1C
+75 data8(_IMAGES;0x0018;+;) 0C
+75 data8(_IMAGES;0x0019;+;) 4E
+75 data8(_IMAGES;0x001A;+;) 87
+75 data8(_IMAGES;0x001B;+;) 85
+75 data8(_IMAGES;0x001C;+;) A1
+75 data8(_IMAGES;0x001D;+;) E1
+75 data8(_IMAGES;0x001E;+;) 72
+75 data8(_IMAGES;0x001F;+;) 30
+75 data8(_mode;) 00
 C2 bit(_reverse;)
 </CODE>
 
@@ -144,9 +235,12 @@ C2 A6
 D0 D0
 D0 E0
 32
-10 98 rel3(L003006?;)
-80 rel2(L003003?;)
-32
+20 98 rel3(L003002?;)
+75 82 00
+22
+C2 98
+85 99 82
+22
 74 data8(__str_0;)
 C0 E0
 74 data8(__str_0;0x0008;>>;)
@@ -189,12 +283,57 @@ F5 81
 75 82 01
 12 addr16(_initializePin;)  
 12 addr16(_initializeADC;)  
-75 82 05
-12 addr16(_getADCAtPin;)  
-AA 82
-AB 83
+12 addr16(_LED_init;)  
+75 data8(_power_level;) 00
+12 addr16(_changeMode;)  
+E4
+B5 data8(_mode;) rel3(L004015?;)
+80 rel2(L004001?;)
+74 01
+B5 data8(_mode;) rel3(L004016?;)
+80 rel2(L004002?;)
+74 02
+B5 data8(_mode;) rel3(L004007?;)
+80 rel2(L004003?;)
+12 addr16(_mode0;)  
+80 rel2(L004007?;)
+12 addr16(_mode1;)  
+80 rel2(L004007?;)
+12 addr16(_mode2;)  
+80 rel2(L004007?;)
+E5 82
+FA
+70 rel2(L005004?;)
+90 00 32
 C0 02
-C0 03
+12 addr16(_delay;)  
+D0 02
+EA
+70 rel2(L005004?;)
+D3
+22
+C3
+22
+20 96 rel3(L006008?;)
+90 00 32
+12 addr16(_delay;)  
+20 96 rel3(L006003?;)
+74 02
+B5 data8(_mode;) rel3(L006010?;)
+7A 00
+80 rel2(L006011?;)
+E5 data8(_mode;)
+04
+FA
+8A data8(_mode;)
+30 96 rel3(L006003?;)
+22
+30 85 rel3(L007019?;)
+22
+90 00 32
+12 addr16(_delay;)  
+30 85 rel3(L007020?;)
+22
 74 data8(__str_5;)
 C0 E0
 74 data8(__str_5;0x0008;>>;)
@@ -202,12 +341,108 @@ C0 E0
 74 80
 C0 E0
 12 addr16(_printf;)  
+15 81
+15 81
+15 81
+74 data8(_mode0_direction_1_79;)
+C0 E0
+74 data8(_mode0_direction_1_79;0x0008;>>;)
+C0 E0
+74 40
+C0 E0
+74 data8(__str_6;)
+C0 E0
+74 data8(__str_6;0x0008;>>;)
+C0 E0
+74 80
+C0 E0
+12 addr16(_scanf;)  
 E5 81
-24 FB
+24 FA
 F5 81
-90 00 32
-12 addr16(_delay;)  
-80 rel2(L004002?;)
+74 data8(__str_7;)
+C0 E0
+74 data8(__str_7;0x0008;>>;)
+C0 E0
+74 80
+C0 E0
+12 addr16(_printf;)  
+15 81
+15 81
+15 81
+74 data8(_mode0_inputPWM_1_79;)
+C0 E0
+74 data8(_mode0_inputPWM_1_79;0x0008;>>;)
+C0 E0
+74 40
+C0 E0
+74 data8(__str_6;)
+C0 E0
+74 data8(__str_6;0x0008;>>;)
+C0 E0
+74 80
+C0 E0
+12 addr16(_scanf;)  
+E5 81
+24 FA
+F5 81
+C0 data8(_mode0_inputPWM_1_79;)
+C0 data8(_mode0_inputPWM_1_79;0x0001;+;)
+C0 data8(_mode0_direction_1_79;)
+C0 data8(_mode0_direction_1_79;0x0001;+;)
+74 data8(__str_8;)
+C0 E0
+74 data8(__str_8;0x0008;>>;)
+C0 E0
+74 80
+C0 E0
+12 addr16(_printf;)  
+E5 81
+24 F9
+F5 81
+C3
+74 01
+95 data8(_mode0_direction_1_79;)
+E4
+95 data8(_mode0_direction_1_79;0x0001;+;)
+50 rel2(L007021?;)
+02 addr16(L007002?;)  
+C3
+74 64
+95 data8(_mode0_inputPWM_1_79;)
+E4
+95 data8(_mode0_inputPWM_1_79;0x0001;+;)
+50 rel2(L007022?;)
+02 addr16(L007002?;)  
+85 data8(_mode0_inputPWM_1_79;) data8(_power_level;)
+E5 data8(_mode0_direction_1_79;)
+45 data8(_mode0_direction_1_79;0x0001;+;)
+24 FF
+92 data8(_reverse;)
+30 85 rel3(L007005?;)
+22
+74 data8(__str_9;)
+C0 E0
+74 data8(__str_9;0x0008;>>;)
+C0 E0
+74 80
+C0 E0
+12 addr16(_printf;)  
+15 81
+15 81
+15 81
+22
+74 data8(__str_10;)
+C0 E0
+74 data8(__str_10;0x0008;>>;)
+C0 E0
+74 80
+C0 E0
+12 addr16(_printf;)  
+15 81
+15 81
+15 81
+22
 53 D9 BF
 75 FF 80
 75 EF 06
@@ -244,22 +479,22 @@ AA 82
 85 data8(_initializePin_PARM_2;) F0
 05 F0
 74 01
-80 rel2(L007012?;)
+80 rel2(L012012?;)
 25 E0
-D5 F0 rel3(L007010?;)
+D5 F0 rel3(L012010?;)
 FB
 EA
 24 FC
-40 rel2(L007007?;)
+40 rel2(L012007?;)
 EA
 2A
 2A
-90 data16(L007014?;)  
+90 data16(L012014?;)  
 73
-02 addr16(L007001?;)  
-02 addr16(L007002?;)  
-02 addr16(L007003?;)  
-02 addr16(L007004?;)  
+02 addr16(L012001?;)  
+02 addr16(L012002?;)  
+02 addr16(L012003?;)  
+02 addr16(L012004?;)  
 EB
 F4
 52 F1
@@ -288,9 +523,9 @@ EB
 85 82 BB
 75 BA 1F
 D2 EC
-20 EC rel3(L008001?;)
+20 EC rel3(L013001?;)
 D2 EC
-20 EC rel3(L008004?;)
+20 EC rel3(L013004?;)
 AA BD
 7B 00
 AD BE
@@ -313,12 +548,12 @@ AA 82
 C3
 EB
 9A
-50 rel2(L009007?;)
+50 rel2(L014007?;)
 E5 91
-30 E7 rel3(L009001?;)
+30 E7 rel3(L014001?;)
 53 91 7F
 0B
-80 rel2(L009004?;)
+80 rel2(L014004?;)
 75 91 00
 22
 AA 82
@@ -330,7 +565,7 @@ EC
 9A
 ED
 9B
-50 rel2(L010005?;)
+50 rel2(L015005?;)
 75 82 F9
 C0 02
 C0 03
@@ -348,10 +583,224 @@ D0 04
 D0 03
 D0 02
 0C
-BC 00 rel3(L010001?;)
+BC 00 rel3(L015001?;)
 0D
-80 rel2(L010001?;)
+80 rel2(L015001?;)
 22
+85 82 data8(_LED_display_grid_1_102;)
+85 83 data8(_LED_display_grid_1_102;0x0001;+;)
+85 F0 data8(_LED_display_grid_1_102;0x0002;+;)
+7D 01
+7E 00
+C3
+74 08
+9D
+E4
+9E
+40 rel2(L016005?;)
+ED
+FF
+24 FF
+F8
+EE
+34 FF
+F9
+E8
+25 data8(_LED_display_grid_1_102;)
+F8
+E9
+35 data8(_LED_display_grid_1_102;0x0001;+;)
+F9
+AA data8(_LED_display_grid_1_102;0x0002;+;)
+88 82
+89 83
+8A F0
+12 addr16(__gptrget;)  
+F5 data8(_LED_write_PARM_2;)
+8F 82
+C0 05
+C0 06
+12 addr16(_LED_write;)  
+D0 06
+D0 05
+0D
+BD 00 rel3(L016001?;)
+0E
+80 rel2(L016001?;)
+22
+85 82 data8(_LED_animate_grid_1_105;)
+85 83 data8(_LED_animate_grid_1_105;0x0001;+;)
+85 F0 data8(_LED_animate_grid_1_105;0x0002;+;)
+85 data8(_LED_animate_PARM_3;) data8(__divsint_PARM_2;)
+85 data8(_LED_animate_PARM_3;0x0001;+;) data8(__divsint_PARM_2;0x0001;+;)
+90 03 E8
+12 addr16(__divsint;)  
+AD 82
+AE 83
+7F 00
+78 00
+A9 data8(_LED_animate_PARM_2;)
+7A 00
+C3
+EF
+99
+E8
+9A
+50 rel2(L017005?;)
+8F 02
+E8
+C4
+03
+54 F8
+CA
+C4
+03
+CA
+6A
+CA
+54 F8
+CA
+6A
+FB
+EA
+25 data8(_LED_animate_grid_1_105;)
+FA
+EB
+35 data8(_LED_animate_grid_1_105;0x0001;+;)
+FB
+AC data8(_LED_animate_grid_1_105;0x0002;+;)
+8A 82
+8B 83
+8C F0
+C0 05
+C0 06
+C0 07
+C0 00
+12 addr16(_LED_display;)  
+D0 00
+D0 07
+D0 06
+D0 05
+8D 82
+8E 83
+C0 05
+C0 06
+C0 07
+C0 00
+12 addr16(_delay;)  
+D0 00
+D0 07
+D0 06
+D0 05
+0F
+BF 00 rel3(L017001?;)
+08
+80 rel2(L017001?;)
+22
+AA 82
+7B 01
+EB
+24 F7
+40 rel2(L018005?;)
+74 80
+5A
+FC
+BC 80 rel3(L018011?;)
+D3
+80 rel2(L018012?;)
+C3
+92 A4
+D2 A3
+75 82 14
+C0 02
+C0 03
+12 addr16(_delayUs;)  
+D0 03
+D0 02
+C2 A3
+EA
+2A
+FA
+0B
+80 rel2(L018001?;)
+22
+D2 A5
+90 00 01
+12 addr16(_delay;)  
+C2 A5
+22
+7A 01
+EA
+24 F7
+40 rel2(L020005?;)
+8A 82
+C0 02
+12 addr16(_LED_spi;)  
+75 82 00
+12 addr16(_LED_spi;)  
+12 addr16(_LED_pulse;)  
+D0 02
+0A
+80 rel2(L020001?;)
+22
+E5 82
+FA
+24 F0
+50 rel2(L021002?;)
+22
+75 82 0A
+C0 02
+12 addr16(_LED_spi;)  
+D0 02
+8A 82
+12 addr16(_LED_spi;)  
+02 addr16(_LED_pulse;)  
+C2 A5
+75 82 09
+12 addr16(_LED_spi;)  
+75 82 00
+12 addr16(_LED_spi;)  
+12 addr16(_LED_pulse;)  
+75 82 0A
+12 addr16(_LED_spi;)  
+75 82 01
+12 addr16(_LED_spi;)  
+12 addr16(_LED_pulse;)  
+75 82 0B
+12 addr16(_LED_spi;)  
+75 82 07
+12 addr16(_LED_spi;)  
+12 addr16(_LED_pulse;)  
+12 addr16(_LED_clear;)  
+75 82 0C
+12 addr16(_LED_spi;)  
+75 82 01
+12 addr16(_LED_spi;)  
+02 addr16(_LED_pulse;)  
+AA 82
+BA 01 rel3(L023007?;)
+40 rel2(L023001?;)
+EA
+24 F7
+50 rel2(L023002?;)
+22
+8A 82
+12 addr16(_LED_spi;)  
+85 data8(_LED_write_PARM_2;) 82
+12 addr16(_LED_spi;)  
+02 addr16(_LED_pulse;)  
+75 82 0F
+12 addr16(_LED_spi;)  
+75 82 01
+12 addr16(_LED_spi;)  
+12 addr16(_LED_pulse;)  
+90 03 E8
+12 addr16(_delay;)  
+75 82 0F
+12 addr16(_LED_spi;)  
+75 82 00
+12 addr16(_LED_spi;)  
+02 addr16(_LED_pulse;)  
 </CODE>
 
 <CODE R_CSEG>
@@ -361,6 +810,8 @@ BC 00 rel3(L010001?;)
 </CODE>
 
 <CODE R_CONST>
+04
+00
 1B
 5B 32 4A 
 00
@@ -398,11 +849,29 @@ BC 00 rel3(L010001?;)
 4D 6F 
 74 6F 72 43 6F 6E 74 72 6F 6C 2E 63 
 00
-4D 61 72 20 31 34 20 32 30 31 37 
+4D 61 72 20 31 35 20 32 30 31 37 
 00
-31 32 3A 33 30 3A 30 35 
+31 31 3A 35 36 3A 32 34 
 00
-24 25 64 3B 
+45 6E 74 65 72 20 70 6F 77 65 72 20 73 65 74 74 69
+6E 67 3A 
+0A
+3C 64 69 72 65 63 74 69 6F 6E 20 5B 30 2C 20 31 5D
+3E 3A 20 
+00
+25 64 
+00
+0A
+3C 44 75 74 79 20 43 79 63 6C 65 3E 3A 20 
+00
+0A
+53 65 74 3A 20 25 64 3A 25 64 
+0A
+00
+4D 6F 64 65 20 31 
+0A
+00
+4D 6F 64 65 20 32 
 0A
 00
 </CODE>

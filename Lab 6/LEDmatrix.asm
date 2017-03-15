@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1069 (Apr 23 2015) (MSVC)
-; This file was generated Tue Mar 14 10:35:21 2017
+; This file was generated Tue Mar 14 23:09:02 2017
 ;--------------------------------------------------------
 $name LEDmatrix
 $optc51 --model-small
@@ -1112,7 +1112,7 @@ __str_3:
 	db 'Mar 14 2017'
 	db 0x00
 __str_4:
-	db '10:35:21'
+	db '23:09:02'
 	db 0x00
 __str_5:
 	db 0x1B

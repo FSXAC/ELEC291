@@ -5,14 +5,54 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <c8051f38x.h>
+// #include <ctype.h>
 
 #define SYSCLK    48000000L
 #define BAUDRATE  115200L
+
+// make programmer's life easier preprocessors
+#define HIGH 1
+#define LOW 0
 
 // reference digial voltage
 #define VDD 3.2
 #define POT_1 LQFP32_MUX_P1_5
 
+// BUTTONS
+#define BTN0 P0_5
+#define BTN1 P0_6
+#define BTN2 P0_7
+#define BTNX P1_6
+
+/* ===[MAX7219 CONTROL]=== */
+#define LED_CS P2_5
+#define LED_DATA P2_4
+#define LED_CLK P2_3
+
+#define LED_INTENSITY 0x01
+
+/* Toggles CS */
+void LED_pulse(void);
+
+/* send one byte */
+void LED_spi(unsigned char value);
+
+/* clear all MAX7219s */
+void LED_clear(void);
+
+/* initialize the LED */
+void LED_init(void);
+
+/* write to MAX7219 */
+void LED_write(unsigned char address, unsigned char value);
+
+/* test LED matrix */
+void LED_test(void);
+
+void LED_display(unsigned char *grid);
+void LED_animate(unsigned char grid[][8], unsigned char frames, int fps);
+
+// other function prototpes
 char _c51_external_startup(void);
 void delayUs(unsigned char us);
 void delay(unsigned int ms);
@@ -20,10 +60,32 @@ void initializeADC(void);
 void initializePin(unsigned char port, unsigned char pin);
 unsigned int getADCAtPin(unsigned char pin);
 
+// modes
+bit checkButton(unsigned char button);
+void changeMode(void);
+void mode0(void);
+void mode1(void);
+void mode2(void);
+
 // ISR / PWM counter
 volatile unsigned char pwm_count=0;
 volatile unsigned char power_level = 50;
 volatile unsigned bit reverse = 0;
+
+// LED matrix thing
+unsigned char IMAGES[4][8] = {
+  {0x7c, 0x32, 0x11, 0x81, 0x81, 0x88, 0x4c, 0x3e},
+  {0x3c, 0x62, 0xf0, 0xc0, 0x03, 0x0f, 0x06, 0x3c},
+  {0x38, 0x41, 0x83, 0x87, 0xe1, 0xc1, 0x82, 0x1c},
+  {0x0c, 0x4e, 0x87, 0x85, 0xa1, 0xe1, 0x72, 0x30}
+};
+const int IMAGES_LEN = sizeof(IMAGES)/8;
+
+// demo mode:
+// [0] - scanf putty
+// [1] - temperature fan
+// [2] - video game
+unsigned char mode = 0;
 
 // Timer 2 ISR
 void T2_ISR(void) interrupt 5 {
@@ -44,15 +106,17 @@ void T2_ISR(void) interrupt 5 {
     }
 }
 
-// Serial ISR
-void SPI_ISR(void) interrupt 4 {
-	if (RI) {
-		RI = 0;
-		//scanf("%d", &power_level);
-		// get input stream right here
-	}
+
+// get input character from input stream
+char getKey(void) {
+	if(!RI) return 0;
+
+	RI = 0;
+    return SBUF;
 }
 
+
+// main program
 void main(void) {
     printf("\x1b[2J");
     printf("PWM and motor output\n"
@@ -67,12 +131,82 @@ void main(void) {
     initializePin(1, 5);
     initializeADC();
 
+    // initalize MAX7219
+    LED_init();
+
+    // set motor to off to begin with
+    power_level = 0;
+
     while (1) {
-        printf("$%d;\n", getADCAtPin(POT_1));
-        delay(50);
-        // delay(2000);
-        // reverse = !reverse;
+        // check button state
+       	changeMode();
+
+        // check modes
+        switch (mode) {
+            case 0: mode0(); break;
+            case 1: mode1(); break;
+            case 2: mode2(); break;
+            default: break;
+        }
     }
+}
+
+bit checkButton(unsigned char button) {
+	if (!button) {
+		delay(50);
+		if (!button) {
+			return 1;
+			//while (!button);
+		}
+	}
+	return 0;
+}
+
+void changeMode(void) {
+	if (!BTNX) {
+		delay(50);
+		if (!BTNX) mode = (mode == 2) ? 0 : mode + 1;
+		while (!BTNX);
+	}
+}
+
+void mode0(void) {
+    // get scanf and turn the motor
+    //printf("%d", checkButton(BTN0));
+    unsigned int inputPWM;
+    unsigned int direction;
+
+    if (!BTN0) {
+    	delay(50);
+    	if (!BTN0) {
+    		do {
+        		printf("Enter power setting:\n<direction [0, 1]>: ");
+        		scanf("%d", &direction);
+                printf("\n<Duty Cycle>: ");
+                scanf("%d", &inputPWM);
+        		printf("\nSet: %d:%d\n", direction, inputPWM);
+    		} while (direction > 1 || inputPWM > 100);
+
+    		// apply changes to motor settings
+    		power_level = inputPWM;
+    		reverse = direction;
+
+    		// wait for button to release
+    		while (!BTN0);
+    	}
+ 	}
+}
+
+void mode1(void) {
+	printf("Mode 1\n");
+}
+
+void mode2(void) {
+	printf("Mode 2\n");
+	//int potentValue;
+    //potentValue = getADCAtPin(POT_1);
+    //power_level = 100.0*potentValue / 1023.0; // CHANGED
+    //delay(50);
 }
 
 char _c51_external_startup(void) {
@@ -206,4 +340,110 @@ void delay(unsigned int ms) {
         delayUs(249);
         delayUs(250);
     }
+}
+
+void LED_display(unsigned char *grid) {
+    unsigned int i;
+    for (i = 1; i <= 8; i++) {
+        LED_write(i, grid[i-1]);
+    }
+}
+
+void LED_animate(unsigned char grid[][8], unsigned char frames, int fps) {
+    unsigned int i;
+    for (i = 0; i < frames; i++) {
+        LED_display(grid[i]);
+        delay(1000/fps);
+    }
+}
+
+// ===[STUFF FOR MAX7219 HERE]===
+/* send one byte */
+void LED_spi(unsigned char value) {
+    unsigned char j, temp;
+    for (j = 1; j <= 8; j++) {
+        temp = value & 0x80;
+        LED_DATA = (temp == 0x80) ? HIGH : LOW;
+
+        // toggle clock
+        LED_CLK = HIGH;
+        delayUs(20);
+        LED_CLK = LOW;
+
+        // shift bit one over
+        value = value << 1;
+    }
+}
+
+void LED_pulse(void) {
+    LED_CS = HIGH;
+    delay(1);
+    LED_CS = LOW;
+}
+
+/* clear all MAX7219s */
+void LED_clear(void) {
+    unsigned char j;
+    for (j = 1; j <= 8; j++) {
+        LED_spi(j);
+        LED_spi(0x00);
+        LED_pulse();
+    }
+}
+
+
+/* set custom intensity for LEDs */
+void LED_setIntensity(unsigned char intensity) {
+    if (intensity > 0x0F) return;
+    LED_spi(0x0A);
+    LED_spi(intensity);
+    LED_pulse();
+}
+
+/* initialize the LED */
+void LED_init(void) {
+    LED_CS = LOW;
+
+    // set decode mode (no-decode)
+    LED_spi(0x09);
+    // LED_spi(0xFF);
+    LED_spi(0x00);
+    LED_pulse();
+
+    // set intensity (0-F)
+    LED_spi(0x0A);
+    LED_spi(LED_INTENSITY);
+    LED_pulse();
+
+    // set scan limit (8 digits)
+    LED_spi(0x0b);
+    LED_spi(0x07);
+    LED_pulse();
+
+    // clear MAX7219
+    LED_clear();
+
+    // set for normal operation
+    LED_spi(0x0C);
+    LED_spi(0x01);
+    LED_pulse();
+}
+
+/* write to MAX7219 */
+void LED_write(unsigned char address, unsigned char value) {
+    if ((address < 1) || (address > 8)) return;
+    LED_spi(address);
+    LED_spi(value);
+    LED_pulse();
+}
+
+/* turn on ALL LEDs for testing */
+void LED_test(void) {
+    LED_spi(0x0F);
+    LED_spi(0x01);
+    LED_pulse();
+    delay(1000);
+    LED_spi(0x0F);
+    LED_spi(0x00);
+    LED_pulse();
 }

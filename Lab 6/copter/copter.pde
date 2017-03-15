@@ -74,7 +74,7 @@ void draw() {
     if (ser.available() > 0) {
         ser.readStringUntil('$');
         serInput = ser.readStringUntil(';');
-        if (serInput != NULL) {
+        if (serInput != null) {
             serInput = serInput.substring(0, serInput.length() - 1);
 
             // get numerical values
