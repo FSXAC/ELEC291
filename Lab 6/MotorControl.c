@@ -50,7 +50,7 @@ void LED_write(unsigned char address, unsigned char value);
 void LED_test(void);
 
 void LED_display(unsigned char *grid);
-void LED_animate(unsigned char grid[][8], unsigned char frames, int fps);
+void LED_animate(unsigned char grid[][8], unsigned char frames, unsigned char fps, bit forward);
 
 // other function prototpes
 char _c51_external_startup(void);
@@ -74,12 +74,12 @@ volatile unsigned bit reverse = 0;
 
 // LED matrix thing
 unsigned char IMAGE[4][8] = {
-  {0x7c, 0x32, 0x11, 0x81, 0x81, 0x88, 0x4c, 0x3e},
-  {0x3c, 0x62, 0xf0, 0xc0, 0x03, 0x0f, 0x06, 0x3c},
-  {0x38, 0x41, 0x83, 0x87, 0xe1, 0xc1, 0x82, 0x1c},
-  {0x0c, 0x4e, 0x87, 0x85, 0xa1, 0xe1, 0x72, 0x30}
+    {0x00, 0x00, 0x00, 0x1f, 0xf8, 0x00, 0x00, 0x00},
+    {0x01, 0x02, 0x04, 0x18, 0x18, 0x20, 0x40, 0x80},
+    {0x10, 0x10, 0x10, 0x18, 0x18, 0x08, 0x08, 0x08},
+    {0x80, 0x40, 0x20, 0x18, 0x18, 0x04, 0x02, 0x01}
 };
-const int IMAGES_LEN = sizeof(IMAGE)/8;
+unsigned char IMAGE_MODE0[8] = {0xc3, 0xe7, 0x7E, 0x3c, 0x3c, 0x7e, 0xe7, 0xc3};
 
 // demo mode:
 // [0] - scanf putty
@@ -148,21 +148,10 @@ void main(void) {
             case 2: mode2(); break;
             default: break;
         }
-        
-        // LED matrix
-    	LED_animate(IMAGE, 4, 30);
-    }
-}
 
-bit checkButton(unsigned char button) {
-	if (!button) {
-		delay(50);
-		if (!button) {
-			return 1;
-			//while (!button);
-		}
-	}
-	return 0;
+        // LED matrix
+    	LED_animate(IMAGE, 4, 30, !reverse);
+    }
 }
 
 void changeMode(void) {
@@ -175,10 +164,11 @@ void changeMode(void) {
 }
 
 void mode0(void) {
-    // get scanf and turn the motor
-    //printf("%d", checkButton(BTN0));
     unsigned int inputPWM;
     unsigned int direction;
+
+    // LED matrix
+    LED_display(IMAGE_MODE0);
 
     if (!BTN0) {
     	delay(20);
@@ -188,13 +178,13 @@ void mode0(void) {
         		printf("Enter power setting:\n<direction [0, 1]>: ");
         		scanf("%d", &direction);
         		reverse = direction;
-        		
+
                 printf("\n<Duty Cycle>: ");
                 scanf("%d", &inputPWM);
                 power_level = inputPWM;
-                
+
         		printf("\nSet: %d:%d\n", reverse, power_level);
-        		
+
     		} while (direction > 1 || inputPWM > 100);
 
     		// wait for button to release
@@ -355,11 +345,18 @@ void LED_display(unsigned char *grid) {
     }
 }
 
-void LED_animate(unsigned char grid[][8], unsigned char frames, int fps) {
+void LED_animate(unsigned char grid[][8], unsigned char frames, unsigned char fps, bit forward) {
     unsigned int i;
-    for (i = 0; i < frames; i++) {
-        LED_display(grid[i]);
-        delay(1000/fps);
+    if (forward) {
+        for (i = 0; i < frames; i++) {
+            LED_display(grid[i]);
+            delay(1000/fps);
+        }
+    } else {
+        for (i = frames-1; i != 0; i--) {
+            LED_display(grid[i]);
+            if (fps != 0) delay(1000/fps);
+        }
     }
 }
 
