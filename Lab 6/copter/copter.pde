@@ -10,6 +10,7 @@ import processing.serial.*;
 // serial
 Serial ser;
 String serInput;
+String[] serInputComponents = new String[3];
 
 // game constants
 // map size
@@ -28,6 +29,7 @@ SoundFile victorySound;
 
 // create player object
 Player player;
+float playerSpeed_tgt = 30;
 
 // create obsticle objects
 Block[] blocks = new Block[maxBlocks];
@@ -39,6 +41,9 @@ float turnValue;
 float turnOffset_tgt;
 float turnOffset = 0;
 float trackOffset = 0;
+
+// boosting
+boolean boostButton = false;
 
 void setup() {
     size(800, 600, P3D);
@@ -78,12 +83,14 @@ void draw() {
             serInput = serInput.substring(0, serInput.length() - 1);
 
             // get numerical values
-            turnValue_tgt = map(Integer.parseInt(serInput), 0, 1023, 0, width);
+            serInputComponents = serInput.split(",");
+            playerSpeed_tgt = map(Integer.parseInt(serInputComponents[0]), 0, 1023, 10, 60);
+            turnValue_tgt = map(Integer.parseInt(serInputComponents[1]), 0, 1023, 0, width);
+            boostButton = (serInputComponents[2] == "1") ? false : true;
         }
     }
     turnValue = lerp(turnValue, turnValue_tgt, 0.5);
 
-    // FIXME Optimize
     turnOffset_tgt = map(turnValue - width/2, -width/2, width/2, 80, -80);
     turnOffset = lerp(turnOffset, turnOffset_tgt, 0.1);
     trackOffset = lerp(trackOffset, (player.getSpeed() > 60) ? -200 : -100, 0.05);
@@ -106,7 +113,6 @@ void draw() {
     fill(150, 150, 150);
     rect(0, 0, 4*mapWidth, 4*mapDepth);
     popMatrix();
-
 
     // draw block
     stroke(50);
@@ -154,7 +160,7 @@ void draw() {
     }
 
     fill(0);
-    // text(mBlock.position.y, 10, 10);
+    text(player.boostAvailable ? "ON" : "OFF", 10, 10);
 }
 
 // mouse events

@@ -5,6 +5,9 @@ class Player {
     int collisions = 0;
     int collisionTimer = 0;
 
+    int distance = 0;
+    boolean boosting = false, boostAvailable = false;
+
     // constructor
     Player() {
         speed = 10;
@@ -44,10 +47,19 @@ class Player {
     }
 
     private void update() {
-        if (speed < 120) speed = lerp(speed, 100, 0.001);
-        // speed = map(mouseY, 0, height, 100, 10);
+        if (speed < 120) speed = lerp(speed, playerSpeed_tgt, 0.005);
         fanRotation = (fanRotation >= TWO_PI) ? 0 : fanRotation + 0.01 * speed;
         if (collisionTimer > 0) collisionTimer--;
+
+        // accumulate distance
+        if (!boosting && !boostAvailable) {
+            distance += speed/10;
+            if (distance > 6000) {
+                boostAvailable = true;
+            }
+        }
+
+        println(distance);
     }
 
     // render player frame

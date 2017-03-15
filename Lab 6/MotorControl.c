@@ -200,8 +200,8 @@ void mode1(void) {
 	int potent2Value;
     potent1Value = getADCAtPin(POT_1);
     potent2Value = getADCAtPin(POT_2);
-    power_level = 100.0*potent1Value / 1023.0;
-    printf("$%d,%d;", potent1Value, potent2Value);
+    power_level = 30.0+((100.0-30.0)/(1023.0-30.0))*(potent1Value-30);
+    printf("$%d,%d,%d;", potent1Value, potent2Value, BTN1);
     delay(50);
 }
 

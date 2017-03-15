@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1069 (Apr 23 2015) (MSVC)
-; This file was generated Wed Mar 15 13:39:24 2017
+; This file was generated Wed Mar 15 14:19:17 2017
 ;--------------------------------------------------------
 $name MotorControl
 $optc51 --model-small
@@ -914,9 +914,13 @@ _mode1:
 	mov	r5,dph
 	pop	ar3
 	pop	ar2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:203: power_level = 100.0*potent1Value / 1023.0;
-	mov	dpl,r2
-	mov	dph,r3
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:203: power_level = 30.0+((100.0-30.0)/(1023.0-30.0))*(potent1Value-30);
+	mov	a,r2
+	add	a,#0xe2
+	mov	dpl,a
+	mov	a,r3
+	addc	a,#0xff
+	mov	dph,a
 	push	ar2
 	push	ar3
 	push	ar4
@@ -930,9 +934,9 @@ _mode1:
 	push	ar7
 	push	ar0
 	push	ar1
-	mov	dptr,#0x0000
-	mov	b,#0xC8
-	mov	a,#0x42
+	mov	dptr,#0x5EDF
+	mov	b,#0x90
+	mov	a,#0x3D
 	lcall	___fsmul
 	mov	r6,dpl
 	mov	r7,dph
@@ -943,17 +947,16 @@ _mode1:
 	mov	sp,a
 	clr	a
 	push	acc
-	mov	a,#0xC0
 	push	acc
-	mov	a,#0x7F
+	mov	a,#0xF0
 	push	acc
-	mov	a,#0x44
+	mov	a,#0x41
 	push	acc
 	mov	dpl,r6
 	mov	dph,r7
 	mov	b,r0
 	mov	a,r1
-	lcall	___fsdiv
+	lcall	___fsadd
 	mov	r6,dpl
 	mov	r7,dph
 	mov	r0,b
@@ -971,7 +974,14 @@ _mode1:
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:204: printf("$%d,%d;", potent1Value, potent2Value);
+;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:204: printf("$%d,%d,%d;", potent1Value, potent2Value, BTN1);
+	mov	c,_P0_7
+	clr	a
+	rlc	a
+	mov	r6,a
+	mov	r7,#0x00
+	push	ar6
+	push	ar7
 	push	ar4
 	push	ar5
 	push	ar2
@@ -984,7 +994,7 @@ _mode1:
 	push	acc
 	lcall	_printf
 	mov	a,sp
-	add	a,#0xf9
+	add	a,#0xf7
 	mov	sp,a
 ;	C:\Users\mansu\OneDrive\Documents\2017 UBC\ELEC 291\Lab 6\MotorControl.c:205: delay(50);
 	mov	dptr,#0x0032
@@ -1767,7 +1777,7 @@ __str_3:
 	db 'Mar 15 2017'
 	db 0x00
 __str_4:
-	db '13:39:24'
+	db '14:19:17'
 	db 0x00
 __str_5:
 	db 0x0A
@@ -1792,7 +1802,7 @@ __str_9:
 	db 0x0A
 	db 0x00
 __str_10:
-	db '$%d,%d;'
+	db '$%d,%d,%d;'
 	db 0x00
 
 	CSEG
