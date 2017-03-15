@@ -73,13 +73,13 @@ volatile unsigned char power_level = 50;
 volatile unsigned bit reverse = 0;
 
 // LED matrix thing
-unsigned char IMAGES[4][8] = {
+unsigned char IMAGE[4][8] = {
   {0x7c, 0x32, 0x11, 0x81, 0x81, 0x88, 0x4c, 0x3e},
   {0x3c, 0x62, 0xf0, 0xc0, 0x03, 0x0f, 0x06, 0x3c},
   {0x38, 0x41, 0x83, 0x87, 0xe1, 0xc1, 0x82, 0x1c},
   {0x0c, 0x4e, 0x87, 0x85, 0xa1, 0xe1, 0x72, 0x30}
 };
-const int IMAGES_LEN = sizeof(IMAGES)/8;
+const int IMAGES_LEN = sizeof(IMAGE)/8;
 
 // demo mode:
 // [0] - scanf putty
@@ -148,6 +148,9 @@ void main(void) {
             case 2: mode2(); break;
             default: break;
         }
+        
+        // LED matrix
+    	LED_animate(IMAGE, 4, 30);
     }
 }
 
@@ -167,6 +170,7 @@ void changeMode(void) {
 		delay(50);
 		if (!BTNX) mode = (mode == 2) ? 0 : mode + 1;
 		while (!BTNX);
+		printf("\n=== Mode %d ===\n", mode);
 	}
 }
 
@@ -177,19 +181,21 @@ void mode0(void) {
     unsigned int direction;
 
     if (!BTN0) {
-    	delay(50);
+    	delay(20);
     	if (!BTN0) {
     		do {
+    			// apply changes to motor settings
         		printf("Enter power setting:\n<direction [0, 1]>: ");
         		scanf("%d", &direction);
+        		reverse = direction;
+        		
                 printf("\n<Duty Cycle>: ");
                 scanf("%d", &inputPWM);
-        		printf("\nSet: %d:%d\n", direction, inputPWM);
+                power_level = inputPWM;
+                
+        		printf("\nSet: %d:%d\n", reverse, power_level);
+        		
     		} while (direction > 1 || inputPWM > 100);
-
-    		// apply changes to motor settings
-    		power_level = inputPWM;
-    		reverse = direction;
 
     		// wait for button to release
     		while (!BTN0);
@@ -198,15 +204,15 @@ void mode0(void) {
 }
 
 void mode1(void) {
-	printf("Mode 1\n");
+	delay(100);
 }
 
 void mode2(void) {
-	printf("Mode 2\n");
-	//int potentValue;
-    //potentValue = getADCAtPin(POT_1);
-    //power_level = 100.0*potentValue / 1023.0; // CHANGED
-    //delay(50);
+	int potentValue;
+    potentValue = getADCAtPin(POT_1);
+    power_level = 100.0*potentValue / 1023.0;
+    printf("$%d;", potentValue);
+    delay(50);
 }
 
 char _c51_external_startup(void) {
@@ -390,7 +396,6 @@ void LED_clear(void) {
         LED_pulse();
     }
 }
-
 
 /* set custom intensity for LEDs */
 void LED_setIntensity(unsigned char intensity) {
