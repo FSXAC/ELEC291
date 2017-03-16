@@ -47,18 +47,20 @@ boolean boostButton = false;
 final int boostDistance = 30000;
 
 // game conditions
-boolean gameOver = false;
-boolean playOfTheGame = false;
+boolean gameOver;
+boolean playOfTheGame;
 PImage playerImage;
-POTGTitle pTitle = new POTGTitle();
+POTGTitle pTitle;
 
 void setup() {
     size(800, 600, P3D);
     player = new Player();
 
     // serial initialize
-    ser = new Serial(this, Serial.list()[0], 115200);
-    ser.readStringUntil('$');
+    if (ser == null) {
+      ser = new Serial(this, Serial.list()[0], 115200);
+      ser.readStringUntil('$');
+    }
 
     // spawn random blocks
     for (int i = 0; i < blocks.length; i++) {
@@ -72,7 +74,14 @@ void setup() {
     victorySound = new SoundFile(this, "victory.mp3");
     
     // load ending image
-    playerImage = loadImage("group.jpg");
+    String filename = "group" + ((random(1) < 0.5) ? "0" : "1") + ".jpg";
+    println(filename);
+    playerImage = loadImage(filename);
+    
+    // initialize game
+    gameOver = false;
+    playOfTheGame = false;
+    pTitle = new POTGTitle();
 }
 
 void draw() {
@@ -82,7 +91,7 @@ void draw() {
     } else {
         // setup background and camera
         // background(216, 251, 255);
-        background(116, 151, 200);
+        background(#6589A7);
         ambientLight(50, 50, 50);
         directionalLight(255,255,255,0,1, 0);
         directionalLight(255,255,255,0,0, -1);
@@ -163,7 +172,7 @@ void draw() {
             translate(random(-5, 5), random(-5, 5));
     
             // windsheild effects
-            stroke(150);
+            stroke(50);
             strokeWeight(5);
             float randomRStart = random(100, 300);
             float randomREnd = random(500, 800);
@@ -218,6 +227,10 @@ void draw() {
              playerSpeed_tgt = map(noise(millis()*0.001), 0, 1, 10, 120);
         }
     }
+}
+
+void mousePressed() {
+    setup();
 }
 
 // debug axis

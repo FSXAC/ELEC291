@@ -11,12 +11,12 @@ class POTGTitle {
     int maxTime = 350;
     
     // position vectors for each text
-    PVector text1 = new PVector(width/4, 200);
+    PVector text1 = new PVector(80, 200);
     PVector text2 = new PVector(text1.x + 20, text1.y + 80);
     PVector text3 = new PVector(text2.x + 10, text2.y + 30);
     float text1x = text1.x + 50;
     float text2x = text2.x + 70;
-    float text3x = text3.x + 30;
+    float text3x = text3.x + 80;
     POTGTitle() {
     }
 
@@ -46,7 +46,7 @@ class POTGTitle {
             if (time == maxTime - 20) {
                 text1x += 100;
                 text2x += 300;
-                text3x += 200;
+                text3x += 500;
             }
         } else {
             // fake play of the game
