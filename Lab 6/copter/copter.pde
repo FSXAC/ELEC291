@@ -13,6 +13,9 @@ String serInput;
 String[] serInputComponents = new String[3];
 
 // game constants
+final String PLAYER_NAME = "MUCHEN HE";
+final String PLAYER_ROLE = "PROGRAMMER";
+
 // map size
 final int mapWidth = 3000;
 final int mapDepth = 10000;

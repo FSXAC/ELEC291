@@ -28,10 +28,10 @@ class POTGTitle {
         textSize(50);
         text("PLAY OF THE GAME", text1.x, text1.y);
         textSize(30);
-        text("AS PROGRAMMER", text3.x, text3.y);
+        text("AS "+PLAYER_ROLE, text3.x, text3.y);
         fill(255, 200, 0);
         textSize(100);
-        text("MUCHEN HE", text2.x, text2.y);
+        text(PLAYER_NAME, text2.x, text2.y);
          
         // update text status
         update();

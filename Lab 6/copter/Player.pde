@@ -144,6 +144,7 @@ class Player {
 
         // render boosting shield
         if (boosting) {
+            noFill();
             pushMatrix();
             rotateX(millis()*0.001);
             rotateY(millis()*0.0033);
