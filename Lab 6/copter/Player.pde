@@ -1,6 +1,6 @@
 class Player {
-    private float speed;
-    private float fanRotation;
+    float speed;
+    float fanRotation;
 
     // collision
     int collisionTimer = 0;
@@ -11,7 +11,7 @@ class Player {
     int boostTimer = 300;
 
     // game ending conditions
-    float fuel = 1000;
+    float fuel = 100;
     float score = 0;
 
     // constructor

@@ -74,7 +74,7 @@ class Title {
             stroke(255);
             strokeWeight(constrain(map(time, 10, 40, 30, 0), 0, 30));
             float diam = map(time, 10, 60, 50, 500);
-            ellipse(width/2 - 150, height/2 - 60, diam, diam);
+            ellipse(width/2-20*message.length(), height/2 - 60, diam, diam);
         }
     }
 
