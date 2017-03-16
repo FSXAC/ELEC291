@@ -29,6 +29,7 @@ Title title;
 
 // sound player
 SoundFile victorySound;
+SoundFile boostSound;
 
 // create player object
 Player player;
@@ -76,6 +77,7 @@ void setup() {
 
     // load sound
     victorySound = new SoundFile(this, "victory.mp3");
+    boostSound = new SoundFile(this, "boost.mp3");
     
     // load ending image
     String filename = "group" + ((random(1) < 0.5) ? "0" : "1") + ".jpg";

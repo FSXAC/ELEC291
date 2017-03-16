@@ -89,6 +89,7 @@ class Player {
         // boosting button is pressed
         if (boostButton && boostAvailable) {
             // start boost, reset boost
+            boostSound.play();
             distance = 0;
             boostAvailable = false;
             boosting = true;
