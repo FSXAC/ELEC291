@@ -11,7 +11,7 @@ class Player {
     int boostTimer = 300;
 
     // game ending conditions
-    float fuel = 100;
+    float fuel = 1000;
     float score = 0;
 
     // constructor

@@ -134,10 +134,13 @@ void draw() {
             translate(random(-2, 2), random(-2, 2), random(-2, 2));
         }
         if (player.getCollide()) {
-            ser.write('1');
+            collideBeep = collideBeep ? false : true;
             float pSpeed = map(player.getSpeed(), 10, 100, 10, 50);
             translate(random(-pSpeed, pSpeed), 0,  random(-pSpeed, pSpeed));
-        } else ser.write('0');
+        } else collideBeep = falase;
+        
+        // toggle beep
+        ser.write((collideBeep ? '1' : '0'));
     
         // draw ground
         pushMatrix();
